@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+#!/bin/sh
+FILES=$(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g')
+[ -z "$FILES" ] && exit 0
+
+npm run prettier:fix
+npm run lint:fix && npm run test
+git add .
+
+# Add back the modified/prettified files to staging
+echo "$FILES" | xargs git add
+
+git update-index -g
+
+exit 0
