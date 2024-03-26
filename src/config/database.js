@@ -1,14 +1,14 @@
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 
 dotenv.config();
 module.exports = {
   development: {
-    url: process.env.DB_DEV,
+    url: process.env.DB_DEV
   },
   test: {
-    url: process.env.DB_TEST,
+    url: process.env.DB_TEST
   },
   production: {
-    url: process.env.DB_PROD,
-  },
+    url: process.env.DB_PROD
+  }
 };

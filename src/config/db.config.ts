@@ -13,8 +13,8 @@ APP_MODE === "development"
   : (dialect_option = {
       ssl: {
         require: process.env.SSL,
-        rejectUnauthorized: process.env.SSL,
-      },
+        rejectUnauthorized: process.env.SSL
+      }
     });
 
 export const sequelizeConnection: Sequelize = new Sequelize(db_uri, {
@@ -24,8 +24,8 @@ export const sequelizeConnection: Sequelize = new Sequelize(db_uri, {
     max: 10,
     min: 0,
     acquire: 30000,
-    idle: 10000,
-  },
+    idle: 10000
+  }
 });
 
 export const dbConnect = () =>
