@@ -1,6 +1,7 @@
 eslint:
   enabled: true
   config_file: .eslintrc.json
+   version: 8.1.0
   file_patterns:
     - "*.js"
     - "*.ts"
