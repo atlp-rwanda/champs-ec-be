@@ -1,5 +1,3 @@
-"use strict";
-
 const { v4: uuidv4 } = require("uuid");
 
 /** @type {import('sequelize-cli').Migration} */
@@ -10,12 +8,12 @@ module.exports = {
       [
         {
           id: uuidv4(),
-          title: "test item one",
+          title: "test item one"
         },
         {
           id: uuidv4(),
-          title: "test item two",
-        },
+          title: "test item two"
+        }
       ],
       {}
     );
@@ -23,5 +21,5 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete("tests", null, {});
-  },
+  }
 };

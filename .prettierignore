@@ -1,0 +1,11 @@
+# Ignore artifacts:
+build
+coverage
+
+
+#other folders
+node_modules/
+build/
+dist/
+package-lock.json
+src/public

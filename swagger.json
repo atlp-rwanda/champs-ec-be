@@ -1,0 +1,175 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Champs Marketplace API",
+      "version": "1.0.0",
+      "description": "API documentation for the Marketplace project which is  A comprehensive marketplace platform connecting buyers and sellers, where each seller manages their stall, stock, pricing, and discounts. Users can browse various stalls, add items to their cart, manage purchases, and rate vendors. Admins oversee user roles, stock, and platform operations. Key features include user management, shopping cart, checkout, rating system, and vendor stock management. The platform includes user, vendor, admin dashboards, contact form, login/signup, with optional features like subscriptions, email notifications, chatbot, and delivery. Built with Node, Express, Postgres, and React"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000",
+        "description": "Development server"
+      },
+      {
+        "url": "https://yourdomain.com",
+        "description": "Production server (HTTPS)"
+      },
+      {
+        "url": "http://yourdomain.com",
+        "description": "Production server (HTTP)"
+      }
+    ],
+    "tags": [
+      {
+        "name": "Users",
+        "description": "API endpoints for managing users"
+      },
+      {
+        "name": "Vendors",
+        "description": "API endpoints for managing vendors"
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "summary": "Welcome",
+          "responses": {
+            "200": {
+              "description": "Welcome Page",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                    }
+                  }
+                }
+              }
+            }
+          }
+        
+        }
+      },
+      "/api/users/{id}": {
+        "get": {
+          "summary": "Get a user by ID",
+          "tags": ["Users"],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "description": "ID of the user",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "A single user object",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      },
+      "/api/vendors": {
+        "get": {
+          "summary": "Get all vendors",
+          "tags": ["Vendors"],
+          "responses": {
+            "200": {
+              "description": "A list of vendors",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Vendor"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "required": ["id", "username", "email"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique user ID"
+            },
+            "username": {
+              "type": "string",
+              "description": "User's username"
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "User's email address"
+            }
+          }
+        },
+        "Vendor": {
+          "type": "object",
+          "required": ["id", "name", "products"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique vendor ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Vendor's name"
+            },
+            "products": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Product name"
+                  },
+                  "price": {
+                    "type": "number",
+                    "description": "Product price"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }
+  }
+  
