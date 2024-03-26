@@ -1,0 +1,9 @@
+node_modules/
+build/
+dist/
+package-lock.json
+.yml
+.husky/*
+.husky
+.github
+.github/*
