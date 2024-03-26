@@ -8,7 +8,7 @@ const APP_MODE: string = process.env.DEV_MODE || "development";
 
 let dialect_option: any;
 
-APP_MODE == "development"
+APP_MODE === "development"
   ? {}
   : (dialect_option = {
       ssl: {

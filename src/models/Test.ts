@@ -1,4 +1,4 @@
-import { DataTypes, UUIDV4 } from "sequelize";
+import { DataTypes } from "sequelize";
 import { sequelizeConnection } from "../config/db.config";
 
 const Test = sequelizeConnection.define("tests", {
