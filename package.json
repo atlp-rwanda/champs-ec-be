@@ -26,6 +26,8 @@
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
     "typescript": "^5.4.3",
     "uuid": "^9.0.1"
   },
@@ -55,6 +57,9 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,css,html,json,md}": ["eslint --fix", "git add"]
+    "*.{js,ts,css,html,json,md}": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
