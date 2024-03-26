@@ -1,22 +1,11 @@
 eslint:
-  docker:
-    - image: node:16
-  steps:
-    - checkout
-    - run:
-        name: Install ESLint and dependencies
-        command: npm install eslint@8.1.0 eslint-plugin-react eslint-plugin-import eslint-plugin-prettier @typescript-eslint/parser @typescript-eslint/eslint-plugin
-    - run:
-        name: Run ESLint
-        command: eslint . --ext .js,.ts
-    - run:
-        name: Determine ESLint status and generate badge URL
-        command: |
-          eslint_output=$(eslint . --ext .js,.ts --format=json)
-          eslint_errors=$(echo "$eslint_output" | jq -r '.[0].errorCount')
-          if [ "$eslint_errors" -gt 0 ]; then
-            badge_url="https://img.shields.io/badge/ESLint-Errors-red"
-          else
-            badge_url="https://img.shields.io/badge/ESLint-No%20Errors-brightgreen"
-          fi
-          echo "ESLint Badge URL: $badge_url"
+  enabled: true
+  config_file: .eslintrc.json
+  file_patterns:
+    - "*.js"
+    - "*.ts"
+  enabled_plugins:
+    - eslint-plugin-react
+    - eslint-plugin-import
+    - eslint-plugin-prettier
+   
