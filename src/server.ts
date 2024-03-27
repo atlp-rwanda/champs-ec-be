@@ -4,7 +4,7 @@ import { dbConnect } from "./config/db.config";
 import setPort from "./utils/functions/setport";
 
 config();
-const port: string = process.env.PORT;
+const port: string = process.env.PORT as string;
 
 setPort(port);
 dbConnect();

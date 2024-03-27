@@ -5,10 +5,12 @@
     "target": "ES2022",
     "outDir": "./dist",
     "rootDir": "./src",
+    "strict": true,
     "pretty": true,
     "esModuleInterop": true,
     "skipLibCheck": true
   },
+  "ts-node": { "esm": true,"experimentalSpecifierResolution": "node"},
   "include": ["src/**/*.ts", "src/**/*"],
   "exclude": ["node_modules"]
 }
