@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/user";
 import { userSchema } from "../validations/user.validations";
+import { userLoginValidation } from "../utils/validations/user.validations";
 
 const isUserExist = async (req: Request, res: Response, next: NextFunction) => {
   const user = await User.findOne({
@@ -24,8 +25,19 @@ const isValidUser = (req: Request, res: Response, next: NextFunction) => {
       next();
     }
   } catch (error: any) {
-    return res.status(403).json({ error: error.errors[0].message });
+    return res.status(400).json({ error: error.errors[0].message });
+  }
+};
+const isValidUserLogin = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const validation = userLoginValidation.parse(req.body);
+
+    if (validation) {
+      next();
+    }
+  } catch (error: any) {
+    return res.status(400).json({ error: error.errors[0].message });
   }
 };
 
-export { isUserExist, isValidUser };
+export { isUserExist, isValidUser, isValidUserLogin };
