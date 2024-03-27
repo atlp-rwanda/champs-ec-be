@@ -1,0 +1,26 @@
+version: 2.1
+orbs:
+  node: circleci/node@4.1.0
+  coveralls: coveralls/coveralls@2.2.1
+
+workflows:
+  build:
+    jobs:
+      - build
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:16.13.2
+    steps:
+      - checkout
+      - run:
+          name: Set up Node.js
+          command: |
+            echo "##[group] Installing Node.js"
+            curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            echo "##[endgroup]"
+      - run: npm ci
+      - run: npm test
+      - coveralls/upload
