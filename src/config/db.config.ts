@@ -3,7 +3,7 @@ import { Sequelize } from "sequelize";
 
 config();
 
-const db_uri: string = process.env.DB_PROD;
+const dbUri: string = process.env.DB_PROD as string;
 const APP_MODE: string = process.env.DEV_MODE || "development";
 
 let dialect_option: any;
@@ -17,7 +17,7 @@ APP_MODE === "development"
       }
     });
 
-export const sequelizeConnection: Sequelize = new Sequelize(db_uri, {
+export const sequelizeConnection: Sequelize = new Sequelize(dbUri, {
   dialect: "postgres",
   dialectOptions: dialect_option,
   pool: {
