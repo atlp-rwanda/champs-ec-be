@@ -9,7 +9,7 @@ For specific files we will be using dot notation with element.action.ts for exam
 - config: db.config.ts
 - test: element.test.ts
 
-Model: for model naming
+MODEL: FOR MODEL NAMING
 
 - User: model should be Entity in singural and start with capital letter,
   Table(entity): for entity or table naming
