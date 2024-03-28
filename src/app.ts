@@ -12,6 +12,7 @@ import authenticate from "./middlewares/user.auth";
 
 dotenv.config();
 
+
 const app: express.Application = express();
 
 app.use(cors());
@@ -38,5 +39,6 @@ app.use(
 
 app.get("/", authenticate, Home);
 app.use("/api/users", userRoutes);
+
 
 export default app;

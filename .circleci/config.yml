@@ -1,65 +1,26 @@
-# https://circleci.com/docs/collect-test-data/#mochajs
-# https://github.com/codeclimate/test-reporter/issues/342
-version: 2
+version: 2.1
 orbs:
-  coveralls: coveralls/coveralls@1.0.6
+  node: circleci/node@4.1.0
+  coveralls: coveralls/coveralls@2.2.1
+
+workflows:
+  build:
+    jobs:
+      - build
+
 jobs:
   build:
     docker:
-      - image: cimg/node:18.17.0
-    working_directory: ~/repo
+      - image: cimg/node:16.13.2
     steps:
-      - setup_remote_docker:
-          version: 20.10.7
       - checkout
-      # Update npm
       - run:
-          name: update-npm
-          command: "sudo npm install -g npm@latest"
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package-lock.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - run:
-          name: Install dependencies
-          command: npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package-lock.json" }}
-      # - run: mkdir reports
-      # Run mocha tests
-      - run:
-          name: Run tests
-          command: npm test
-          when: always
-      # Run coverage
-      - run:
-          name: Run coverage
-          command: npm run test
-          when: always
-      - run:
-          name: Upload coverage to Coveralls
-          command: npx coveralls < coverage/lcov.info
-      # Run coverage report for Code Climate
-      - run:
-          name: Setup Code Climate test-reporter
+          name: Set up Node.js
           command: |
-            # download test reporter as a static binary
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x ./cc-test-reporter
-            ./cc-test-reporter before-build
-          when: always
-      - run:
-          name: Send coverage report to Code Climate
-          command:
-            # nyc report requires that nyc has already been run,
-            # which creates the .nyc_output folder containing necessary data
-            ./cc-test-reporter after-build -t lcov
-          when: always
-      # Upload results
-      - store_artifacts: # upload test coverage as artifact
-          path: ./coverage/lcov.info
-          prefix: tests
+            echo "##[group] Installing Node.js"
+            curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            echo "##[endgroup]"
+      - run: npm ci
+      - run: npm test
+      - coveralls/upload

@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import chai, { expect } from "chai";
-import chaiHttp from "chai-http";
-import app from "../app";
+import { expect } from "chai";
+import "../app";
 import { dbConnect } from "../config/db.config";
 import User from "../models/user";
 import { passwordEncrypt } from "../utils/encrypt";
