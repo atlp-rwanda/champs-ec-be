@@ -7,15 +7,15 @@
     },
     "servers": [
       {
-        "url": "http://localhost:3000",
+        "url": "http://localhost:5500",
         "description": "Development server"
       },
       {
-        "url": "https://yourdomain.com",
+        "url": "https://champs-ec-be.onrender.com",
         "description": "Production server (HTTPS)"
       },
       {
-        "url": "http://yourdomain.com",
+        "url": "https://champs-ec-be.onrender.com",
         "description": "Production server (HTTP)"
       }
     ],

@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import swaggerUi from "swagger-ui-express";
 import { Home } from "./utils/functions/redirect";
 import swaggerDocument from "../swagger.json";
+import userRoutes from "./routes/user.routes";
 
 const app: express.Application = express();
 
@@ -18,5 +19,6 @@ app.use(
 );
 
 app.get("/", Home);
+app.use("/api/users", userRoutes);
 
 export default app;
