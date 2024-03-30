@@ -3,27 +3,43 @@ import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import app from "../app";
 import { dbConnect } from "../config/db.config";
+import User from "../models/user";
+import { passwordEncrypt } from "../utils/encrypt";
 
 chai.use(chaiHttp);
 
 before(async function () {
   this.timeout(50000);
   await dbConnect();
-});
+  await User.truncate();
 
-describe("test a home route", () => {
-  it("should respond with the welcome message", () => {
-    chai
-      .request(app)
-      .get("/")
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(200);
-      });
+  await User.create({
+    firstName: "Ernest",
+    lastName: "Tchami",
+    password: await passwordEncrypt("Test@12345"),
+    email: "usertest@gmail.com"
   });
 });
 
 describe("test a user signup endpoint", () => {
+  it("it should create a user successful", () => {
+    const r = (Math.random() + 1).toString(36).substring(5);
+    const userEmail = `u${r}@gmail.com`;
+    console.log(userEmail);
+    chai
+      .request(app)
+      .post("/api/users/signup")
+      .send({
+        firstName: "Ernest",
+        lastName: "Tchami",
+        password: "Test@12345",
+        email: "emailfortest3@gmail.com"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(201);
+      });
+  });
   it("should return user exist", () => {
     chai
       .request(app)
@@ -32,7 +48,7 @@ describe("test a user signup endpoint", () => {
         firstName: "Ernest",
         lastName: "Tchami",
         password: "Test@12345",
-        email: "tchami123@gmail.com"
+        email: "usertest@gmail.com"
       })
       .end((err, res) => {
         expect(err).to.be.null;
@@ -52,60 +68,102 @@ describe("test a user signup endpoint", () => {
       })
       .end((err, res) => {
         expect(err).to.be.null;
-        expect(res).to.have.status(403);
+        expect(res).to.have.status(400);
       });
   });
+});
 
-  /*
-  it("it should create a user succesful", () => {
-    const r = (Math.random() + 1).toString(36).substring(5);
-    const userEmail = `u${r}@gmail.com`;
-    console.log(userEmail);
+let token = "";
+describe("user Signin controller and passport", () => {
+  it("Login end point test", () => {
     chai
       .request(app)
-      .post("/api/users/signup")
+      .post("/api/users/login")
       .send({
-        firstName: "Ernest",
-        lastName: "Tchami",
         password: "Test@12345",
-        email: userEmail
+        email: "usertest@gmail.com"
       })
       .end((err, res) => {
         expect(err).to.be.null;
-        expect(res).to.have.status(201);
+        token = res.body.token;
+        expect(res).to.have.status(200);
       });
+    console.log("one one test token", token);
   });
- 
-  it("it should test internal server error", () => {
-    const r = (Math.random() + 1).toString(36).substring(5);
-    const userEmail = `user${r}@gmail.com`;
+  it("Login end Fail to login", () => {
     chai
       .request(app)
-      .post("/api/users/signup")
+      .post("/api/users/login")
       .send({
-        firstName: "Ernest",
-        lastName:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen bookLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen bookLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen bookLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen bookLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen bookLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen bookLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen bookLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen bookLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen bookLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen bookLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen bookLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen bookLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-        password: "Test@12345",
-        email: userEmail
+        email: "tchdfjhdcjschscdcd7@gmail.com",
+        password: "Test@12345"
       })
       .end((err, res) => {
-        expect(res).to.have.status(500);
+        expect(err).to.be.null;
+        expect(res).to.have.status(404);
       });
   });
-  */
-});
-
-/*
-describe("Home function", () => {
-  it("should respond with the welcome message", () => {
-    const req = {} as Request;
-    const res = {
-      send: (message: string) => {
-        expect(message).to.equal("Welcome to Express & TypeScript Server");
-      }
-    } as Response;
-    Home(req, res);
+  it("Login end Fail to login for password", () => {
+    chai
+      .request(app)
+      .post("/api/users/login")
+      .send({
+        password: "Test@12345bjhb",
+        email: "usertest@gmail.com"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(403);
+      });
+  });
+  it("use invalid email", () => {
+    console.log("final-------first", token);
+    chai
+      .request(app)
+      .post("/api/users/login")
+      .send({
+        email: "tchamiefuhh677gmail.com",
+        password: "Test@12345123"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
   });
 });
-*/
+
+describe("test a home route", () => {
+  it("should respond with the welcome message", () => {
+    console.log("final ----------------", token);
+    chai
+      .request(app)
+      .get("/")
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(401);
+      });
+  });
+
+  it("should respond with the welcome message", () => {
+    console.log("final ---------------------", token);
+    chai
+      .request(app)
+      .post("/api/users/login")
+      .send({
+        password: "Test@12345",
+        email: "usertest@gmail.com"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        chai
+          .request(app)
+          .get("/")
+          .set("Authorization", res.body.token)
+          .end((err, res) => {
+            expect(err).to.be.null;
+            expect(res).to.have.status(200);
+          });
+        expect(res).to.have.status(200);
+      });
+  });
+});
