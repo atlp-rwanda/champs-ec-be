@@ -1,37 +1,32 @@
 {
   "root": true,
+  "parser": "@typescript-eslint/parser",
   "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
     "airbnb-base",
-    "prettier"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
   ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".ts"]
+      }
+    }
+  },
   "env": {
     "node": true,
     "es6": true,
     "mocha": true
   },
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaVersion": 2021,
-    "sourceType": "module"
-  },
-  "plugins": ["@typescript-eslint"],
   "rules": {
     "one-var": 0,
-    "no-console":0,
-    "no-undef": 0,
-    "import/extensions":"off",
-    "import/no-unresolved": "off",
-    "global-require": 0,
-    "mocha/max-top-level-suites": 0,
-    "mocha/no-identical-title": 0,
     "one-var-declaration-per-line": 0,
     "new-cap": 0,
-    "import/no-import-module-exports": 0,
     "consistent-return": 0,
     "no-param-reassign": 0,
-    "func-names": [0, "always"],
+    "comma-dangle": 0,
+    "curly": ["error", "multi-line"],
+    "import/no-unresolved": [2, { "commonjs": true }],
     "no-shadow": ["error", { "allow": ["req", "res", "err"] }],
     "valid-jsdoc": [
       "error",
@@ -42,15 +37,38 @@
         "requireReturnDescription": true
       }
     ],
-    "arrow-body-style": "error",
-    "require-jsdoc": ["error", {
-      "require": {
-        "FunctionDeclaration": true,
-        "MethodDefinition": true,
-        "ClassDeclaration": true
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "": "never",
+        "js": "never",
+        "ts": "never"
       }
-    }],
-    "@typescript-eslint/no-var-requires": "error",
-    "quotes": ["error", "double"]
-  }
+   ],
+    "import/prefer-default-export": 0,
+    "require-jsdoc": [
+      "error",
+      {
+        "require": {
+          "FunctionDeclaration": true,
+          "MethodDefinition": true,
+          "ClassDeclaration": true
+        }
+      }
+    ]
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["prettier", "node", "mocha", "jsdoc", "@typescript-eslint"],
+  "overrides": [
+    {
+      "extends": ["plugin:@typescript-eslint/disable-type-checked"],
+      "files": ["*.js", "*.ts"]
+    }
+  ]
 }
+

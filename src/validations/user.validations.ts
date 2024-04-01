@@ -18,10 +18,7 @@ const userSchema = z.object({
   password: z
     .string()
     .min(8, "password should be atleast 8 characters length")
-    .regex(
-      passwordStrength,
-      "Password sholud contain capital letter, small letter and symbol"
-    )
+    .regex(passwordStrength, "Password should be alphanumeric ")
 });
 
 export { userSchema };
