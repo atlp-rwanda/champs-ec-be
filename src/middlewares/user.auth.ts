@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import passport from "../config/passport.config";
 
 const authenticate = (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate("jwt", { session: false }, (error:any, user:any) => {
+  passport.authenticate("jwt", { session: false }, (error: any, user: any) => {
     if (error) {
       return res.status(500).json({ error: error.message });
     }
