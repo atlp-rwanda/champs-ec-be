@@ -1,13 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { config } from "dotenv";
-import { use } from "chai";
 import User from "../models/user";
 import { UserAttributes } from "../types/user.types";
 import { passwordEncrypt } from "../utils/encrypt";
 import { userToken } from "../utils/functions/token.generator";
-import { userLoginValidation } from "../utils/validations/user.validations";
 
 config();
 
@@ -40,11 +38,7 @@ export const userSignup = async (req: Request, res: Response) => {
   }
 };
 
-export const userLogin = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const userLogin = async (req: Request, res: Response) => {
   try {
     const user: any = await User.findOne({
       where: {

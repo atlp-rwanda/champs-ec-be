@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import app from "../app";

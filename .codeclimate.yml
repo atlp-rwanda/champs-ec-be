@@ -8,5 +8,6 @@ checks:
     eslint:
       enabled: true
 exclude_patterns:
+  - "**/src/__test__/*"
   - "**/package-lock.json/"
   - "**/.env/*"
