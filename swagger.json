@@ -7,16 +7,12 @@
     },
     "servers": [
       {
-        "url": "http://localhost:5500",
+        "url": "http://localhost:5000",
         "description": "Development server"
       },
       {
         "url": "https://champs-ec-be.onrender.com",
         "description": "Production server (HTTPS)"
-      },
-      {
-        "url": "https://champs-ec-be.onrender.com",
-        "description": "Production server (HTTP)"
       }
     ],
     "tags": [
@@ -48,7 +44,11 @@
                 }
               }
             }
-          }
+            
+          },
+           
+          "security": [{ "Bearer": [] }]
+
         
         }
       },
@@ -155,10 +155,10 @@
        
       },
       "securitySchemes": {
-        "bearerAuth": {
-          "type": "http",
-          "scheme": "bearer",
-          "bearerFormat": "JWT"
+        "Bearer": {
+          "type": "apiKey",
+          "name":"Authorization",
+          "in": "header"
         }
       }
     }
