@@ -1,4 +1,4 @@
-import { DataTypes, UUIDV4, Model } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import { sequelizeConnection } from "../config/db.config";
 import { UserAttributes, UserCreationAttributes } from "../types/user.types";
 

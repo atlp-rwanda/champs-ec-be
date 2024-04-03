@@ -22,7 +22,7 @@ switch (APP_MODE) {
     break;
 }
 
-DB_HOST_MODE == "local"
+DB_HOST_MODE === "local"
   ? (dialect_option = {})
   : (dialect_option = {
       ssl: {
