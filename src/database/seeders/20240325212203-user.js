@@ -7,33 +7,27 @@ module.exports = {
       [
         {
           id: uuidv4(),
-          firstName: "Emmanuel",
-          lastName: "munezero",
+          first_name: "Emmanuel",
+          last_name: "munezero",
           email: "test@gmail.com",
           password: uuidv4(),
-          profile: "test.png",
-          createdAt: new Date(),
-          updatedAt: new Date()
+          profile: "test.png"
         },
         {
           id: uuidv4(),
-          firstName: "Emmanuel",
-          lastName: "munezero",
+          first_name: "Emmanuel",
+          last_name: "munezero",
           email: "test2@gmail.com",
           password: uuidv4(),
-          profile: "test.png",
-          createdAt: new Date(),
-          updatedAt: new Date()
+          profile: "test.png"
         },
         {
           id: uuidv4(),
-          firstName: "Emmanuel",
-          lastName: "munezero",
+          first_name: "Emmanuel",
+          last_name: "munezero",
           email: "test3@gmail.com",
           password: uuidv4(),
-          profile: "test.png",
-          createdAt: new Date(),
-          updatedAt: new Date()
+          profile: "test.png"
         }
       ],
       {}

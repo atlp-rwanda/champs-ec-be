@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import swaggerUi from "swagger-ui-express";
 import session from "express-session";
 import dotenv from "dotenv";
-import { Home } from "./utils/functions/redirect";
+import { Home } from "./utils/redirect";
 import swaggerDocument from "../swagger.json";
 import userRoutes from "./routes/user.routes";
 import passport from "./config/passport.config";

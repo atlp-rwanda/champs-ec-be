@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import { config } from "dotenv";
-import User from "../models/user";
+import User from "../models/User";
 
 config();
 
@@ -12,10 +12,10 @@ const jwtOptions = {
 
 const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {
-    console.log(payload);
     const user = await User.findOne({
       where: {
-        email: payload.email
+        email: payload.email,
+        verified: true
       }
     });
     if (!user) {

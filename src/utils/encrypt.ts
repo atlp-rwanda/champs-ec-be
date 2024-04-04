@@ -14,3 +14,14 @@ export const passwordCompare = async (
   const verifyPassword = await bcrypt.compare(inputPassword, userPassword);
   return verifyPassword;
 };
+
+// export const encryptString = (text: string, secretKey: string) => {
+//   const encrypted = CryptoJS.AES.encrypt(text, secretKey).toString();
+//   return encodeURIComponent(btoa(encrypted));
+// };
+
+// export const decryptString = (encryptedString: string, secretKey: string) => {
+//   const decodedString = decodeURIComponent(encryptedString);
+//   const bytes = CryptoJS.AES.decrypt(atob(decodedString), secretKey);
+//   return bytes.toString(CryptoJS.enc.Utf8);
+// };

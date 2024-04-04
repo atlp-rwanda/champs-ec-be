@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 import app from "./app";
 import { dbConnect } from "./config/db.config";
-import setPort from "./utils/functions/setport";
+import setPort from "./utils/setport";
 
 config();
 const port: string = process.env.PORT as string;

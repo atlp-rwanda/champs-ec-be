@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import User from "../models/user";
+import User from "../models/User";
 import { userSchema } from "../validations/user.validations";
 import { userLoginValidation } from "../utils/validations/user.validations";
 

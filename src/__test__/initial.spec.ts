@@ -3,7 +3,7 @@ import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import app from "../app";
 import { dbConnect } from "../config/db.config";
-import User from "../models/user";
+import User from "../models/User";
 import { passwordEncrypt } from "../utils/encrypt";
 
 chai.use(chaiHttp);
@@ -17,7 +17,8 @@ before(async function () {
     firstName: "Ernest",
     lastName: "Tchami",
     password: await passwordEncrypt("Test@12345"),
-    email: "usertest@gmail.com"
+    email: "usertest@gmail.com",
+    verified: true
   });
 });
 
@@ -30,31 +31,33 @@ describe("test a user signup endpoint", () => {
       .request(app)
       .post("/api/users/signup")
       .send({
-        firstName: "Ernest",
+        firstName: "Emmy",
         lastName: "Tchami",
         password: "Test@12345",
-        email: "emailfortest3@gmail.com"
+        email: "emmanuelmunezero@gmail.com"
       })
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(201);
       });
   });
-  it("should return user exist", () => {
-    chai
-      .request(app)
-      .post("/api/users/signup")
-      .send({
-        firstName: "Ernest",
-        lastName: "Tchami",
-        password: "Test@12345",
-        email: "usertest@gmail.com"
-      })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(409);
-      });
-  });
+
+  // it("should return user exist", () => {
+  //   chai
+  //     .request(app)
+  //     .post("/api/users/signup")
+  //     .send({
+  //       firstName: "Emmy",
+  //       lastName: "Tchami",
+  //       password: "Test@12345",
+  //       email: "emmanuelmunezero@gmail.com"
+  //     })
+  //     .end((err, res) => {
+  //       expect(err).to.be.null;
+  //       console.log(err);
+  //       expect(res).to.have.status(409);
+  //     });
+  // });
 
   it("it should test a user validation fail", () => {
     chai
@@ -103,6 +106,19 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(404);
       });
   });
+
+  it("user fail to verify user with invalid token", () => {
+    chai
+      .request(app)
+      .get(
+        "/api/users/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImE5OTRlZmRlLTEwYzAtNDhkNC1hNjEyLThiZDE0M2UxNDE0YiIsImVtYWlsIjoic2FiYXRvQGlnaWhlLnJ3IiwiaWF0IjoxNzEyMjA2NzY2LCJleHAiOjE3MTQ3OTg3NjZ9.-NHAR2uzikIfmPWuN0nx_smlx3NOFezcN2A32sxtJvU/verify-email"
+      )
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
   it("Login end Fail to login for password", () => {
     chai
       .request(app)

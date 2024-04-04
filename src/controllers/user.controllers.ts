@@ -3,20 +3,19 @@ import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { config } from "dotenv";
 import { use } from "chai";
-import User from "../models/user";
+import User from "../models/User";
 import { UserAttributes } from "../types/user.types";
 import { passwordEncrypt } from "../utils/encrypt";
-import { userToken } from "../utils/functions/token.generator";
 import { userLoginValidation } from "../utils/validations/user.validations";
+import { sendVerificationMail } from "../utils/mailer";
+import { userToken } from "../utils/token.generator";
 
 config();
 
 export const userSignup = async (req: Request, res: Response) => {
   try {
     const { firstName, lastName, email, password } = req.body;
-
     const userPassword = await passwordEncrypt(password);
-    console.log("user:", userPassword);
 
     const newUser: any = await User.create({
       firstName,
@@ -26,17 +25,18 @@ export const userSignup = async (req: Request, res: Response) => {
     });
 
     const createdUser: UserAttributes = newUser.dataValues;
+
     if (createdUser) {
-      const token = await userToken(
-        createdUser.id as string,
-        createdUser.email as string
-      );
-      return res
-        .status(201)
-        .json({ message: "user is successfully signed up", token });
+      const token = await userToken(createdUser.id, createdUser.email);
+      const link: string = `api/users/${token}/verify-email`;
+
+      sendVerificationMail(email, link, firstName);
+      res.status(201).json({
+        message: "user is registered, please verify through email"
+      });
     }
   } catch (error) {
-    return res.status(500).json({ error: "internal server error" });
+    res.status(500).json({ error: "internal server error" });
   }
 };
 
