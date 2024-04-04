@@ -18,9 +18,7 @@ class User
 
   public profile!: string;
 
-  public createdAt!: Date;
-
-  public updatedAt!: Date;
+  public verified!: boolean;
 }
 
 User.init(
@@ -29,21 +27,24 @@ User.init(
       type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4
+      defaultValue: DataTypes.UUIDV4,
+      field: "id"
     },
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true
-      }
+      },
+      field: "first_name"
     },
     lastName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true
-      }
+      },
+      field: "last_name"
     },
     email: {
       type: DataTypes.STRING,
@@ -66,13 +67,9 @@ User.init(
       allowNull: true,
       defaultValue: ""
     },
-    createdAt: {
-      allowNull: false,
-      type: DataTypes.DATE
-    },
-    updatedAt: {
-      allowNull: false,
-      type: DataTypes.DATE
+    verified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   },
   {

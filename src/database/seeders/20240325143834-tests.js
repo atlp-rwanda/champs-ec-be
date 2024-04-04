@@ -8,15 +8,11 @@ module.exports = {
       [
         {
           id: uuidv4(),
-          title: "test item one",
-          createdAt: new Date(),
-          updatedAt: new Date()
+          title: "test item one"
         },
         {
           id: uuidv4(),
-          title: "test item two",
-          createdAt: new Date(),
-          updatedAt: new Date()
+          title: "test item two"
         }
       ],
       {}

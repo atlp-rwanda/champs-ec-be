@@ -6,12 +6,10 @@ import User from "../models/user";
 import { passwordEncrypt } from "../utils/encrypt";
 
 chai.use(chaiHttp);
-
 before(async function () {
   this.timeout(50000);
   await dbConnect();
   await User.truncate();
-
   await User.create({
     firstName: "Ernest",
     lastName: "Tchami",
@@ -19,12 +17,10 @@ before(async function () {
     email: "usertest@gmail.com"
   });
 });
-
 describe("test a user signup endpoint", () => {
   it("it should create a user successful", () => {
     const r = (Math.random() + 1).toString(36).substring(5);
     const userEmail = `u${r}@gmail.com`;
-    console.log(userEmail);
     chai
       .request(app)
       .post("/api/users/signup")
@@ -54,7 +50,6 @@ describe("test a user signup endpoint", () => {
         expect(res).to.have.status(409);
       });
   });
-
   it("it should test a user validation fail", () => {
     chai
       .request(app)
@@ -70,8 +65,19 @@ describe("test a user signup endpoint", () => {
         expect(res).to.have.status(400);
       });
   });
-});
 
+  it("user fail to verify user with invalid token", () => {
+    chai
+      .request(app)
+      .get(
+        "/api/users/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImE5OTRlZmRlLTEwYzAtNDhkNC1hNjEyLThiZDE0M2UxNDE0YiIsImVtYWlsIjoic2FiYXRvQGlnaWhlLnJ3IiwiaWF0IjoxNzEyMjA2NzY2LCJleHAiOjE3MTQ3OTg3NjZ9.-NHAR2uzikIfmPWuN0nx_smlx3NOFezcN2A32sxtJvU/verify-email"
+      )
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+});
 let token = "";
 describe("user Signin controller and passport", () => {
   it("Login end point test", () => {
@@ -87,7 +93,6 @@ describe("user Signin controller and passport", () => {
         token = res.body.token;
         expect(res).to.have.status(200);
       });
-    console.log("one one test token", token);
   });
   it("Login end Fail to login", () => {
     chai
@@ -116,7 +121,6 @@ describe("user Signin controller and passport", () => {
       });
   });
   it("use invalid email", () => {
-    console.log("final-------first", token);
     chai
       .request(app)
       .post("/api/users/login")
@@ -130,10 +134,8 @@ describe("user Signin controller and passport", () => {
       });
   });
 });
-
 describe("test a home route", () => {
   it("should respond with the welcome message", () => {
-    console.log("final ----------------", token);
     chai
       .request(app)
       .get("/")
@@ -142,9 +144,7 @@ describe("test a home route", () => {
         expect(res).to.have.status(401);
       });
   });
-
   it("should respond with the welcome message", () => {
-    console.log("final ---------------------", token);
     chai
       .request(app)
       .post("/api/users/login")

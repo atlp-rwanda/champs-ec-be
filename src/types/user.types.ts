@@ -1,12 +1,13 @@
-import { Optional } from "sequelize";
+import { DataTypes } from "sequelize";
 
 export interface UserAttributes {
-  id?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  password?: string;
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
   profile?: string;
+  verified?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -17,6 +18,6 @@ export interface PayloadAttributes {
 }
 
 export interface UserCreationAttributes
-  extends Optional<UserAttributes, "id"> {}
+  extends Partial<Omit<UserAttributes, "id" | "createdAt" | "updatedAt">> {}
 
-export interface UserOutPuts extends Required<UserAttributes> {}
+export interface UserOutputs extends Required<UserAttributes> {}
