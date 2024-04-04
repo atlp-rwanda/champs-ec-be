@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 config();
 
 const appUrl: string =
-  process.env.DB_HOST_TYPE == "local"
+  process.env.DB_HOST_TYPE === "local"
     ? `http://localhost:${process.env.PORT}/`
     : "https://champs-ec-be.onrender.com/";
 

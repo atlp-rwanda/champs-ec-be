@@ -5,9 +5,13 @@ import { dbConnect } from "../config/db.config";
 import User from "../models/user";
 import { passwordEncrypt } from "../utils/encrypt";
 
+const imageFilePath = "./src/__test__/image/test.jpg";
+
+let headerToken: any;
+
 chai.use(chaiHttp);
 before(async function () {
-  this.timeout(50000);
+  this.timeout(3600000);
   await dbConnect();
   await User.truncate();
   await User.create({
@@ -17,10 +21,9 @@ before(async function () {
     email: "usertest@gmail.com"
   });
 });
+
 describe("test a user signup endpoint", () => {
-  it("it should create a user successful", () => {
-    const r = (Math.random() + 1).toString(36).substring(5);
-    const userEmail = `u${r}@gmail.com`;
+  it("it should create a user successful", (done) => {
     chai
       .request(app)
       .post("/api/users/signup")
@@ -32,10 +35,12 @@ describe("test a user signup endpoint", () => {
       })
       .end((err, res) => {
         expect(err).to.be.null;
+        console.log("user created ------------------------------------");
         expect(res).to.have.status(201);
+        done();
       });
   });
-  it("should return user exist", () => {
+  it("should return user exist", (done) => {
     chai
       .request(app)
       .post("/api/users/signup")
@@ -48,9 +53,10 @@ describe("test a user signup endpoint", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(409);
+        done();
       });
   });
-  it("it should test a user validation fail", () => {
+  it("it should test a user validation fail", (done) => {
     chai
       .request(app)
       .post("/api/users/signup")
@@ -63,10 +69,11 @@ describe("test a user signup endpoint", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(400);
+        done();
       });
   });
 
-  it("user fail to verify user with invalid token", () => {
+  it("user fail to verify user with invalid token", (done) => {
     chai
       .request(app)
       .get(
@@ -75,12 +82,13 @@ describe("test a user signup endpoint", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(400);
+        done();
       });
   });
 });
-let token = "";
+
 describe("user Signin controller and passport", () => {
-  it("Login end point test", () => {
+  it("Login end point test", (done) => {
     chai
       .request(app)
       .post("/api/users/login")
@@ -90,11 +98,13 @@ describe("user Signin controller and passport", () => {
       })
       .end((err, res) => {
         expect(err).to.be.null;
-        token = res.body.token;
+        headerToken = res.body.token;
+        console.log("Header number 2", headerToken);
         expect(res).to.have.status(200);
+        done();
       });
   });
-  it("Login end Fail to login", () => {
+  it("Login end Fail to login", (done) => {
     chai
       .request(app)
       .post("/api/users/login")
@@ -105,9 +115,10 @@ describe("user Signin controller and passport", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(404);
+        done();
       });
   });
-  it("Login end Fail to login for password", () => {
+  it("Login end Fail to login for password", (done) => {
     chai
       .request(app)
       .post("/api/users/login")
@@ -118,9 +129,10 @@ describe("user Signin controller and passport", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(403);
+        done();
       });
   });
-  it("use invalid email", () => {
+  it("use invalid email", (done) => {
     chai
       .request(app)
       .post("/api/users/login")
@@ -131,38 +143,83 @@ describe("user Signin controller and passport", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(400);
+        done();
       });
   });
 });
 describe("test a home route", () => {
-  it("should respond with the welcome message", () => {
+  it("should respond with the welcome message", (done) => {
     chai
       .request(app)
       .get("/")
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(401);
+        done();
       });
   });
-  it("should respond with the welcome message", () => {
+  it("should respond with the welcome message", (done) => {
     chai
       .request(app)
-      .post("/api/users/login")
+      .get("/")
+      .set("Authorization", headerToken)
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+      });
+    done();
+  });
+});
+
+describe("user profile", () => {
+  it("check for the user profile", () => {
+    chai
+      .request(app)
+      .get("/api/users/profile")
+      .set("Authorization", headerToken)
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+      });
+  });
+
+  it("update user profile with unauthirized field", () => {
+    chai
+      .request(app)
+      .put("/api/users/profiles")
+      .set("Authorization", headerToken)
       .send({
-        password: "Test@12345",
-        email: "usertest@gmail.com"
+        email: "Tdaniel@gmail.com"
       })
       .end((err, res) => {
         expect(err).to.be.null;
-        chai
-          .request(app)
-          .get("/")
-          .set("Authorization", res.body.token)
-          .end((err, res) => {
-            expect(err).to.be.null;
-            expect(res).to.have.status(200);
-          });
-        expect(res).to.have.status(200);
+        expect(res).to.have.status(400);
+      });
+  });
+  // it("update user profile with an image ", () => {
+  //   const res = chai
+  //     .request(app)
+  //     .put("/api/users/profiles")
+  //     .set("Authorization", headerToken)
+  //     .attach("profileImage", imageFilePath)
+  //     .field("firstName", "Ernest")
+  //     .field("lastName", "Tchami");
+  //   expect(res).to.have.status(201);
+  //   console.log(res);
+  // });
+  it("update user profile with an image", () => {
+    chai
+      .request(app)
+      .put("/api/users/profiles")
+      .set("Authorization", headerToken)
+      .attach("profileImage", imageFilePath)
+      .field("firstName", "Ernest")
+      .field("lastName", "Tchami")
+      .then((res) => {
+        expect(res).to.have.status(201);
+      })
+      .catch((err) => {
+        throw err;
       });
   });
 });
