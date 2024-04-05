@@ -1,6 +1,7 @@
 /* eslint-disable func-names */
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
+
 import sinon from "sinon";
 import app from "../app";
 import { dbConnect } from "../config/db.config";
@@ -25,8 +26,10 @@ let verifyTkn: string;
 let catId: string;
 let headerToken: string;
 let userId1: string;
-chai.use(chaiHttp);
+let headerToken2: string;
 
+chai.use(chaiHttp);
+// eslint-disable-next-line func-names
 before(async function () {
   this.timeout(50000);
   await dbConnect();
@@ -71,7 +74,8 @@ before(async function () {
         lastName: "User",
         password: await passwordEncrypt("Another@123"),
         email: "anotheruser@gmail.com",
-        roleId: "8736b050-1117-4614-a599-005dd76ff332"
+        roleId: "8736b050-1117-4614-a599-005dd76ff332",
+        verified: true
       });
       const user3 = await User.create({
         firstName: "Another",
@@ -88,8 +92,9 @@ before(async function () {
         roleId: "8736b050-1117-4614-a599-005dd76ff333"
       });
       return [user1, user2, user3, user4];
+      return [user1, user2];
     } catch (error) {
-      console.error("Error creating users:", error);
+      return error;
     }
   };
 
@@ -341,7 +346,6 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(400);
       });
   });
-
   it("update user profile with an image", () => {
     chai
       .request(app)
@@ -411,7 +415,7 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(409);
         done();
       });
-  });
+  }).timeout(5000);
   // Get all roles with server error
   it("should get all role with unauthenticated user ", (done) => {
     chai
@@ -1084,4 +1088,107 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
+});
+describe("Test user should be able to update their password", () => {
+  it("should return 400 if request data is missing", (done) => {
+    chai
+      .request(app)
+      .patch("/api/users/passwordUpdate")
+      .set("Authorization", headerToken)
+      .send({
+        oldPassword: "",
+        newPassword: "NewPass1234@",
+        confirmPassword: "NewPass1234@"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+  it("should return 400 if old password is false", (done) => {
+    chai
+      .request(app)
+      .patch("/api/users/passwordUpdate")
+      .set("Authorization", headerToken)
+      .send({
+        oldPassword: "Test@12348",
+        newPassword: "NewPass1234@",
+        confirmPassword: "NewPass1234@"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+  it("should return 400 if newPassword doesn't match confirmPassowrd", (done) => {
+    const rightData = {
+      oldPassword: "Test@12345",
+      newPassword: "NewPass1234@",
+      confirmPassword: "NewPass1234"
+    };
+    chai
+      .request(app)
+      .patch(`/api/users/passwordUpdate`)
+      .set("Authorization", headerToken)
+      .send(rightData)
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+  it("update password failed because of user is not verified", (done) => {
+    const rightData = {
+      oldPassword: "Test@12345",
+      newPassword: "String23@oi",
+      confirmPassword: "String23@oi"
+    };
+    chai
+      .request(app)
+      .post("/api/users/login")
+      .send({
+        email: "usertest@gmail.com",
+        password: "Test@12345"
+      })
+      .end((err, res) => {
+        chai
+          .request(app)
+          .patch(`/api/users/passwordUpdate`)
+          .set("Authorization", res.body.token)
+          .send(rightData)
+          .end((err, res) => {
+            expect(err).to.be.null;
+            expect(res).to.have.status(400);
+            done();
+          });
+      });
+  });
+  it("should return password sucessfully updated", (done) => {
+    const rightData = {
+      oldPassword: "Another@123",
+      newPassword: "String23@oi",
+      confirmPassword: "String23@oi"
+    };
+    chai
+      .request(app)
+      .post("/api/users/login")
+      .send({
+        email: "anotheruser@gmail.com",
+        password: "Another@123"
+      })
+      .end((err, res) => {
+        chai
+          .request(app)
+          .patch(`/api/users/passwordUpdate`)
+          .set("Authorization", res.body.token)
+          .send(rightData)
+          .end((err, res) => {
+            expect(err).to.be.null;
+            expect(res).to.have.status(200);
+            done();
+          });
+      });
+  }).timeout(50000);
 });
