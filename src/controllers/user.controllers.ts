@@ -2,19 +2,17 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { config } from "dotenv";
-import User from "../models/user";
 import { UserAttributes } from "../types/user.types";
 import { passwordEncrypt } from "../utils/encrypt";
-import { userToken } from "../utils/functions/token.generator";
+import User from "../models/user";
+import { sendVerificationMail } from "../utils/mailer";
+import { userToken } from "../utils/token.generator";
 
 config();
-
 export const userSignup = async (req: Request, res: Response) => {
   try {
     const { firstName, lastName, email, password } = req.body;
-
     const userPassword = await passwordEncrypt(password);
-    console.log("user:", userPassword);
 
     const newUser: any = await User.create({
       firstName,
@@ -24,17 +22,48 @@ export const userSignup = async (req: Request, res: Response) => {
     });
 
     const createdUser: UserAttributes = newUser.dataValues;
+
     if (createdUser) {
-      const token = await userToken(
-        createdUser.id as string,
-        createdUser.email as string
-      );
-      return res
-        .status(201)
-        .json({ message: "user is successfully signed up", token });
+      const token = await userToken(createdUser.id, createdUser.email);
+      const link: string = `api/users/${token}/verify-email`;
+
+      sendVerificationMail(email, link, firstName);
+      res.status(201).json({
+        message: "user is registered, please verify through email"
+      });
     }
   } catch (error) {
-    return res.status(500).json({ error: "internal server error" });
+    res.status(500).json({ error: "internal server error" });
+  }
+};
+
+export const verifyAccount = async (req: Request, res: Response) => {
+  try {
+    const reqToken = req.params.token;
+    const decodedToken = jwt.verify(
+      reqToken,
+      process.env.JWT_SECRET as string
+    ) as {
+      id: string;
+      email: string;
+    };
+    console.log(decodedToken);
+    const user = await User.findOne({
+      where: { email: decodedToken.email, verified: false }
+    });
+
+    if (user) {
+      const updatedUser = await user.update({ verified: true });
+      if (updatedUser) {
+        res.status(201).json({
+          message: "Account verified please login to continue"
+        });
+      }
+    } else {
+      res.status(400).json({ error: "Verification failed" });
+    }
+  } catch (error) {
+    res.status(400).json({ error: "Invalid token" });
   }
 };
 

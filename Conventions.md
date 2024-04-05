@@ -14,6 +14,7 @@ MODEL: FOR MODEL NAMING
 - User: model should be Entity in singural and start with capital letter,
   Table(entity): for entity or table naming
 - users: (table name should be named entity in plural and start with small letter)
+- field naming: snake_case
 
 Migration: follow sequelizer formatting correctly
 Utils:just function in small case letter

@@ -6,7 +6,6 @@ export const passwordEncrypt = async (password: string) => {
   return hashedPassword;
 };
 
-// function to compare password on user login
 export const passwordCompare = async (
   userPassword: string,
   inputPassword: string
