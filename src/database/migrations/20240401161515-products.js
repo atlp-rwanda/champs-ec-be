@@ -41,8 +41,7 @@ module.exports = {
       },
       productDiscount: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        default: 0
+        allowNull: true
       },
       productDescription: {
         type: Sequelize.TEXT,

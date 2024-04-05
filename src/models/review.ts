@@ -40,7 +40,7 @@ Reviews.init(
     },
     rating: {
       allowNull: false,
-      type: DataTypes.INTEGER
+      type: DataTypes.DECIMAL
     },
     feedback: {
       allowNull: false,
@@ -61,4 +61,5 @@ Reviews.init(
     tableName: "reviews"
   }
 );
+Reviews.belongsTo(User, { foreignKey: "buyerId", as: "userProfile" });
 export default Reviews;

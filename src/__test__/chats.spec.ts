@@ -6,7 +6,6 @@ import app from "../app";
 chai.use(chaiHttp);
 
 describe("Chat Application Testing", () => {
-  // eslint-disable-next-line func-names
   // it("should retrieve all messages sent in chat application", function (done) {
   //   this.timeout(26813);
   //   chai

@@ -16,7 +16,7 @@ module.exports = {
       "users",
       [
         {
-          id: uuidv4(),
+          id: "28f676ce-82e0-43e3-870b-e692127b0b89",
           firstName: "Emmanuel",
           lastName: "munezero",
           email: "test1@gmail.com",

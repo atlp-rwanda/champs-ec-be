@@ -1,11 +1,8 @@
 /** @type {import('sequelize-cli').Migration} */
-
-const extendPasswordValidity = async () => {
-  let myDate = new Date(Date.now());
-  const addedTime = Number(process.env.PASSWORD_LIFE_SPAN);
-  myDate = new Date(myDate.setMonth(myDate.getMonth() + addedTime));
-  return myDate;
-};
+let myDate = new Date(Date.now());
+const addedTime = Number(process.env.PASSWORD_LIFE_SPAN);
+myDate = new Date(myDate.setMonth(myDate.getMonth() + addedTime));
+console.log(">>>>>>>>>>>>>>>>>>>>>>>", myDate);
 
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -102,7 +99,7 @@ module.exports = {
       passwordExpiresAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: await extendPasswordValidity()
+        defaultValue: myDate
       },
       isPasswordExpired: {
         allowNull: false,

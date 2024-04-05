@@ -22,7 +22,7 @@ module.exports = {
         onUpdate: "cascade"
       },
       rating: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.DECIMAL,
         allowNull: false
       },
       feedback: {

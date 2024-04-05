@@ -7,6 +7,7 @@ import {
 import User from "./user";
 import Order from "./Order";
 import Reviews from "./review";
+import Wish from "./Wish";
 // eslint-disable-next-line require-jsdoc
 class Product
   extends Model<ProductAttributes, ProductCreationAttributes>
@@ -100,7 +101,7 @@ Product.init(
       allowNull: false
     },
     productCurrency: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: false,
       validate: {
@@ -108,8 +109,8 @@ Product.init(
       }
     },
     productDiscount: {
-      type: DataTypes.NUMBER,
-      allowNull: false,
+      type: DataTypes.INTEGER,
+      allowNull: true,
       defaultValue: 0
     },
     productDescription: {
@@ -168,8 +169,9 @@ Product.init(
 );
 
 Product.hasMany(Reviews, { foreignKey: "productId", as: "reviews" });
+
 Product.belongsTo(User, {
   foreignKey: "sellerId",
-  as: "seller" // You can use this alias when querying
+  as: "seller"
 });
 export default Product;
