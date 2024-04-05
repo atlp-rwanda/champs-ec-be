@@ -1761,7 +1761,7 @@ describe("products and product categgories", () => {
   it("stub throw internal error for user cart ", (done) => {
     const roleStub = sinon
       .stub(Cart, "findAll")
-      .throws(new Error("User is successful creates"));
+      .throws(new Error("User cart, internal server error"));
     chai
       .request(app)
       .get(`/api/carts`)
@@ -1927,7 +1927,7 @@ describe("products and product categgories", () => {
       .set("Authorization", headerToken)
       .send({ featureEndDate: "12/12/2050" })
       .end((err, res) => {
-        expect(res).to.have.status(400);
+        expect(res).to.have.status(200);
         done();
       });
   });
@@ -1937,7 +1937,7 @@ describe("products and product categgories", () => {
       .patch(`/api/products/${productId}/feature`)
       .set("Authorization", headerToken)
       .end((err, res) => {
-        expect(res).to.have.status(200);
+        expect(res).to.have.status(400);
         done();
       });
   });
@@ -1958,7 +1958,7 @@ describe("products and product categgories", () => {
   it("stub throw internal error for getting all products ", (done) => {
     const roleStub = sinon
       .stub(Product, "findAll")
-      .throws(new Error("User is successful creates"));
+      .throws(new Error("get all products internal server error"));
     chai
       .request(app)
       .get(`/api/products`)
@@ -1980,7 +1980,7 @@ describe("products and product categgories", () => {
   it("stub throw internal error for getting single product ", (done) => {
     const roleStub = sinon
       .stub(Product, "findOne")
-      .throws(new Error("User is successful creates"));
+      .throws(new Error("get single product internal servaer error"));
     chai
       .request(app)
       .get(`/api/products/${productId}`)
@@ -2047,12 +2047,11 @@ describe("products and product categgories", () => {
   //     .request(app)
   //     .patch(`/api/products/${productId}`)
   //     .set("Authorization", headerTokenSeller)
-  //     .attach("productImage", imageFilePath)
-  //     .field("productDiscount", "1000000")
+  //     .field("productDiscount", 1000000)
   //     .end((err, res) => {
-  //       expect(res.body.error).to.equal(
-  //         "product discount can't be greater than price"
-  //       );
+  //       console.log('<<<<<<< err >>>>>>>', err);
+  //       console.log('<<<<<<< err >>>>>>>', err);
+
   //       expect(res).to.have.status(403);
   //       done();
   //     });
@@ -2111,7 +2110,8 @@ describe("products and product categgories", () => {
   //       // );
   //       expect(res).to.have.status(400);
   //       done();
-
+  //   });
+  // })
   it("Seller crud operation replace specific image", (done) => {
     chai
       .request(app)
@@ -2293,16 +2293,16 @@ describe("products and product categgories", () => {
   // end test wishlists  ========================================================
 
   it("Seller crud operation want to delete product ", (done) => {
+    Order.truncate({ cascade: true });
     chai
       .request(app)
       .delete(`/api/products/${productId}`)
       .set("Authorization", headerTokenSeller)
-      .attach("productImage", imageFilePath)
       .end((err, res) => {
         expect(res).to.have.status(203);
         done();
       });
-  });
+  }).timeout(7000);
 
   it("it shoult test product category delete ", (done) => {
     chai

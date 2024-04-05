@@ -65,11 +65,11 @@ const createMessageAndStoreInChatroom = async (
   chatroom: Chatroom
 ) => {
   const newMessage = await Message.create({
-    ...options,
-    chatroomId: chatroom?.dataValues.id as string
+    ...options
   });
+  console.log("just created message >>>>>>>>>>", newMessage);
   await (chatroom as any).addMessage(newMessage);
-  return newMessage;
+  return (await Message.findByPk(newMessage.dataValues.id)) as Message;
 };
 export const createNewMessage = async (
   options: createNewMessageOptions
@@ -134,12 +134,14 @@ export const createNewMessage = async (
       return await createMessageAndStoreInChatroom(options, chatroom);
     }
     console.log("going on here 4 chatroom here", chatroom);
-    chatroom = chatrooms.filter(
-      (item) =>
-        item.dataValues.participants?.includes(senderId) &&
-        item.dataValues.participants?.includes(receiver)
-    )[0];
-    return await createMessageAndStoreInChatroom(options, chatroom);
+    const participantsChatrooms = (await fetchChatroomByParticipants(
+      senderId,
+      receiver
+    )) as Chatroom[];
+    return await createMessageAndStoreInChatroom(
+      options,
+      participantsChatrooms[0]
+    );
   } catch (error) {
     console.error("Error creating new message:", error);
     return new Error(`Error creating new message: ${error}`);

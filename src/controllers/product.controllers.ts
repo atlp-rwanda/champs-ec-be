@@ -101,7 +101,14 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
             {
               model: Reviews,
               as: "reviews",
-              attributes: ["buyerId", "rating", "feedback"]
+              attributes: ["buyerId", "rating", "feedback"],
+              include: [
+                {
+                  model: User,
+                  as: "userProfile",
+                  attributes: ["firstName", "profileImage"]
+                }
+              ]
             }
           ]
         });
@@ -117,7 +124,14 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
               {
                 model: Reviews,
                 as: "reviews",
-                attributes: ["buyerId", "rating", "feedback"]
+                attributes: ["buyerId", "rating", "feedback"],
+                include: [
+                  {
+                    model: User,
+                    as: "userProfile",
+                    attributes: ["firstName", "profileImage"]
+                  }
+                ]
               }
             ]
           });
@@ -148,7 +162,14 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
           {
             model: Reviews,
             as: "reviews",
-            attributes: ["buyerId", "rating", "feedback"]
+            attributes: ["buyerId", "rating", "feedback"],
+            include: [
+              {
+                model: User,
+                as: "userProfile",
+                attributes: ["firstName", "profileImage"]
+              }
+            ]
           }
         ],
         offset,
@@ -183,7 +204,14 @@ export const getSingleProduct = async (req: Request, res: Response) => {
             {
               model: Reviews,
               as: "reviews",
-              attributes: ["buyerId", "rating", "feedback"]
+              attributes: ["buyerId", "rating", "feedback"],
+              include: [
+                {
+                  model: User,
+                  as: "userProfile",
+                  attributes: ["firstName", "lastName", "profileImage"]
+                }
+              ]
             }
           ]
         });
@@ -210,7 +238,14 @@ export const getSingleProduct = async (req: Request, res: Response) => {
         {
           model: Reviews,
           as: "reviews",
-          attributes: ["buyerId", "rating", "feedback"]
+          attributes: ["buyerId", "rating", "feedback"],
+          include: [
+            {
+              model: User,
+              as: "userProfile",
+              attributes: ["firstName", "lastName", "profileImage"]
+            }
+          ]
         }
       ]
     });
@@ -240,7 +275,14 @@ export const getSingleProduct = async (req: Request, res: Response) => {
         {
           model: Reviews,
           as: "reviews",
-          attributes: ["buyerId", "rating", "feedback"]
+          attributes: ["buyerId", "rating", "feedback"],
+          include: [
+            {
+              model: User,
+              as: "userProfile",
+              attributes: ["firstName", "lastName", "profileImage"]
+            }
+          ]
         }
       ]
     });

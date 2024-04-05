@@ -36,6 +36,14 @@ Message.init(
       primaryKey: true,
       defaultValue: UUIDV4
     },
+    senderId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: User,
+        key: "id"
+      }
+    },
     receiver: {
       type: DataTypes.UUID,
       allowNull: false

@@ -4,6 +4,7 @@ import Order from "../models/Order";
 // import { OrderUpdated } from "../services/eventEmit.services";
 import User from "../models/user";
 import NodeEvents from "../services/eventEmit.services";
+import Reviews from "../models/review";
 
 export const getAllOrders = async (req: Request, res: Response) => {
   try {
@@ -12,16 +13,53 @@ export const getAllOrders = async (req: Request, res: Response) => {
     const userRole = loggedUser.dataValues.Role;
     const roleName = userRole.dataValues.name;
     if (roleName === "buyer") {
-      const oreders = await Order.findAll({
+      const orders = await Order.findAll({
         where: { buyerId: loggedUser.dataValues.id },
         include: [
           {
             model: Product,
-            attributes: ["productName", "productPrice"]
+            attributes: [
+              "id",
+              "productName",
+              "productPrice",
+              "productThumbnail",
+              "productCurrency"
+            ],
+            include: [
+              {
+                model: User,
+                as: "seller",
+                attributes: [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "phone",
+                  "whereYouLive",
+                  "billingAddress"
+                ]
+              },
+              {
+                model: Reviews,
+                as: "reviews",
+                attributes: ["buyerId", "rating", "feedback"]
+              }
+            ]
+          },
+          {
+            model: User,
+            as: "buyer",
+            attributes: [
+              "firstName",
+              "lastName",
+              "email",
+              "phone",
+              "whereYouLive",
+              "billingAddress"
+            ]
           }
         ]
       });
-      return res.status(200).json({ oreders });
+      return res.status(200).json({ orders });
     }
     if (roleName === "seller") {
       const data = await Order.findAll({
@@ -30,7 +68,33 @@ export const getAllOrders = async (req: Request, res: Response) => {
             model: Product,
             where: {
               sellerId: userId
-            }
+            },
+            include: [
+              {
+                model: User,
+                as: "seller",
+                attributes: [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "phone",
+                  "whereYouLive",
+                  "billingAddress"
+                ]
+              }
+            ]
+          },
+          {
+            model: User,
+            as: "buyer",
+            attributes: [
+              "firstName",
+              "lastName",
+              "email",
+              "phone",
+              "whereYouLive",
+              "billingAddress"
+            ]
           }
         ]
       });
@@ -58,7 +122,33 @@ export const getSingleOrder = async (req: Request, res: Response) => {
             model: Product,
             where: {
               sellerId: userId
-            }
+            },
+            include: [
+              {
+                model: User,
+                as: "seller",
+                attributes: [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "phone",
+                  "whereYouLive",
+                  "billingAddress"
+                ]
+              }
+            ]
+          },
+          {
+            model: User,
+            as: "buyer",
+            attributes: [
+              "firstName",
+              "lastName",
+              "email",
+              "phone",
+              "whereYouLive",
+              "billingAddress"
+            ]
           }
         ]
       });
@@ -72,7 +162,44 @@ export const getSingleOrder = async (req: Request, res: Response) => {
         include: [
           {
             model: Product,
-            attributes: ["productName", "productPrice"]
+            attributes: [
+              "id",
+              "productName",
+              "productPrice",
+              "productThumbnail",
+              "productCurrency"
+            ],
+            include: [
+              {
+                model: User,
+                as: "seller",
+                attributes: [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "phone",
+                  "whereYouLive",
+                  "billingAddress"
+                ]
+              },
+              {
+                model: Reviews,
+                as: "reviews",
+                attributes: ["buyerId", "rating", "feedback"]
+              }
+            ]
+          },
+          {
+            model: User,
+            as: "buyer",
+            attributes: [
+              "firstName",
+              "lastName",
+              "email",
+              "phone",
+              "whereYouLive",
+              "billingAddress"
+            ]
           }
         ]
       });
