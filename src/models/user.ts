@@ -6,21 +6,27 @@ class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
 {
-  public id!: string;
+  declare id: string;
 
-  public firstName!: string;
+  declare firstName: string;
 
-  public lastName!: string;
+  declare lastName: string;
 
-  public email!: string;
+  declare googleId: string;
 
-  public password!: string;
+  declare photoUrl: string;
 
-  public profile!: string;
+  declare email: string;
 
-  public createdAt!: Date;
+  declare password: string;
 
-  public updatedAt!: Date;
+  declare profile: string;
+
+  declare verified: boolean;
+
+  declare createdAt: Date;
+
+  declare updatedAt: Date;
 }
 
 User.init(
@@ -29,50 +35,55 @@ User.init(
       type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4
+      defaultValue: DataTypes.UUIDV4,
+      field: "id"
     },
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true
-      }
+      },
+      field: "first_name"
     },
     lastName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true
-      }
+      },
+      field: "last_name"
+    },
+    googleID: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: "google_id"
+    },
+    photoUrl: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: "photo_url"
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
       validate: {
-        notEmpty: true
+        notEmpty: true,
+        isEmail: true
       }
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        notEmpty: true
-      }
+      allowNull: true
     },
     profile: {
       type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: ""
+      allowNull: true
     },
-    createdAt: {
-      allowNull: false,
-      type: DataTypes.DATE
-    },
-    updatedAt: {
-      allowNull: false,
-      type: DataTypes.DATE
+    verified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   },
   {

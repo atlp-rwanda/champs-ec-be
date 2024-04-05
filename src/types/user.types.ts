@@ -7,6 +7,9 @@ export interface UserAttributes {
   email?: string;
   password?: string;
   profile?: string;
+  photoUrl?: string;
+  verified?: boolean;
+  googleID?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

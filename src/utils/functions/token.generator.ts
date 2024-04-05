@@ -15,3 +15,4 @@ export const userToken = async (userId: string, userEmail: string) => {
   });
   return token;
 };
+export default userToken;

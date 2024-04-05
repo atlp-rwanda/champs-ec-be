@@ -6,14 +6,12 @@ config();
 let db_uri: string = "";
 const APP_MODE: string = (process.env.DEV_MODE as string) || "development";
 const DB_HOST_MODE: string = process.env.DB_HOST_TYPE as string;
-
-let dialect_option: any;
+let dialect_option: any = {};
 
 switch (APP_MODE) {
   case "test":
     db_uri = process.env.DB_TEST as string;
     break;
-
   case "production":
     db_uri = process.env.DB_PROD as string;
     break;
@@ -22,14 +20,16 @@ switch (APP_MODE) {
     break;
 }
 
-DB_HOST_MODE === "local"
-  ? (dialect_option = {})
-  : (dialect_option = {
-      ssl: {
-        require: process.env.SSL,
-        rejectUnauthorized: true
-      }
-    });
+if (DB_HOST_MODE === "local") {
+  dialect_option = {};
+} else {
+  dialect_option = {
+    ssl: {
+      require: process.env.SSL === "true",
+      rejectUnauthorized: true
+    }
+  };
+}
 
 export const sequelizeConnection: Sequelize = new Sequelize(db_uri, {
   dialect: "postgres",
@@ -42,7 +42,7 @@ export const sequelizeConnection: Sequelize = new Sequelize(db_uri, {
   }
 });
 
-export const dbConnect = () =>
+export const dbConnect = () => {
   sequelizeConnection
     .authenticate()
     .then(() => {
@@ -52,3 +52,4 @@ export const dbConnect = () =>
       console.error("Unable to connect to the database:", error);
       process.exit(1);
     });
+};

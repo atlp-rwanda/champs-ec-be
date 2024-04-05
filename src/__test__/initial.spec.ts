@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import app from "../app";
@@ -16,7 +17,9 @@ before(async function () {
     firstName: "Ernest",
     lastName: "Tchami",
     password: await passwordEncrypt("Test@12345"),
-    email: "usertest@gmail.com"
+    email: "usertest@gmail.com",
+    googleID: "google123", // Provide a valid Google ID value
+    photoUrl: "https://example.com/photo.jpg"
   });
 });
 
@@ -32,7 +35,9 @@ describe("test a user signup endpoint", () => {
         firstName: "Ernest",
         lastName: "Tchami",
         password: "Test@12345",
-        email: "emailfortest3@gmail.com"
+        email: "emailfortest3@gmail.com",
+        googleID: "google123", // Provide a valid Google ID value
+        photoUrl: "https://example.com/photo.jpg"
       })
       .end((err, res) => {
         expect(err).to.be.null;
@@ -47,7 +52,9 @@ describe("test a user signup endpoint", () => {
         firstName: "Ernest",
         lastName: "Tchami",
         password: "Test@12345",
-        email: "usertest@gmail.com"
+        email: "usertest@gmail.com",
+        googleID: "google123", // Provide a valid Google ID value
+        photoUrl: "https://example.com/photo.jpg"
       })
       .end((err, res) => {
         expect(err).to.be.null;
@@ -63,7 +70,9 @@ describe("test a user signup endpoint", () => {
         firstName: "Ernest",
         lastName: "Tchami",
         password: "Test@12345",
-        email: "tchami123@gmaicom"
+        email: "tchami123@gmaicom",
+        googleID: "google123", // Provide a valid Google ID value
+        photoUrl: "https://example.com/photo.jpg"
       })
       .end((err, res) => {
         expect(err).to.be.null;

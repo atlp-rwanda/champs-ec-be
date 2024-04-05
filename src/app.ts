@@ -9,6 +9,7 @@ import swaggerDocument from "../swagger.json";
 import userRoutes from "./routes/user.routes";
 import passport from "./config/passport.config";
 import authenticate from "./middlewares/user.auth";
+import authRoutes from "./routes/auth.routes";
 
 dotenv.config();
 
@@ -38,5 +39,6 @@ app.use(
 
 app.get("/", authenticate, Home);
 app.use("/api/users", userRoutes);
+app.use("/api/users/", authRoutes);
 
 export default app;
