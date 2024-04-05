@@ -8,7 +8,9 @@ import {
   editUser,
   verifyAccount,
   assignRoleToUser,
-  getAllUsers
+  getAllUsers,
+  sendResetInstructions,
+  resetUserPassword
 } from "../controllers/user.controllers";
 import { authenticate } from "../middlewares/user.auth";
 
@@ -25,6 +27,8 @@ import { isDecodeOTP } from "../middlewares/otpauth.middleware";
 
 const userRoutes = express.Router();
 
+userRoutes.post("/reset-password", sendResetInstructions);
+userRoutes.patch("/reset-password/:token", resetUserPassword);
 userRoutes.post("/signup", isValidUser, isUserExist, userSignup);
 userRoutes.post("/login", isValidUserLogin, userLogin);
 userRoutes.get("/profile", authenticate, userProfile);

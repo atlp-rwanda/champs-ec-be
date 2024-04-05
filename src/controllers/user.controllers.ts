@@ -1,19 +1,25 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 import { UserAttributes } from "../types/user.types";
 import { passwordEncrypt } from "../utils/encrypt";
 import User from "../models/user";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Role from "../models/Role";
-import { sendVerificationMail } from "../utils/mailer";
-import { userToken } from "../utils/token.generator";
+import { userToken, tokenVerify, tokenAssign } from "../utils/token.generator";
 import uploadImage from "../utils/cloudinary";
 import { isUserExist } from "../middlewares/user.middleware";
 import { isCheckSeller } from "../middlewares/user.auth";
+import { sendResetMail, sendVerificationMail } from "../utils/mailer";
+import { passwordStrength } from "../utils/validations/user.validations";
+import { findUserByEmail } from "../utils/finders";
 
 config();
+interface JToken extends jwt.Jwt {
+  user?: string;
+  exp?: string;
+}
 export const userSignup = async (req: Request, res: Response) => {
   try {
     const { firstName, lastName, email, password, roleId } = req.body;
@@ -139,10 +145,79 @@ export const userProfile = async (req: Request, res: Response) => {
       billingAddress,
       preferredcurrency
     };
-
     res.status(200).json({ User: userResult });
   } catch (error) {
     return res.status(400).json("user profile is not exist");
+  }
+};
+export const sendResetInstructions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const foundUser = await findUserByEmail(req, res, next);
+    if (!foundUser) return res.status(404).json({ msg: "User not found" });
+    const { firstName, id, email } = foundUser.dataValues;
+
+    const token = tokenAssign(
+      { user: id },
+      Date.now() + Number(process.env.PASSWORD_RESET_EXPIRES as string)
+    );
+    const passwordUpdateLink = `${process.env.BASE_URL as string}/api/users/reset-password/${token}`;
+    sendResetMail(email as string, passwordUpdateLink, firstName as string);
+
+    return res.status(200).json({
+      msg: "Password reset Instructions sent successfully",
+      token
+    });
+  } catch (err) {
+    return next({ err });
+  }
+};
+
+export const resetUserPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { token } = req.params;
+
+    const isValid: JToken = tokenVerify(
+      token,
+      function (err: Error, decoded: any) {
+        if (err) {
+          if (err.message.includes("expired")) {
+            return res.status(401).json({ message: "Token has expired" });
+          }
+          return res.status(404).json({ message: "Invalid token" });
+        }
+        return decoded;
+      }
+    );
+
+    const foundUser = await User.findByPk(isValid.user);
+    if (!foundUser) return res.status(404).json({ msg: "User Not found" });
+
+    const { newPassword, confirmPassword } = req.body;
+    const checkPasswordStrength = passwordStrength.test(newPassword);
+    if (!checkPasswordStrength) {
+      return res
+        .status(400)
+        .json({ msg: "Password must have atleast 8 to 15 characters" });
+    }
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ msg: "Passwords don't match" });
+    }
+
+    const pass = await passwordEncrypt(newPassword);
+    foundUser.password = pass;
+    await foundUser.update(foundUser);
+
+    return res.status(200).json({ msg: "Password updated succesfully" });
+  } catch (err) {
+    return next({ err });
   }
 };
 

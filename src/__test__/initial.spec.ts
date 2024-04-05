@@ -194,7 +194,7 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(201);
         done();
       });
-  });
+  }).timeout(5000);
   it("Email sent successfully", (done) => {
     chai
       .request(app)
@@ -341,17 +341,7 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(400);
       });
   });
-  // it("update user profile with an image ", () => {
-  //   const res = chai
-  //     .request(app)
-  //     .put("/api/users/profiles")
-  //     .set("Authorization", headerToken)
-  //     .attach("profileImage", imageFilePath)
-  //     .field("firstName", "Ernest")
-  //     .field("lastName", "Tchami");
-  //   expect(res).to.have.status(201);
 
-  // });
   it("update user profile with an image", () => {
     chai
       .request(app)
@@ -518,19 +508,7 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
-  // assign unexisting role to user
-  // it("should assign unexisting role to a user", (done) => {
-  //   chai
-  //     .request(app)
-  //     .patch(`/api/users/${createdUserId}/roles`)
-  //     .set("Authorization", headerToken)
-  //     .send({ roleId: "88" })
-  //     .end((err, res) => {
-  //       expect(err).to.be.null;
-  //       expect(res).to.have.status(500);
-  //       done();
-  //     });
-  // });
+
   it("should assign unexisting role to a user internal server", (done) => {
     chai
       .request(app)
@@ -1009,22 +987,7 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
-  /*
-  it("Seller crud operation replace specific image no image set ", (done) => {
-    chai
-      .request(app)
-      .patch(`/api/products/${productId}/pictures/${image_id}`)
-      .set("Authorization", headerTokenSeller)
-      .attach("productImage", "")
-      .end((err, res) => {
-        expect(res.body.message).to.equal(
-          "Please select a new image for product item"
-        );
-        expect(res).to.have.status(403);
-        done();
-      });
-  });
-  */
+
   it("Seller crud operation replace specific image", (done) => {
     chai
       .request(app)
@@ -1110,7 +1073,7 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
-  /*
+
   it("it shoult test product category delete ", (done) => {
     chai
       .request(app)
@@ -1121,5 +1084,4 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
-  */
 });

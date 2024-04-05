@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node ./dist/server.js",
-    "dev": "nodemon ./dist/server.js",
+    "dev": "npx tsc && nodemon ./dist/server.js",
     "lint": "eslint \"src/**/*.{js,ts,css,html,json,md}\"",
     "prettier": "eslint \"src/**/*.{js,ts,css,html,json,md}\"",
     "lint:staged": "lint-staged",
@@ -99,6 +99,7 @@
     "mock-http": "^1.1.0",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
+    "sequelize-cli": "^6.6.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0"
   },
