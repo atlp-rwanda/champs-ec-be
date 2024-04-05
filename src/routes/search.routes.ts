@@ -4,7 +4,7 @@ import searchProducts from "../controllers/search.controller";
 
 const searchRoutes = express.Router();
 
-// Search items route
+// Search items route here
 searchRoutes.get("/", isAnonymous, searchProducts);
 
 export default searchRoutes;

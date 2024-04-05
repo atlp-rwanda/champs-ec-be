@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
+import { checkExpiredProducts } from "../utils/finders";
 
 import { isImageExist } from "../utils/product.image.check";
 import Product from "../models/Product";
@@ -35,11 +36,9 @@ export const createProducts = async (req: Request, res: Response) => {
 
     const imageResponses: any = await Promise.all(multiplePicturePromise)
       .then((result) => {
-        // dispatch a success
         return result;
       })
       .catch((err) => {
-        // dispatch a failure and throw error
         throw err;
       });
 
@@ -306,4 +305,24 @@ export const setProductThumbnail = async (req: Request, res: Response) => {
   return res
     .status(201)
     .json({ message: "the item thumbnail is updated", product });
+};
+
+// trigger check products expiration from API request
+
+export const productExpirationChecker = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await checkExpiredProducts();
+    return res
+      .status(200)
+      .json({ msg: "Expired products unlisted successfully." });
+  } catch (err) {
+    console.error("FAILURE: COULD NOT PERFORM TASK AT THE MOMENT", err);
+    return res
+      .status(500)
+      .json({ msg: "Couldn't check all products' expiration dates" });
+  }
 };

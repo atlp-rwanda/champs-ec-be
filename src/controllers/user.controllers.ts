@@ -218,7 +218,7 @@ export const resetUserPassword = async (
       return res.status(400).json({ msg: "Passwords don't match" });
     }
 
-    const pass = await passwordEncrypt(newPassword);
+    const pass: string = await passwordEncrypt(newPassword);
     await foundUser.update({ password: pass });
 
     return res.status(200).json({ msg: "Password updated succesfully" });
@@ -344,7 +344,11 @@ export const updateUserPassword = async (req: Request, res: Response) => {
     return res.status(500).send({ error: "Internal server error" });
   }
 };
-async function blacklistToken(req: Request, res: Response, next: NextFunction) {
+export const blacklistToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const tokenHeader = req.headers.authorization?.split(" ")[1];
 
   if (!tokenHeader) {
@@ -371,7 +375,7 @@ async function blacklistToken(req: Request, res: Response, next: NextFunction) {
       .status(500)
       .json({ success: false, message: "Internal server error" });
   }
-}
+};
 
 export const changeAccountStatus = async (req: any, res: Response) => {
   const data: ResponseOutPut = await userStatusData(req.body);

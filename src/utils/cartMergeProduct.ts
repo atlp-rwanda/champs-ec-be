@@ -21,9 +21,9 @@ const checkifExist = async (products: Array<object>): Promise<boolean> => {
         }
       });
       const finalProduct: any = product?.dataValues;
-      const number = finalProduct.stockLevel.split(" ");
+      const number = finalProduct.stockLevel;
 
-      return el.quantity <= Number(number[0]);
+      return el.quantity <= Number(number);
     })
   );
 
