@@ -1,10 +1,11 @@
-import { DataTypes, Model, UUIDV4 } from "sequelize";
+import { DataTypes, Model, ModelStatic, UUIDV4 } from "sequelize";
 import { sequelizeConnection } from "../config/db.config";
 import {
   MessageAttributes,
   MessageCreationAttributes
 } from "../types/message.types";
 import User from "./user";
+import Chatroom from "./Chatroom";
 
 class Message
   extends Model<MessageAttributes, MessageCreationAttributes>
@@ -14,11 +15,15 @@ class Message
 
   public senderId!: string;
 
+  public receiver!: string;
+
   public message!: string;
 
   public createdAt!: Date;
 
   public updatedAt!: Date;
+
+  public chatroomId?: string;
 
   static id: any;
 }
@@ -31,13 +36,9 @@ Message.init(
       primaryKey: true,
       defaultValue: UUIDV4
     },
-    senderId: {
+    receiver: {
       type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: "User",
-        key: "id"
-      }
+      allowNull: false
     },
     message: {
       type: DataTypes.STRING,
@@ -61,5 +62,6 @@ Message.init(
     tableName: "messages"
   }
 );
-Message.belongsTo(User, { foreignKey: "senderId", as: "sender" });
+
+// define association here
 export default Message;

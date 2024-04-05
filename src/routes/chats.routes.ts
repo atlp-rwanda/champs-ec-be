@@ -2,13 +2,16 @@ import { Router } from "express";
 import {
   MessageSent,
   Notification,
-  chatApplication
+  chatApplication,
+  privateChatApplication
 } from "../controllers/chats.controllers";
 
-const chatRouters = Router();
+const chatRoutes = Router({ mergeParams: true });
 
-chatRouters.get("/chats", chatApplication);
-chatRouters.get("/Notification", Notification);
-chatRouters.get("/messages", MessageSent);
+chatRoutes.get("/", chatApplication);
+chatRoutes.get("/private", privateChatApplication);
+chatRoutes.get("/Notification", Notification);
+chatRoutes.get("/messages", MessageSent);
+chatRoutes.get("/messages", MessageSent);
 
-export default chatRouters;
+export default chatRoutes;

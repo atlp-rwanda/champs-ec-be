@@ -60,6 +60,8 @@ const isCheckSeller = async (user: UserData, req: Request, res: Response) => {
     res.status(200).send({
       message: "Login successful",
       success: true,
+      firstName: user.dataValues.firstName,
+      lastName: user.dataValues.lastName,
       token: `Bearer ${token}`
     });
   }

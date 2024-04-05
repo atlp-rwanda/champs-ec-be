@@ -12,7 +12,7 @@ import passport from "./config/passport.config";
 import { authenticate } from "./middlewares/user.auth";
 import { validateStats } from "./validations/stats.validations";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import chatRouters from "./routes/chats.routes";
+import chatRoutes from "./routes/chats.routes";
 import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";
 import productCategoryRoutes from "./routes/productCategory.routes";
@@ -23,11 +23,14 @@ import searchRoutes from "./routes/search.routes";
 import statsRoutes from "./routes/stats.routes";
 import {
   handleUnavailable,
-  startProductsExpirationCronJob
+  startProductsExpirationCronJob,
+  startPasswordExpirationCronJob
 } from "./cronjobs/crontab";
 import orderRoutes from "./routes/orders.routes";
 import paymentRoutes from "./routes/payment.routes";
 import NotificationsRoutes from "./routes/notification.routes";
+
+import { createPublicChatroom } from "./services/chats.services";
 
 dotenv.config();
 
@@ -35,16 +38,17 @@ const app: express.Application = express();
 
 // run products expiration cron job
 // eslint-disable-next-line no-unused-expressions
+// run products expiration cron jobß
 process.env.DEV_MODE !== "test"
   ? startProductsExpirationCronJob(
       process.env.PRODUCT_EXPIRATION_CRON_TIMER as string
     )
   : "";
 
-// run products expiration cron job
+// run passwords expiration cron job
 // eslint-disable-next-line no-unused-expressions
 process.env.DEV_MODE !== "test"
-  ? startProductsExpirationCronJob(
+  ? startPasswordExpirationCronJob(
       process.env.PASSWORD_EXPIRATION_CRON_TIMER as string
     )
   : "";
@@ -54,6 +58,8 @@ process.env.DEV_MODE !== "test"
 process.env.DEV_MODE !== "test"
   ? handleUnavailable(process.env.NOTIFICATION_CRON_TIME as string)
   : "";
+process.env.DEV_MODE !== "test" ? createPublicChatroom() : "";
+
 app.use(cors());
 app.use(express.json());
 app.use(
@@ -74,8 +80,6 @@ app.use(
     extended: true
   })
 );
-
-app.use("/api/users", chatRouters);
 app.use("/api/users/", authRoutes);
 app.use(
   "/api/stats",
@@ -91,6 +95,8 @@ app.use("/api/search/", searchRoutes);
 app.use("/api/carts/", authenticate, checkRole(["buyer"]), cartRouter);
 app.use("/api/orders/", orderRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/chats", chatRoutes);
+
 app.use("/api/products", productRoutes);
 app.use("/api/notifications", NotificationsRoutes);
 app.use("/api/wishes", authenticate, productWishRoutes);

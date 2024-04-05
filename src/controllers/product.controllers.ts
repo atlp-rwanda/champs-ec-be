@@ -19,12 +19,12 @@ import {
 } from "../types/product.types";
 import User from "../models/user";
 import formatString from "../utils/string.manipulation";
-import Reviews from "../models/reviews";
 import NodeEvents from "../services/eventEmit.services";
 import { isValidUUID } from "../utils/uuid";
 import ProductCategory from "../models/product_category";
 import Order from "../models/Order";
 import { isValidDate } from "../utils/date";
+import Reviews from "../models/review";
 
 export const createProducts = async (req: Request, res: Response) => {
   try {

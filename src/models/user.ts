@@ -1,7 +1,9 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, ModelStatic, Sequelize } from "sequelize";
 import { sequelizeConnection } from "../config/db.config";
 import { UserAttributes, UserCreationAttributes } from "../types/user.types";
 import Role from "./Role";
+import Chatroom from "./Chatroom";
+import Message from "./message";
 
 const currentDate = new Date();
 const userPasswordValidityPeriod = new Date(currentDate);
@@ -62,7 +64,8 @@ User.init(
       type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4
+      defaultValue: DataTypes.UUIDV4,
+      onDelete: "CASCADE"
     },
     firstName: {
       type: DataTypes.STRING,
@@ -93,7 +96,6 @@ User.init(
     password: {
       type: DataTypes.STRING,
       allowNull: true,
-      unique: true,
       defaultValue: ""
     },
     profileImage: {
@@ -169,11 +171,18 @@ User.init(
   {
     timestamps: true,
     sequelize: sequelizeConnection,
+    modelName: "User",
     tableName: "users"
   }
 );
 User.belongsTo(Role, {
   foreignKey: "roleId",
   onDelete: "CASCADE"
+});
+User.hasMany(Message);
+Message.belongsTo(User, {
+  as: "sender",
+  foreignKey: "senderId"
+  // onDelete: "CASCADE"
 });
 export default User;

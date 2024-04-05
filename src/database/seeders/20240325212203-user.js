@@ -28,7 +28,8 @@ module.exports = {
           preferredCurrency: "$",
           whereYouLive: "kigali street KN 250 st",
           billingAddress: "kigali street KN 250 st",
-          profileImage: "test.png",
+          profileImage:
+            "https://res.cloudinary.com/drno4jopp/image/upload/v1715685571/champs-bay/ifo2me0najmr3n152qr9.png",
           roleId: buyerRole,
           verified: true,
           createdAt: new Date(),
@@ -49,7 +50,8 @@ module.exports = {
           billingAddress: "kigali street KN 250 st",
           roleId: sellerRole,
           verified: true,
-          profileImage: "test.png",
+          profileImage:
+            "https://res.cloudinary.com/drno4jopp/image/upload/v1715685569/champs-bay/gwghcdjn5ntnokhwhp1s.avif",
           createdAt: new Date(),
           updatedAt: new Date()
         },
@@ -67,7 +69,8 @@ module.exports = {
           whereYouLive: "kigali street KN 250 st",
           billingAddress: "kigali street KN 250 st",
           roleId: sellerRole,
-          profileImage: "test.png",
+          profileImage:
+            "https://res.cloudinary.com/drno4jopp/image/upload/v1715685569/champs-bay/gwghcdjn5ntnokhwhp1s.avif",
           verified: true,
           createdAt: new Date(),
           updatedAt: new Date()
@@ -86,7 +89,8 @@ module.exports = {
           whereYouLive: "kigali street KN 250 st",
           billingAddress: "kigali street KN 250 st",
           roleId: sellerRole,
-          profileImage: "test.png",
+          profileImage:
+            "https://res.cloudinary.com/drno4jopp/image/upload/v1715685570/champs-bay/z9wuqvijnb2l4zctwwli.webp",
           verified: true,
           createdAt: new Date(),
           updatedAt: new Date()
@@ -106,7 +110,8 @@ module.exports = {
           billingAddress: "kigali street KN 250 st",
           roleId: buyerRole,
           verified: true,
-          profileImage: "test.png",
+          profileImage:
+            "https://res.cloudinary.com/drno4jopp/image/upload/v1715685571/champs-bay/uiozbejwbplfl4c0pxus.webp",
           createdAt: new Date(),
           updatedAt: new Date()
         },
@@ -125,7 +130,28 @@ module.exports = {
           billingAddress: "kigali street KN 250 st",
           roleId: adminRole,
           verified: true,
-          profileImage: "test.png",
+          profileImage:
+            "https://res.cloudinary.com/drno4jopp/image/upload/v1715685571/champs-bay/uiozbejwbplfl4c0pxus.webp",
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        {
+          id: uuidv4(),
+          firstName: "Kanuma",
+          lastName: "castro",
+          email: "usertest@gmail.com",
+          password:
+            "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
+          phone: "+250786534332",
+          birthDate: new Date(),
+          preferredLanguage: "kinyarwanda",
+          preferredCurrency: "$",
+          whereYouLive: "kigali street KN 250 st",
+          billingAddress: "kigali street KN 250 st",
+          roleId: adminRole,
+          verified: true,
+          profileImage:
+            "https://res.cloudinary.com/drno4jopp/image/upload/v1715685569/champs-bay/gwghcdjn5ntnokhwhp1s.avif",
           createdAt: new Date(),
           updatedAt: new Date()
         }

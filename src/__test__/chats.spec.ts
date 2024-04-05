@@ -10,8 +10,9 @@ describe("Chat Application Testing", () => {
     this.timeout(26813);
     chai
       .request(app)
-      .get("/api/users/messages")
+      .get("/api/chats/messages")
       .end((err, res) => {
+        console.log("==============>>>>>>>>>>>>..", res);
         expect(res).to.have.status(200);
         expect(res.body).to.have.property("message");
         expect(res.body.message).to.equal("Messages retrieved successfully");
@@ -19,11 +20,10 @@ describe("Chat Application Testing", () => {
         done();
       });
   });
-
   it("should serve index.html", (done) => {
     chai
       .request(app)
-      .get("/api/users/chats")
+      .get("/api/chats/")
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(200);

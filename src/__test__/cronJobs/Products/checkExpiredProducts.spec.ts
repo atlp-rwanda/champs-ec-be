@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import sinon from "sinon";
-import { checkExpiredProducts } from "../../../utils/finders";
+import { findAllProducts, checkExpiredProducts } from "../../../utils/finders";
 
 describe("checkExpiredProducts", () => {
   let findAllProductsStub: sinon.SinonStub<any[], any>;

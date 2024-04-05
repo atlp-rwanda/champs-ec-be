@@ -33,6 +33,12 @@ export const findAllProducts = async (): Promise<Product[] | object[]> => {
   }
 };
 
+/*
+    This function below fetches all products from the database iterates 
+    through the returned array of object to identify and flagg products that 
+    are expired. 
+*/
+
 export const checkExpiredProducts = async (): Promise<void> => {
   const products = await findAllProducts();
   if (!products.length) {
@@ -55,11 +61,6 @@ export const checkExpiredProducts = async (): Promise<void> => {
   console.log("SUCCESS: ALL PRODUCTS EXPIRATION DATES HAVE BEEN CHECKED");
 };
 
-export const findAllUsers = async (): Promise<User[] | object[]> => {
-  try {
-    const users = await User.findAll();
-    return users;
-  } catch (err) {
-    throw new Error("Couldn't Perform task at the moment");
-  }
+export const findAllUsers = async (): Promise<User[]> => {
+  return await User.findAll();
 };
