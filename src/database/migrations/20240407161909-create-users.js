@@ -1,4 +1,4 @@
-/** @type {import('sequelize-cli').Migration} */
+// 20220407123456-create-users.js
 
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -35,6 +35,16 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
+      },
+      photo_url: {
+        // Added photo_url field
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      google_id: {
+        // Added google_id field
+        type: Sequelize.STRING,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,

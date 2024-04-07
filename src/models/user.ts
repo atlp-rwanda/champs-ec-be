@@ -6,19 +6,27 @@ class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
 {
-  public id!: string;
+  declare id: string;
 
-  public firstName!: string;
+  declare firstName: string;
 
-  public lastName!: string;
+  declare lastName: string;
 
-  public email!: string;
+  declare email: string;
 
-  public password!: string;
+  declare password: string;
 
-  public profile!: string;
+  declare profile: string;
 
-  public verified!: boolean;
+  declare verified: boolean;
+
+  declare photoURL: string;
+
+  declare googleId: string;
+
+  declare createdAt: Date;
+
+  declare updatedAt: Date;
 }
 
 User.init(
@@ -54,13 +62,21 @@ User.init(
         notEmpty: true
       }
     },
+    googleId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: "google_id"
+    },
+    photoURL: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: "photo_url"
+    },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       unique: true,
-      validate: {
-        notEmpty: true
-      }
+      defaultValue: ""
     },
     profile: {
       type: DataTypes.STRING,
@@ -70,6 +86,14 @@ User.init(
     verified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   },
   {

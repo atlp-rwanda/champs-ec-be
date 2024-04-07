@@ -1,5 +1,3 @@
-import { DataTypes } from "sequelize";
-
 export interface UserAttributes {
   id: string;
   firstName: string;
@@ -10,6 +8,8 @@ export interface UserAttributes {
   verified?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  googleId?: string;
+  photoURL?: string;
 }
 
 export interface PayloadAttributes {
