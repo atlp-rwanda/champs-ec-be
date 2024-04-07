@@ -6,7 +6,7 @@ import {
 
 const authRoutes = express.Router();
 
-authRoutes.get("/login/google", initiateGoogleLogin);
+authRoutes.get("/google", initiateGoogleLogin);
 
 authRoutes.get("/google/callback", handleGoogleCallback);
 
