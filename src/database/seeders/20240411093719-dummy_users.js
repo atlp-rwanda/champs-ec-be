@@ -1,5 +1,7 @@
+// eslint-disable-next-line import/no-import-module-exports
 import { config } from "dotenv";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { v4: uuidv4 } = require("uuid");
 
 config();
@@ -22,6 +24,7 @@ module.exports = {
         {
           id: uuidv4(),
           firstName: "Emmanuel-user",
+          googleId: "tttttttttttt",
           lastName: "munezero",
           email: "test1@gmail.com",
           password: uuidv4(),
@@ -40,6 +43,7 @@ module.exports = {
           id: uuidv4(),
           firstName: "Prince-admin",
           lastName: "Rwigimba",
+          googleId: "tttttttttttt",
           email: "princerwigimba@gmail.com",
           password: process.env.PASSWORD_SEED,
           phone: "+250784948614",
@@ -56,6 +60,7 @@ module.exports = {
         {
           id: uuidv4(),
           firstName: "Emmanuel-seller",
+          googleId: "tttttttttttt",
           lastName: "munezero",
           email: "tes2t3@gmail.com",
           password: uuidv4(),
@@ -76,6 +81,7 @@ module.exports = {
           lastName: "munezero",
           email: "test5@gmail.com",
           password: uuidv4(),
+          googleId: "tttttttttttt",
           phone: "+250786534332",
           birthDate: new Date(),
           preferredLanguage: "kinyarwanda",
@@ -107,8 +113,5 @@ module.exports = {
       ],
       {}
     );
-  },
-  async down(queryInterface) {
-    await queryInterface.bulkDelete("users", null, {});
   }
 };

@@ -66,7 +66,7 @@ export const verifyAccount = async (req: Request, res: Response) => {
       id: string;
       email: string;
     };
-    console.log(decodedToken);
+
     const user = await User.findOne({
       where: { email: decodedToken.email, verified: false }
     });
@@ -106,14 +106,7 @@ export const userLogin = async (req: Request, res: Response) => {
       return res.status(403).json({ error: "Incorrect password" });
     }
 
-    const payload = {
-      email: req.body.email,
-      id: user.id
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
-      expiresIn: process.env.JWT_EXPIRE
-    });
+    const token = await userToken(user.dataValues.id, req.body.email);
 
     res.status(200).send({
       message: "Login successful ",
@@ -121,7 +114,6 @@ export const userLogin = async (req: Request, res: Response) => {
       token: `Bearer ${token}`
     });
   } catch (err) {
-    console.log(err);
     res
       .status(500)
       .json({ error: "There is an error in login please try again" });

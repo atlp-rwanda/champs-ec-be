@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { exec } from "child_process";
@@ -12,7 +13,6 @@ import { passwordEncrypt } from "../utils/encrypt";
 const imageFilePath = "./src/__test__/image/test.jpg";
 
 let headerToken: any;
-const otpToken: string = "";
 let userId1: string;
 chai.use(chaiHttp);
 before(async function () {
@@ -37,7 +37,6 @@ before(async function () {
     createdAt: new Date(),
     updatedAt: new Date()
   });
-  const roles = await Role.findAll();
 
   const createUsers = async () => {
     try {
@@ -59,13 +58,6 @@ before(async function () {
         password: await passwordEncrypt("AnotherPassword"),
         email: "anotheruser@gmail.com",
         roleId: "8736b050-1117-4614-a599-005dd76ff332"
-      });
-      const user3 = await User.create({
-        firstName: "Another",
-        lastName: "seller",
-        password: await passwordEncrypt("AnotherPassword"),
-        email: "anotheruser2@gmail.com",
-        roleId: "8736b050-1117-4614-a599-005dd76ff333"
       });
 
       // console.log("Users created:");
@@ -161,7 +153,6 @@ describe("user Signin controller and passport", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         headerToken = res.body.token;
-        console.log("Header number 2", headerToken);
         expect(res).to.have.status(200);
         done();
       });
@@ -279,7 +270,7 @@ describe("user Signin controller and passport", () => {
       });
   });
 
-  it("update user profile with unauthirized field", () => {
+  it("update user profile with unauthorized field", () => {
     chai
       .request(app)
       .put("/api/users/profiles")
