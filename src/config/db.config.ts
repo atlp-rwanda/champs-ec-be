@@ -34,6 +34,7 @@ DB_HOST_MODE === "local"
 export const sequelizeConnection: Sequelize = new Sequelize(db_uri, {
   dialect: "postgres",
   dialectOptions: dialect_option,
+  logging: false,
   pool: {
     max: 10,
     min: 0,

@@ -10,10 +10,11 @@ export interface UserAttributes {
   phone?: string;
   birthDate?: Date;
   preferredLanguage?: string;
-  preferredcurrency?: string;
+  preferredCurrency?: string;
   whereYouLive?: string;
   billingAddress?: string;
   verified?: boolean;
+  roleId?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -30,7 +31,7 @@ export interface UserCreationAttributes
     | "phone"
     | "birthDate"
     | "preferredLanguage"
-    | "preferredcurrency"
+    | "preferredCurrency"
     | "whereYouLive"
     | "billingAddress"
   > {}

@@ -7,8 +7,10 @@ import dotenv from "dotenv";
 import { Home } from "./utils/redirect";
 import swaggerDocument from "../swagger.json";
 import userRoutes from "./routes/user.routes";
+import roleRoutes from "./routes/role.routes";
 import passport from "./config/passport.config";
 import authenticate from "./middlewares/user.auth";
+import { isAdmin } from "./middlewares/user.middleware";
 
 dotenv.config();
 
@@ -38,5 +40,6 @@ app.use(
 
 app.get("/", authenticate, Home);
 app.use("/api/users", userRoutes);
+app.use("/api/roles", roleRoutes);
 
 export default app;

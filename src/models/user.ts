@@ -1,6 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelizeConnection } from "../config/db.config";
 import { UserAttributes, UserCreationAttributes } from "../types/user.types";
+import Role from "./Role";
 
 class User
   extends Model<UserAttributes, UserCreationAttributes>
@@ -24,13 +25,15 @@ class User
 
   public whereYouLive!: string;
 
-  public preferredcurrency!: string;
+  public preferredCurrency!: string;
 
   public profileImage!: string;
 
   public billingAddress!: string;
 
   public verified!: boolean;
+
+  public roleId!: string;
 }
 
 User.init(
@@ -48,7 +51,7 @@ User.init(
       validate: {
         notEmpty: true
       },
-      field: "first_name"
+      field: "firstName"
     },
     lastName: {
       type: DataTypes.STRING,
@@ -56,7 +59,7 @@ User.init(
       validate: {
         notEmpty: true
       },
-      field: "last_name"
+      field: "lastName"
     },
     email: {
       type: DataTypes.STRING,
@@ -95,7 +98,7 @@ User.init(
       type: DataTypes.STRING,
       allowNull: true
     },
-    preferredcurrency: {
+    preferredCurrency: {
       type: DataTypes.STRING,
       allowNull: true
     },
@@ -106,6 +109,14 @@ User.init(
     billingAddress: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    roleId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: Role,
+        key: "id"
+      }
     },
     createdAt: {
       allowNull: false,
@@ -122,5 +133,9 @@ User.init(
     tableName: "users"
   }
 );
+User.belongsTo(Role, {
+  foreignKey: "roleId",
+  onDelete: "CASCADE"
+});
 
 export default User;

@@ -9,11 +9,11 @@ module.exports = {
         primaryKey: true,
         defaultValue: Sequelize.UUIDV4
       },
-      first_name: {
+      firstName: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      last_name: {
+      lastName: {
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -42,7 +42,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true
       },
-      preferredcurrency: {
+      preferredCurrency: {
         type: Sequelize.STRING,
         allowNull: true
       },
@@ -59,6 +59,15 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
+      },
+      roleId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: {
+          model: "roles",
+          key: "id"
+        },
+        onDelete: "SET NULL"
       },
       createdAt: {
         allowNull: false,
