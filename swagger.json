@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000",
+      "url": "http://localhost:5000",
       "description": "Development server"
     },
     {
@@ -205,6 +205,50 @@
           }
         },
         "security": [{ "Bearer": [] }]
+      }
+    },"/api/users/otp": {
+      "post": {
+        "tags": ["Two factor OTP"],
+        "summary": "Send OTP request",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "201": { "description": "Verification code sent successfully" }
+        }
+      }
+    },
+    "/api/users/otp/{token}": {
+      "post": {
+        "tags": ["Two factor OTP"],
+        "summary": "Verify OTP",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+              "name": "token",
+              "in": "path",
+              "description": "otp Token",
+              "schema": {
+                  "type": "string"
+              }
+          }
+      ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "otp": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200":{ "description": "Access granted" },
+          "401":{ "description": "Wrong OTP entered" },
+          "404":{ "description": "Invalid token" }
+        }
       }
     }
   },

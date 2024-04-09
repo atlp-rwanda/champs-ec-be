@@ -8,15 +8,17 @@ import {
   editUser,
   verifyAccount
 } from "../controllers/user.controllers";
+import authenticate from "../middlewares/user.auth";
 import {
   isUserExist,
   isValidUser,
   isValidUserLogin,
   isValidUserUpdate
 } from "../middlewares/user.middleware";
-import authenticate from "../middlewares/user.auth";
+import { sendOtp, verifyOtp } from "../controllers/otpauth.controllers";
 
 const userRoutes = express.Router();
+
 userRoutes.post("/signup", isValidUser, isUserExist, userSignup);
 userRoutes.post("/login", isValidUserLogin, userLogin);
 userRoutes.get("/profile", authenticate, userProfile);
@@ -29,5 +31,7 @@ userRoutes.put(
 );
 
 userRoutes.route("/:token/verify-email").get(verifyAccount);
+userRoutes.post("/otp", authenticate, sendOtp);
+userRoutes.post("/otp/:token", authenticate, verifyOtp);
 
 export default userRoutes;

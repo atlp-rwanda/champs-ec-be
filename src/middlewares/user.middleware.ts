@@ -28,6 +28,7 @@ const isValidUser = (req: Request, res: Response, next: NextFunction) => {
     return res.status(400).json({ error: error.errors[0].message });
   }
 };
+
 const isValidUserLogin = (req: Request, res: Response, next: NextFunction) => {
   try {
     const validation = userLoginValidation.parse(req.body);
