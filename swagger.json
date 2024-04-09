@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5000",
+      "url": "http://localhost:5500",
       "description": "Development server"
     },
     {
@@ -27,7 +27,8 @@
     {
       "name": "Users",
       "description": "API endpoints for managing Users"
-    },{
+    },
+    {
       "name": "Roles",
       "description": "API endpoints for managing roles"
     },
@@ -54,7 +55,7 @@
             }
           }
         },
-        "security": [{"Bearer": []}]
+        "security": [{ "Bearer": [] }]
       }
     },
 
@@ -69,10 +70,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "firstName": {"type": "string"},
-                  "lastName": {"type": "string"},
-                  "email": {"type": "string"},
-                  "password": {"type": "string"}
+                  "firstName": { "type": "string" },
+                  "lastName": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
                 },
                 "required": ["firstName", "lastName", "email", "password"]
               }
@@ -81,7 +82,7 @@
           "required": true
         },
         "responses": {
-          "201": {"description": "User created successfully"}
+          "201": { "description": "User created successfully" }
         }
       }
     },
@@ -96,8 +97,8 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": {"type": "string"},
-                  "password": {"type": "string"}
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
                 },
                 "required": ["email", "password"]
               }
@@ -106,8 +107,8 @@
           "required": true
         },
         "responses": {
-          "200": {"description": "User authenticated successfully"},
-          "401": {"description": "Invalid credentials"}
+          "200": { "description": "User authenticated successfully" },
+          "401": { "description": "Invalid credentials" }
         }
       }
     },
@@ -120,7 +121,7 @@
             "name": "token",
             "in": "path",
             "description": "OTP Token",
-            "schema": {"type": "string"}
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -130,220 +131,219 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "otp": {"type": "string"}
+                  "otp": { "type": "string" }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {"description": "Login Successful"},
-          "401": {"description": "Wrong OTP entered"},
-          "404": {"description": "Invalid token"}
+          "200": { "description": "Login Successful" },
+          "401": { "description": "Wrong OTP entered" },
+          "404": { "description": "Invalid token" }
         }
       },
-    "/api/roles": {
-      "post": {
-        "summary": "Create Role",
-        "description": "Create a new role",
-        "tags": ["Roles"],
-        "requestBody": {
-          "content": {
-            "application/json": {
+      "/api/roles": {
+        "post": {
+          "summary": "Create Role",
+          "description": "Create a new role",
+          "tags": ["Roles"],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["name"]
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "Role created successfully"
+            }
+          },
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        },
+        "get": {
+          "summary": "Get All Roles",
+          "description": "Get a list of all roles",
+          "tags": ["Roles"],
+          "responses": {
+            "200": {
+              "description": "List of all roles"
+            }
+          },
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/api/roles/{id}": {
+        "get": {
+          "summary": "Get Role by ID",
+          "description": "Get a role by its ID",
+          "tags": ["Roles"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the role",
+              "required": true,
               "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  }
-                
-                },
-                "required": ["name"]
+                "type": "string"
               }
             }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Role created successfully"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      },
-      "get": {
-        "summary": "Get All Roles",
-        "description": "Get a list of all roles",
-        "tags": ["Roles"],
-        "responses": {
-          "200": {
-            "description": "List of all roles"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/api/roles/{id}": {
-      "get": {
-        "summary": "Get Role by ID",
-        "description": "Get a role by its ID",
-        "tags": ["Roles"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the role",
-            "required": true,
-            "schema": {
-              "type": "string"
+          ],
+          "responses": {
+            "200": {
+              "description": "Role found"
+            },
+            "404": {
+              "description": "Role not found"
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Role found"
           },
-          "404": {
-            "description": "Role not found"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      },
-      "put": {
-        "summary": "Update Role",
-        "description": "Update a role by its ID",
-        "tags": ["Roles"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the role",
-            "required": true,
-            "schema": {
-              "type": "string"
+          "security": [
+            {
+              "Bearer": []
             }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
+          ]
+        },
+        "put": {
+          "summary": "Update Role",
+          "description": "Update a role by its ID",
+          "tags": ["Roles"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the role",
+              "required": true,
               "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
                   }
                 }
               }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Role updated successfully"
+            },
+            "404": {
+              "description": "Role not found"
             }
           },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Role updated successfully"
-          },
-          "404": {
-            "description": "Role not found"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      },
-      "delete": {
-        "summary": "Delete Role",
-        "description": "Delete a role by its ID",
-        "tags": ["Roles"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the role",
-            "required": true,
-            "schema": {
-              "type": "string"
+          "security": [
+            {
+              "Bearer": []
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Role deleted successfully"
-          },
-          "404": {
-            "description": "Role not found"
-          }
+          ]
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/api/users/{userId}/roles": {
-      "post": {
-        "summary": "Assign Role to User",
-        "description": "Assign a role to a specific user",
-        "tags": ["AssignRole"],
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "description": "ID of the user",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
+        "delete": {
+          "summary": "Delete Role",
+          "description": "Delete a role by its ID",
+          "tags": ["Roles"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "ID of the role",
+              "required": true,
               "schema": {
-                "type": "object",
-                "properties": {
-                  "roleId": {
-                    "type": "string"
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Role deleted successfully"
+            },
+            "404": {
+              "description": "Role not found"
+            }
+          },
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
+      },
+      "/api/users/{userId}/roles": {
+        "post": {
+          "summary": "Assign Role to User",
+          "description": "Assign a role to a specific user",
+          "tags": ["AssignRole"],
+          "parameters": [
+            {
+              "name": "userId",
+              "in": "path",
+              "description": "ID of the user",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "roleId": {
+                      "type": "string"
+                    }
                   }
                 }
               }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Role assigned to user successfully"
+            },
+            "404": {
+              "description": "User or Role not found"
+            },
+            "500": {
+              "description": "Internal server error"
             }
           },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Role assigned to user successfully"
-          },
-          "404": {
-            "description": "User or Role not found"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+          "security": [
+            {
+              "Bearer": []
+            }
+          ]
+        }
       }
-    }
     },
     "/api/users/login/google": {
       "get": {
@@ -355,7 +355,7 @@
             "description": "Redirect to Google Login",
             "headers": {
               "Location": {
-                "schema": {"type": "string"},
+                "schema": { "type": "string" },
                 "description": "http://localhost:4000/api/users/login/google"
               }
             }
@@ -389,12 +389,12 @@
             "description": "Profile page",
             "content": {
               "application/json": {
-                "schema": {"type": "array", "items": {}}
+                "schema": { "type": "array", "items": {} }
               }
             }
           }
         },
-        "security": [{"Bearer": []}]
+        "security": [{ "Bearer": [] }]
       }
     },
     "/api/users/profiles": {
@@ -407,25 +407,25 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "firstName": {"type": "string"},
-                  "lastName": {"type": "string"},
-                  "phone": {"type": "string"},
-                  "birthDate": {"type": "string", "format": "date"},
-                  "preferredLanguage": {"type": "string"},
-                  "preferredCurrency": {"type": "string"},
-                  "whereYouLive": {"type": "string"},
-                  "billingAddress": {"type": "string"},
-                  "profileImage": {"type": "string", "format": "binary"}
+                  "firstName": { "type": "string" },
+                  "lastName": { "type": "string" },
+                  "phone": { "type": "string" },
+                  "birthDate": { "type": "string", "format": "date" },
+                  "preferredLanguage": { "type": "string" },
+                  "preferredCurrency": { "type": "string" },
+                  "whereYouLive": { "type": "string" },
+                  "billingAddress": { "type": "string" },
+                  "profileImage": { "type": "string", "format": "binary" }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": {"description": "Updated profile page"},
-          "400": {"description": "Fail to update"}
+          "201": { "description": "Updated profile page" },
+          "400": { "description": "Fail to update" }
         },
-        "security": [{"Bearer": []}]
+        "security": [{ "Bearer": [] }]
       }
     },
     "/api/roles": {
@@ -442,7 +442,6 @@
                   "name": {
                     "type": "string"
                   }
-                
                 },
                 "required": ["name"]
               }
@@ -629,19 +628,548 @@
           }
         ]
       }
+    },
+    "/api/categories": {
+      "post": {
+        "summary": "Product categories",
+        "description": "add new product Category",
+        "tags": ["Product Category"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "categoryName": { "type": "string" }
+                },
+                "required": ["categoryName"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": { "description": "Product category is created successfully" }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "get": {
+        "summary": "Get all product categories",
+        "tags": ["Product Category"],
+        "responses": {
+          "200": {
+            "description": "All product categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AddProductCategory"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/categories/{catId}": {
+      "get": {
+        "tags": ["Product Category"],
+        "summary": "get single product category",
+        "parameters": [
+          {
+            "name": "catId",
+            "required": true,
+            "in": "path",
+            "description": "category id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": " selected product catgeory",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddProductCategory"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product catgeory not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "patch": {
+        "tags": ["Product Category"],
+        "summary": "update product category",
+        "parameters": [
+          {
+            "name": "catId",
+            "required": true,
+            "in": "path",
+            "description": "category id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddProductCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "product category updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddProductCategory"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product item not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "delete": {
+        "tags": ["Product Category"],
+        "summary": "Delete a product Category",
+        "parameters": [
+          {
+            "name": "catId",
+            "required": true,
+            "in": "path",
+            "description": "category id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "responses": {
+          "204": { "description": "Product category deleted" },
+          "404": { "description": "Product category not found" },
+          "500": { "description": "Internal Server Error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+
+    "/api/products": {
+      "post": {
+        "summary": "Add new Product",
+        "description": "Authenticate Seller could perform a CRUD operation over they own product",
+        "tags": ["Seller Product CRUD"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productCategory": {
+                    "type": "string"
+                  },
+                  "productName": {
+                    "type": "string"
+                  },
+                  "stockLevel": {
+                    "type": "string"
+                  },
+                  "productPrice": {
+                    "type": "string"
+                  },
+                  "productCurrency": {
+                    "type": "string"
+                  },
+                  "productImage": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  },
+                  "productDescription": {
+                    "type": "string"
+                  },
+                  "expireDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "productCategory",
+                  "productName",
+                  "productPrice",
+                  "productCurrency",
+                  "productDescription",
+                  "productImage",
+                  "stockLevel",
+                  "expireDate"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Seller product is created successfully"
+          },
+          "401": {
+            "description": "Invalid input, validation fail"
+          },
+          "409": {
+            "description": "The item name is already exist to a seller collection"
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "get": {
+        "summary": "Get all product items for a seller",
+        "tags": ["Seller Product CRUD"],
+        "responses": {
+          "200": {
+            "description": "All product items for authenticated seller",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SellerProduct"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/products/{productId}": {
+      "get": {
+        "tags": ["Seller Product CRUD"],
+        "summary": "get single item in seller collection",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "Product id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product item selected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerProduct"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product item not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "delete": {
+        "tags": ["Seller Product CRUD"],
+        "summary": "Delete one item in seller collection",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "Product id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "responses": {
+          "204": { "description": "Product item  deleted" },
+          "404": { "description": "Product item not found" },
+          "500": { "description": "Internal Server Error" }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+
+      "patch": {
+        "tags": ["Seller Product CRUD"],
+        "summary": "update product",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "Product id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/SellerProduct"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "product Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerProduct"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product item not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+
+    "/api/products/{productId}/pictures/{imgId}": {
+      "delete": {
+        "tags": ["Manage single Item pictures"],
+        "summary": "Delete one picture for specific  item ",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "Product id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "imgId",
+            "required": true,
+            "in": "path",
+            "description": "Image id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "responses": {
+          "203": { "description": "the product image  deleted" },
+          "404": { "description": "the product image not found" },
+          "500": { "description": "Internal Server Error" }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+
+      "patch": {
+        "tags": ["Manage single Item pictures"],
+        "summary": "Replace a single picture for a specific item",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "Product id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "imgId",
+            "required": true,
+            "in": "path",
+            "description": "Image id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": "true",
+                "properties": {
+                  "productImage": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "product Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SellerProduct"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product item not found or selected image not exist"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/products/{productId}/profile/{imgId}": {
+      "patch": {
+        "tags": ["Item thumbnail"],
+        "summary": "set thumbnail for product item  ",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "Product id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "imgId",
+            "required": true,
+            "in": "path",
+            "description": "Image id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "responses": {
+          "200": { "description": "Thumbnail for product item updated" },
+          "404": {
+            "description": "product item not found or selected image not exist"
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
     }
-}
-  ,
+  },
   "components": {
     "schemas": {
       "User": {
         "type": "object",
         "required": ["firstName", "lastName", "email", "password"],
         "properties": {
-          "firstName": {"type": "string", "description": "User's first name"},
-          "lastName": {"type": "string", "description": "User's last name"},
-          "email": {"type": "string", "format": "email", "description": "User's email address"},
-          "password": {"type": "string", "format": "password", "description": "User's password"}
+          "firstName": { "type": "string", "description": "User's first name" },
+          "lastName": { "type": "string", "description": "User's last name" },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "User's password"
+          }
+        }
+      },
+      "SellerProduct": {
+        "type": "object",
+        "properties": {
+          "productCategory": {
+            "type": "string",
+            "description": "product item category"
+          },
+          "productName": {
+            "type": "string",
+            "description": "product item name "
+          },
+          "stockLevel": {
+            "type": "string",
+            "description": "add stock level "
+          },
+          "productPrice": {
+            "type": "string",
+            "description": "product item price"
+          },
+          "productCurrency": {
+            "type": "string",
+            "format": "password",
+            "description": "the product curreny unit"
+          },
+          "productDescription": {
+            "type": "string",
+            "description": "Item description"
+          },
+          "productDiscount": {
+            "type": "string"
+          },
+          "productImage": {
+            "type": "string",
+            "format": "binary",
+            "description": "Item more pictures is required "
+          },
+          "expireDate": {
+            "type": "string",
+            "description": "Item expire date is required"
+          }
+        }
+      },
+      "AddProductCategory": {
+        "type": "object",
+        "properties": {
+          "categoryName": {
+            "type": "string",
+            "description": "product item category"
+          }
         }
       }
     },

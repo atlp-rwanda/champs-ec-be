@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/user";
-import { updateSchema, userSchema } from "../validations/user.validations";
-import { userLoginValidation } from "../utils/validations/user.validations";
+import {
+  updateSchema,
+  userLoginValidation,
+  userSchema
+} from "../validations/user.validations";
 import Role from "../models/Role";
 
 const isUserExist = async (req: Request, res: Response, next: NextFunction) => {
@@ -98,10 +101,58 @@ const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const isSeller = async (req: Request, res: Response, next: NextFunction) => {
+  const { user }: any = req;
+
+  try {
+    const role = await Role.findByPk(user.dataValues.roleId);
+    if (!role) {
+      return res.status(404).json({ error: "Role not found" });
+    }
+
+    if (role.dataValues.name === "seller") {
+      next();
+    } else {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized, user is not an seller" });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const isAdminOrSeller = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user }: any = req;
+
+  try {
+    const role = await Role.findByPk(user.dataValues.roleId);
+    if (!role) {
+      return res.status(404).json({ error: "Role not found" });
+    }
+
+    if (role.dataValues.name === "seller" || role.dataValues.name === "admin") {
+      next();
+    } else {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized, only seller and admin has access" });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 export {
   isUserExist,
   isValidUser,
   isValidUserLogin,
   isValidUserUpdate,
-  isAdmin
+  isAdmin,
+  isAdminOrSeller,
+  isSeller
 };

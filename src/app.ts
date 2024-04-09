@@ -13,6 +13,8 @@ import { authenticate } from "./middlewares/user.auth";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { isAdmin } from "./middlewares/user.middleware";
 import authRoutes from "./routes/auth.routes";
+import productRoutes from "./routes/product.routes";
+import productCategoryRoutes from "./routes/productCategory.routes";
 
 dotenv.config();
 
@@ -45,4 +47,6 @@ app.use("/api/users", userRoutes);
 app.use("/api/roles", roleRoutes);
 app.use("/api/users/", authRoutes);
 
+app.use("/api/products", productRoutes);
+app.use("/api/categories", productCategoryRoutes);
 export default app;

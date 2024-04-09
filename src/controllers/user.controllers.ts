@@ -67,7 +67,6 @@ export const verifyAccount = async (req: Request, res: Response) => {
       id: string;
       email: string;
     };
-
     const user = await User.findOne({
       where: { email: decodedToken.email, verified: false }
     });
