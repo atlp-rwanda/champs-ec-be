@@ -26,7 +26,31 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      profile: {
+      profileImage: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      phone: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      birthDate: {
+        type: Sequelize.DATE,
+        allowNull: true
+      },
+      preferredLanguage: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      preferredcurrency: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      billingAddress: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      whereYouLive: {
         type: Sequelize.STRING,
         allowNull: true,
         defaultValue: ""

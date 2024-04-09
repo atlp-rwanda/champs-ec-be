@@ -7,6 +7,7 @@ import { passwordEncrypt } from "../utils/encrypt";
 import User from "../models/user";
 import { sendVerificationMail } from "../utils/mailer";
 import { userToken } from "../utils/token.generator";
+import uploadImage from "../utils/cloudinary";
 
 config();
 export const userSignup = async (req: Request, res: Response) => {
@@ -24,7 +25,10 @@ export const userSignup = async (req: Request, res: Response) => {
     const createdUser: UserAttributes = newUser.dataValues;
 
     if (createdUser) {
-      const token = await userToken(createdUser.id, createdUser.email);
+      const token = await userToken(
+        createdUser.id as string,
+        createdUser.email as string
+      );
       const link: string = `api/users/${token}/verify-email`;
 
       sendVerificationMail(email, link, firstName);
@@ -102,8 +106,69 @@ export const userLogin = async (req: Request, res: Response) => {
       token: `Bearer ${token}`
     });
   } catch (err) {
+    console.log(err);
     res
       .status(500)
       .json({ error: "There is an error in login please try again" });
+  }
+};
+
+export const userProfile = (req: Request, res: Response) => {
+  res.status(200).json({ User: req.user });
+};
+
+export const editUser = async (req: any, res: Response) => {
+  try {
+    const {
+      firstName,
+      lastName,
+      profileImage,
+      phone,
+      birthDate,
+      preferredLanguage,
+      whereYouLive,
+      preferredcurrency,
+      billingAddress
+    } = req.body;
+    if (!firstName && !lastName && !profileImage) {
+      res.status(400).send({
+        error: "At least one property is required to update the user"
+      });
+      return;
+    }
+
+    if (req.body.email || req.body.password) {
+      return res
+        .status(400)
+        .send({ error: "it is not possible to update email or password Here" });
+    }
+
+    const user: User | null = await User.findOne({
+      where: {
+        id: req.user.dataValues.id
+      }
+    });
+
+    let uploadedImage;
+    if (req.file) {
+      uploadedImage = await uploadImage(req.file.buffer);
+    }
+
+    const updatedUser: UserAttributes = {
+      firstName: firstName || user?.firstName,
+      lastName: lastName || user?.lastName,
+      profileImage: uploadedImage || user?.profileImage,
+      phone: phone || user?.phone,
+      birthDate: birthDate || user?.birthDate,
+      preferredLanguage: preferredLanguage || user?.preferredLanguage,
+      whereYouLive: whereYouLive || user?.whereYouLive,
+      billingAddress: billingAddress || user?.billingAddress,
+      preferredcurrency: preferredcurrency || user?.preferredcurrency
+    };
+
+    await user?.update(updatedUser);
+    res.status(201).json({ message: "user are updated successfully", user });
+  } catch (error) {
+    res.status(400).json({ error: "there is an error user are not updated" });
   }
 };

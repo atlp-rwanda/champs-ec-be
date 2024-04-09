@@ -1,166 +1,246 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "Champs Marketplace API",
-      "version": "1.0.0",
-      "description": "API documentation for the Marketplace project which is  A comprehensive marketplace platform connecting buyers and sellers, where each seller manages their stall, stock, pricing, and discounts. Users can browse various stalls, add items to their cart, manage purchases, and rate vendors. Admins oversee user roles, stock, and platform operations. Key features include user management, shopping cart, checkout, rating system, and vendor stock management. The platform includes user, vendor, admin dashboards, contact form, login/signup, with optional features like subscriptions, email notifications, chatbot, and delivery. Built with Node, Express, Postgres, and React"
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Champs Marketplace API",
+    "version": "1.0.0",
+    "description": "API documentation for the Marketplace project which is  A comprehensive marketplace platform connecting buyers and sellers, where each seller manages their stall, stock, pricing, and discounts. Users can browse various stalls, add items to their cart, manage purchases, and rate vendors. Admins oversee user roles, stock, and platform operations. Key features include user management, shopping cart, checkout, rating system, and vendor stock management. The platform includes user, vendor, admin dashboards, contact form, login/signup, with optional features like subscriptions, email notifications, chatbot, and delivery. Built with Node, Express, Postgres, and React"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
     },
-    "servers": [
-      {
-        "url": "http://localhost:5000",
-        "description": "Development server"
-      },
-      {
-        "url": "https://champs-ec-be.onrender.com",
-        "description": "Production server (HTTPS)"
+    {
+      "url": "https://champs-ec-be.onrender.com",
+      "description": "Production server (HTTPS)"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Welcome",
+      "description": "API endpoints for landing page "
+    },
+    {
+      "name": "Authentication",
+      "description": "API endpoints for managing users"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Welcome",
+        "tags": ["Welcome"],
+        "responses": {
+          "200": {
+            "description": "Welcome Page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {}
+                }
+              }
+            }
+          }
+        },
+
+        "security": [{ "Bearer": [] }]
       }
-    ],
-    "tags": [
-      {
-        "name": "Welcome",
-        "description": "API endpoints for landing page "
-      },
-      {
-        "name": "Authentication",
-        "description": "API endpoints for managing users"
+    },
+    "/api/users/signup": {
+      "post": {
+        "summary": "User Sign Up",
+        "description": "Create a new user account",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["firstName", "lastName", "email", "password"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          }
+        }
       }
-     
-    ],
-    "paths": {
-      "/": {
-        "get": {
-          "summary": "Welcome",
-          "tags": ["Welcome"],
-          "responses": {
-            "200": {
-              "description": "Welcome Page",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                    }
+    },
+    "/api/users/login": {
+      "post": {
+        "summary": "User Sign In",
+        "description": "Authenticate user and generate access token",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User authenticated successfully"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/api/users/profile": {
+      "get": {
+        "summary": "user profile",
+        "tags": ["User profile page"],
+        "responses": {
+          "200": {
+            "description": "Profile page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {}
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/users/profiles": {
+      "put": {
+        "summary": "edit Profile",
+        "tags": ["User profile page"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "birthDate": {
+                    "type": "Date"
+                  },
+                  "preferredLanguage": {
+                    "type": "string"
+                  },
+                  "preferredcurrency": {
+                    "type": "string"
+                  },
+                  "whereYouLive": {
+                    "type": "string"
+                  },
+                  "billingAddress": {
+                    "type": "string"
+                  },
+                  "profileImage": {
+                    "type": "file"
                   }
                 }
               }
             }
-            
-          },
-           
-          "security": [{ "Bearer": [] }]
-
-        
-        }
-      },
-      "/api/users/signup": {
-        "post": {
-          "summary": "User Sign Up",
-          "description": "Create a new user account",
-          "tags": ["Authentication"],
-          "requestBody": {
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "updated rpofilepage",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "firstName": {
-                      "type": "string"
-                    },
-                    "lastName": {
-                      "type": "string"
-                    },
-                    "email": {
-                      "type": "string"
-                    },
-                    "password": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["firstName", "lastName", "email", "password"]
+                  "type": "array",
+                  "items": {}
                 }
               }
-            },
-            "required": true
+            }
           },
-          "responses": {
-            "201": {
-              "description": "User created successfully"
+          "400": {
+            "description": "fail to update",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {}
+                }
+              }
             }
           }
-        }
-      },
-      "/api/users/login": {
-        "post": {
-          "summary": "User Sign In",
-          "description": "Authenticate user and generate access token",
-          "tags": ["Authentication"],
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "email": {
-                      "type": "string"
-                    },
-                    "password": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["email", "password"]
-                }
-              }
-            },
-            "required": true
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "required": ["firstName", "lastName", "email", "password"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "User's firstName"
           },
-          "responses": {
-            "200": {
-              "description": "User authenticated successfully"
-            },
-            "401": {
-              "description": "Invalid credentials"
-            }
+          "lastName": {
+            "type": "string",
+            "description": "User's lastName"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "User's password"
           }
         }
       }
-      
     },
-    "components": {
-      "schemas": {
-        "User": {
-          "type": "object",
-          "required": ["firstName", "lastName", "email","password"],
-          "properties": {
-            "firstName": {
-              "type": "string",
-              "description": "User's firstName"
-             
-            },
-            "lastName": {
-              "type": "string",
-              "description": "User's lastName"
-            },
-            "email": {
-              "type": "string",
-              "format": "email",
-              "description": "User's email address"
-            },
-            "password": {
-              "type": "string",
-              "format": "password",
-              "description": "User's password"
-            }
-          }
-        }
-       
-      },
-      "securitySchemes": {
-        "Bearer": {
-          "type": "apiKey",
-          "name":"Authorization",
-          "in": "header"
-        }
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
       }
     }
   }
-  
+}

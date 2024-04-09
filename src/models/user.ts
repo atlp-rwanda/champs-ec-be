@@ -16,7 +16,19 @@ class User
 
   public password!: string;
 
-  public profile!: string;
+  public phone!: string;
+
+  public birthDate!: Date;
+
+  public preferredLanguage!: string;
+
+  public whereYouLive!: string;
+
+  public preferredcurrency!: string;
+
+  public profileImage!: string;
+
+  public billingAddress!: string;
 
   public verified!: boolean;
 }
@@ -62,7 +74,7 @@ User.init(
         notEmpty: true
       }
     },
-    profile: {
+    profileImage: {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: ""
@@ -70,6 +82,38 @@ User.init(
     verified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    birthDate: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    preferredLanguage: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    preferredcurrency: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    whereYouLive: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    billingAddress: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE
     }
   },
   {

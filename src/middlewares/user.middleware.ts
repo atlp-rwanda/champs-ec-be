@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/user";
-import { userSchema } from "../validations/user.validations";
+import { updateSchema, userSchema } from "../validations/user.validations";
 import { userLoginValidation } from "../utils/validations/user.validations";
 
 const isUserExist = async (req: Request, res: Response, next: NextFunction) => {
@@ -39,5 +39,16 @@ const isValidUserLogin = (req: Request, res: Response, next: NextFunction) => {
     return res.status(400).json({ error: error.errors[0].message });
   }
 };
+const isValidUserUpdate = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const validation = updateSchema.parse(req.body);
 
-export { isUserExist, isValidUser, isValidUserLogin };
+    if (validation) {
+      next();
+    }
+  } catch (error: any) {
+    return res.status(400).json({ error: error.errors[0].message });
+  }
+};
+
+export { isUserExist, isValidUser, isValidUserLogin, isValidUserUpdate };

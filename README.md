@@ -9,21 +9,64 @@
 
 [![HoundCI](https://img.shields.io/badge/style--blue.svg?label=HoundCI&logo=eslint&style=flat)](https://houndci.com)
 
+![alt text](image.png)
+
 # How to use the project
 
-## How to use the project online
 
--
 
-## How to run the project locally
+# Table of contents
 
-To run the project you have to and run the following command :
 
-- git clone https://github.com/atlp-rwanda/champs-ec-be.git
-- npm install
-- npm run build
-- npm run dev
+- [Installation](#installation)
+- [Features](#Features)
 
-## To test the project you run
+- [Tests](#tests)
+- [Built with](#Built-with)
+- [Docker](#docker)
+_ [Local](#local)
+_ [Public](#public)
 
-- npm run test
+# Installation
+
+#### start:
+
+```bash
+ git clone https://github.com/atlp-rwanda/champs-ec-be.git
+```
+
+```bash
+$ npm install
+```
+
+```bash
+$ npm run build
+```
+
+```bash
+$ npm run dev
+```
+
+# Features
+
+Back end with Node.js and postgre SQL
+
+# Tests
+
+How to run tests:
+
+```bash
+$ npm run test
+```
+
+```bash
+the final result for test
+
+20 tests, 0 failures
+```
+
+# Built with
+
+- ### Node.js
+- ### Express
+- ### Postgres
