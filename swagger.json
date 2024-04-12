@@ -3,7 +3,7 @@
   "info": {
     "title": "Champs Marketplace API",
     "version": "1.0.0",
-    "description": "API documentation for the Marketplace project which is  A comprehensive marketplace platform connecting buyers and sellers, where each seller manages their stall, stock, pricing, and discounts. Users can browse various stalls, add items to their cart, manage purchases, and rate vendors. Admins oversee user roles, stock, and platform operations. Key features include user management, shopping cart, checkout, rating system, and vendor stock management. The platform includes user, vendor, admin dashboards, contact form, login/signup, with optional features like subscriptions, email notifications, chatbot, and delivery. Built with Node, Express, Postgres, and React"
+    "description": "API documentation for the Marketplace project, a comprehensive marketplace platform connecting buyers and sellers. Each seller manages their stall, stock, pricing, and discounts. Users can browse various stalls, add items to their cart, manage purchases, and rate vendors. Admins oversee user roles, stock, and platform operations. Key features include user management, shopping cart, checkout, rating system, and vendor stock management. The platform includes user, vendor, admin dashboards, contact form, login/signup, with optional features like subscriptions, email notifications, chatbot, and delivery. Built with Node, Express, Postgres, and React."
   },
   "servers": [
     {
@@ -18,7 +18,7 @@
   "tags": [
     {
       "name": "Welcome",
-      "description": "API endpoints for landing page "
+      "description": "API endpoints for landing page"
     },
     {
       "name": "Authentication",
@@ -54,8 +54,7 @@
             }
           }
         },
-
-        "security": [{ "Bearer": [] }]
+        "security": [{"Bearer": []}]
       }
     },
 
@@ -70,18 +69,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "firstName": {
-                    "type": "string"
-                  },
-                  "lastName": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
+                  "firstName": {"type": "string"},
+                  "lastName": {"type": "string"},
+                  "email": {"type": "string"},
+                  "password": {"type": "string"}
                 },
                 "required": ["firstName", "lastName", "email", "password"]
               }
@@ -90,9 +81,7 @@
           "required": true
         },
         "responses": {
-          "201": {
-            "description": "User created successfully"
-          }
+          "201": {"description": "User created successfully"}
         }
       }
     },
@@ -107,12 +96,8 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
+                  "email": {"type": "string"},
+                  "password": {"type": "string"}
                 },
                 "required": ["email", "password"]
               }
@@ -121,11 +106,25 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "User authenticated successfully"
-          },
-          "401": {
-            "description": "Invalid credentials"
+          "200": {"description": "User authenticated successfully"},
+          "401": {"description": "Invalid credentials"}
+        }
+      }
+    },
+    "/api/users/login/google": {
+      "get": {
+        "summary": "Google Login",
+        "description": "Allows users to log in using their Google account. When the user clicks the 'Sign in with Google' button, they will be redirected to this endpoint, which will handle the Google OAuth2 authentication flow.",
+        "tags": ["Authentication"],
+        "responses": {
+          "302": {
+            "description": "Redirect to Google Login",
+            "headers": {
+              "Location": {
+                "schema": {"type": "string"},
+                "description": "http://localhost:4000/api/users/login/google"
+              }
+            }
           }
         }
       }
@@ -149,27 +148,24 @@
     },
     "/api/users/profile": {
       "get": {
-        "summary": "user profile",
+        "summary": "User Profile",
         "tags": ["User profile page"],
         "responses": {
           "200": {
             "description": "Profile page",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {}
-                }
+                "schema": {"type": "array", "items": {}}
               }
             }
           }
         },
-        "security": [{ "Bearer": [] }]
+        "security": [{"Bearer": []}]
       }
     },
     "/api/users/profiles": {
       "put": {
-        "summary": "edit Profile",
+        "summary": "Edit Profile",
         "tags": ["User profile page"],
         "requestBody": {
           "content": {
@@ -177,72 +173,34 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "firstName": {
-                    "type": "string"
-                  },
-                  "lastName": {
-                    "type": "string"
-                  },
-                  "phone": {
-                    "type": "string"
-                  },
-                  "birthDate": {
-                    "type": "Date"
-                  },
-                  "preferredLanguage": {
-                    "type": "string"
-                  },
-                  "preferredCurrency": {
-                    "type": "string"
-                  },
-                  "whereYouLive": {
-                    "type": "string"
-                  },
-                  "billingAddress": {
-                    "type": "string"
-                  },
-                  "profileImage": {
-                    "type": "file"
-                  }
+                  "firstName": {"type": "string"},
+                  "lastName": {"type": "string"},
+                  "phone": {"type": "string"},
+                  "birthDate": {"type": "string", "format": "date"},
+                  "preferredLanguage": {"type": "string"},
+                  "preferredCurrency": {"type": "string"},
+                  "whereYouLive": {"type": "string"},
+                  "billingAddress": {"type": "string"},
+                  "profileImage": {"type": "string", "format": "binary"}
                 }
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "updated rpofilepage",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {}
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "fail to update",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {}
-                }
-              }
-            }
-          }
+          "201": {"description": "Updated profile page"},
+          "400": {"description": "Fail to update"}
         },
-        "security": [{ "Bearer": [] }]
+        "security": [{"Bearer": []}]
       }
     },
     "/api/users/otp": {
       "post": {
         "tags": ["Two factor OTP"],
         "summary": "Send OTP request",
-        "security": [{ "Bearer": [] }],
+        "security": [{"Bearer": []}],
         "responses": {
-          "201": { "description": "Verification code sent successfully" }
+          "201": {"description": "Verification code sent successfully"}
         }
       }
     },
@@ -250,17 +208,15 @@
       "post": {
         "tags": ["Two factor OTP"],
         "summary": "Verify OTP",
-        "security": [{ "Bearer": [] }],
+        "security": [{"Bearer": []}],
         "parameters": [
           {
-              "name": "token",
-              "in": "path",
-              "description": "otp Token",
-              "schema": {
-                  "type": "string"
-              }
+            "name": "token",
+            "in": "path",
+            "description": "OTP Token",
+            "schema": {"type": "string"}
           }
-      ],
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -268,16 +224,16 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "otp": { "type": "string" }
+                  "otp": {"type": "string"}
                 }
               }
             }
           }
         },
         "responses": {
-          "200":{ "description": "Access granted" },
-          "401":{ "description": "Wrong OTP entered" },
-          "404":{ "description": "Invalid token" }
+          "200": {"description": "Access granted"},
+          "401": {"description": "Wrong OTP entered"},
+          "404": {"description": "Invalid token"}
         }
       },
     "/api/roles": {
@@ -693,24 +649,10 @@
         "type": "object",
         "required": ["firstName", "lastName", "email", "password"],
         "properties": {
-          "firstName": {
-            "type": "string",
-            "description": "User's firstName"
-          },
-          "lastName": {
-            "type": "string",
-            "description": "User's lastName"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "User's email address"
-          },
-          "password": {
-            "type": "string",
-            "format": "password",
-            "description": "User's password"
-          }
+          "firstName": {"type": "string", "description": "User's first name"},
+          "lastName": {"type": "string", "description": "User's last name"},
+          "email": {"type": "string", "format": "email", "description": "User's email address"},
+          "password": {"type": "string", "format": "password", "description": "User's password"}
         }
       }
     },

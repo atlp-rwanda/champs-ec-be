@@ -17,6 +17,7 @@ export interface UserAttributes {
   roleId?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  googleId?: string;
 }
 
 export interface PayloadAttributes {

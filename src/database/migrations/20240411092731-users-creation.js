@@ -34,6 +34,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true
       },
+      googleId: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       birthDate: {
         type: Sequelize.DATE,
         allowNull: true

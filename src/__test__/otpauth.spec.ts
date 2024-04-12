@@ -2,6 +2,7 @@ import { describe, it } from "mocha";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { config } from "dotenv";
+// eslint-disable-next-line import/no-unresolved
 import sinon from "sinon";
 import app from "../app";
 import { passwordCompare, passwordEncrypt } from "../utils/encrypt";

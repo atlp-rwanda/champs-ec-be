@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /** @type {import('sequelize-cli').Migration} */
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { v4: uuidv4 } = require("uuid");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { DataTypes } = require("sequelize");
 
 module.exports = {
