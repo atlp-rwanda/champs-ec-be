@@ -5,39 +5,54 @@ import { config } from "dotenv";
 import { UserAttributes } from "../types/user.types";
 import { passwordEncrypt } from "../utils/encrypt";
 import User from "../models/user";
+import Role from "../models/Role";
 import { sendVerificationMail } from "../utils/mailer";
 import { userToken } from "../utils/token.generator";
 import uploadImage from "../utils/cloudinary";
+import { isUserExist } from "../middlewares/user.middleware";
 
 config();
 export const userSignup = async (req: Request, res: Response) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, roleId } = req.body;
     const userPassword = await passwordEncrypt(password);
-
-    const newUser: any = await User.create({
-      firstName,
-      lastName,
-      email,
-      password: userPassword
-    });
-
-    const createdUser: UserAttributes = newUser.dataValues;
-
-    if (createdUser) {
-      const token = await userToken(
-        createdUser.id as string,
-        createdUser.email as string
-      );
-      const link: string = `api/users/${token}/verify-email`;
-
-      sendVerificationMail(email, link, firstName);
-      res.status(201).json({
-        message: "user is registered, please verify through email"
+    await isUserExist(req, res, async () => {
+      const newUser: any = await User.create({
+        firstName,
+        lastName,
+        email,
+        password: userPassword,
+        roleId
       });
-    }
+
+      const createdUser: UserAttributes = newUser.dataValues;
+
+      if (createdUser) {
+        const token = await userToken(
+          createdUser.id as string,
+          createdUser.email as string
+        );
+        const link: string = `api/users/${token}/verify-email`;
+
+        sendVerificationMail(email, link, firstName);
+        res.status(201).json({
+          message: "user is registered, please verify through email"
+        });
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: "internal server error" });
+  }
+};
+
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.findAll();
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -127,7 +142,7 @@ export const editUser = async (req: any, res: Response) => {
       birthDate,
       preferredLanguage,
       whereYouLive,
-      preferredcurrency,
+      preferredCurrency,
       billingAddress
     } = req.body;
     if (!firstName && !lastName && !profileImage) {
@@ -163,12 +178,26 @@ export const editUser = async (req: any, res: Response) => {
       preferredLanguage: preferredLanguage || user?.preferredLanguage,
       whereYouLive: whereYouLive || user?.whereYouLive,
       billingAddress: billingAddress || user?.billingAddress,
-      preferredcurrency: preferredcurrency || user?.preferredcurrency
+      preferredCurrency: preferredCurrency || user?.preferredCurrency
     };
 
     await user?.update(updatedUser);
     res.status(201).json({ message: "user are updated successfully", user });
   } catch (error) {
     res.status(400).json({ error: "there is an error user are not updated" });
+  }
+};
+export const assignRoleToUser = async (req: Request, res: Response) => {
+  try {
+    const { roleId } = req.body;
+    const { userId } = req.params;
+    const user = await User.findByPk(userId);
+
+    await user?.update({ roleId });
+
+    res.status(200).json({ message: "Role assigned to user successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

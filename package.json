@@ -14,7 +14,7 @@
     "prettier:fix": "prettier --write \"src/**/*.{js,ts,css,html,json,md}\"",
     "prettier:check": "prettier \"src/**/*.{js,ts,css,html,json,md}\"",
     "prepare": "husky install",
-    "test": "nyc --reporter=lcov --reporter=text mocha --require ts-node/register src/__test__/**/*.spec.ts "
+    "test": "nyc --reporter=lcov --reporter=text mocha --require ts-node/register src/__test__/**/*.spec.ts"
   },
   "author": "",
   "license": "ISC",

@@ -51,7 +51,7 @@ const updateSchema = z.object({
     .min(5, "Use atleast 3 character")
     .max(70, "No more than 50 character")
     .optional(),
-  preferredcurrency: z
+  preferredCurrency: z
     .string()
     .min(5, "Use atleast 3 character")
     .max(70, "No more than 50 character")

@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5000",
+      "url": "http://localhost:8000",
       "description": "Development server"
     },
     {
@@ -23,6 +23,17 @@
     {
       "name": "Authentication",
       "description": "API endpoints for managing users"
+    },
+    {
+      "name": "Users",
+      "description": "API endpoints for managing Users"
+    },{
+      "name": "Roles",
+      "description": "API endpoints for managing roles"
+    },
+    {
+      "name": "AssignRole",
+      "description": "API endpoints for assigning roles to users"
     }
   ],
   "paths": {
@@ -47,6 +58,7 @@
         "security": [{ "Bearer": [] }]
       }
     },
+
     "/api/users/signup": {
       "post": {
         "summary": "User Sign Up",
@@ -118,6 +130,23 @@
         }
       }
     },
+    "/api/users": {
+      "get": {
+        "summary": "Get All Users",
+        "description": "Get a list of all users",
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "List of all users"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
     "/api/users/profile": {
       "get": {
         "summary": "user profile",
@@ -163,7 +192,7 @@
                   "preferredLanguage": {
                     "type": "string"
                   },
-                  "preferredcurrency": {
+                  "preferredCurrency": {
                     "type": "string"
                   },
                   "whereYouLive": {
@@ -206,7 +235,8 @@
         },
         "security": [{ "Bearer": [] }]
       }
-    },"/api/users/otp": {
+    },
+    "/api/users/otp": {
       "post": {
         "tags": ["Two factor OTP"],
         "summary": "Send OTP request",
@@ -249,9 +279,414 @@
           "401":{ "description": "Wrong OTP entered" },
           "404":{ "description": "Invalid token" }
         }
+      },
+    "/api/roles": {
+      "post": {
+        "summary": "Create Role",
+        "description": "Create a new role",
+        "tags": ["Roles"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                
+                },
+                "required": ["name"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Role created successfully"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Get All Roles",
+        "description": "Get a list of all roles",
+        "tags": ["Roles"],
+        "responses": {
+          "200": {
+            "description": "List of all roles"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/roles/{id}": {
+      "get": {
+        "summary": "Get Role by ID",
+        "description": "Get a role by its ID",
+        "tags": ["Roles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the role",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Role found"
+          },
+          "404": {
+            "description": "Role not found"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update Role",
+        "description": "Update a role by its ID",
+        "tags": ["Roles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the role",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Role updated successfully"
+          },
+          "404": {
+            "description": "Role not found"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete Role",
+        "description": "Delete a role by its ID",
+        "tags": ["Roles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the role",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Role deleted successfully"
+          },
+          "404": {
+            "description": "Role not found"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/users/{userId}/roles": {
+      "post": {
+        "summary": "Assign Role to User",
+        "description": "Assign a role to a specific user",
+        "tags": ["AssignRole"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "roleId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Role assigned to user successfully"
+          },
+          "404": {
+            "description": "User or Role not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       }
     }
   },
+    "/api/roles": {
+      "post": {
+        "summary": "Create Role",
+        "description": "Create a new role",
+        "tags": ["Roles"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                
+                },
+                "required": ["name"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Role created successfully"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Get All Roles",
+        "description": "Get a list of all roles",
+        "tags": ["Roles"],
+        "responses": {
+          "200": {
+            "description": "List of all roles"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/roles/{id}": {
+      "get": {
+        "summary": "Get Role by ID",
+        "description": "Get a role by its ID",
+        "tags": ["Roles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the role",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Role found"
+          },
+          "404": {
+            "description": "Role not found"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update Role",
+        "description": "Update a role by its ID",
+        "tags": ["Roles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the role",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Role updated successfully"
+          },
+          "404": {
+            "description": "Role not found"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete Role",
+        "description": "Delete a role by its ID",
+        "tags": ["Roles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the role",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Role deleted successfully"
+          },
+          "404": {
+            "description": "Role not found"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/users/{userId}/roles": {
+      "patch": {
+        "summary": "Assign Role to User",
+        "description": "Assign a role to a specific user",
+        "tags": ["AssignRole"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "roleId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Role assigned to user successfully"
+          },
+          "404": {
+            "description": "User or Role not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+}
+  ,
   "components": {
     "schemas": {
       "User": {
