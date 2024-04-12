@@ -24,3 +24,7 @@ export const userToken = async (userId: string, userEmail: string) => {
 export const tokenVerify = (token: string, resultFunction?: any) => {
   return jwt.verify(token, process.env.JWT_SECRET as string, resultFunction);
 };
+
+export const tokenDecode = (token: string) => {
+  return jwt.decode(token);
+};

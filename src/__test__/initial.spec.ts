@@ -1,8 +1,7 @@
+/* eslint-disable func-names */
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-import { exec } from "child_process";
 import sinon from "sinon";
-import { error } from "console";
 import app from "../app";
 import { dbConnect } from "../config/db.config";
 import User from "../models/user";
@@ -12,7 +11,6 @@ import { passwordEncrypt } from "../utils/encrypt";
 const imageFilePath = "./src/__test__/image/test.jpg";
 
 let headerToken: any;
-const otpToken: string = "";
 let userId1: string;
 chai.use(chaiHttp);
 before(async function () {
@@ -37,7 +35,6 @@ before(async function () {
     createdAt: new Date(),
     updatedAt: new Date()
   });
-  const roles = await Role.findAll();
 
   const createUsers = async () => {
     try {
@@ -62,16 +59,12 @@ before(async function () {
       });
       const user3 = await User.create({
         firstName: "Another",
-        lastName: "seller",
-        password: await passwordEncrypt("AnotherPassword"),
-        email: "anotheruser2@gmail.com",
+        lastName: "User",
+        password: await passwordEncrypt("Seller1234@"),
+        email: "anotheruser1@gmail.com",
         roleId: "8736b050-1117-4614-a599-005dd76ff333"
       });
-
-      // console.log("Users created:");
-      // console.log(user1.toJSON());
-      // console.log(user2.toJSON());
-      return [user1, user2];
+      return [user1, user2, user3];
     } catch (error) {
       console.error("Error creating users:", error);
     }
@@ -96,8 +89,6 @@ describe("test a user signup endpoint", () => {
       })
       .end((err, res) => {
         expect(err).to.be.null;
-
-        console.log("user created ------------------------------------");
         expect(res).to.have.status(201);
         done();
       });
@@ -161,7 +152,6 @@ describe("user Signin controller and passport", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         headerToken = res.body.token;
-        console.log("Header number 2", headerToken);
         expect(res).to.have.status(200);
         done();
       });
@@ -279,7 +269,7 @@ describe("user Signin controller and passport", () => {
       });
   });
 
-  it("update user profile with unauthirized field", () => {
+  it("update user profile with unauthorized field", () => {
     chai
       .request(app)
       .put("/api/users/profiles")
@@ -323,10 +313,6 @@ describe("user Signin controller and passport", () => {
   let createdRoleId: any;
   // Create a role
   it("should create a new role", (done) => {
-    console.log(
-      "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
-      headerToken
-    );
     chai
       .request(app)
       .post(`/api/roles/`)
@@ -386,7 +372,6 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(401);
 
         done();
-        console.log(createdRoleId);
       });
   });
 
@@ -401,7 +386,6 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(200);
 
         done();
-        console.log(createdRoleId);
       });
   });
 
@@ -431,7 +415,6 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(200);
 
         done();
-        console.log(createdRoleId);
       });
   });
   // Get role by unexisting id
@@ -458,7 +441,6 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(200);
         expect(res.body).to.have.property("role");
         done();
-        console.log(createdRoleId);
       });
   });
   // Get role by ID
@@ -540,12 +522,9 @@ describe("user Signin controller and passport", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(500);
-
         done();
-        console.log(res.body.token);
       });
   });
-
   // Delete a role
   it("should delete a role", (done) => {
     chai

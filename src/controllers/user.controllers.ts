@@ -5,11 +5,12 @@ import { config } from "dotenv";
 import { UserAttributes } from "../types/user.types";
 import { passwordEncrypt } from "../utils/encrypt";
 import User from "../models/user";
-import Role from "../models/Role";
+// import Role from "../models/Role";
 import { sendVerificationMail } from "../utils/mailer";
 import { userToken } from "../utils/token.generator";
 import uploadImage from "../utils/cloudinary";
 import { isUserExist } from "../middlewares/user.middleware";
+import { isCheckSeller } from "../middlewares/user.auth";
 
 config();
 export const userSignup = async (req: Request, res: Response) => {
@@ -66,7 +67,7 @@ export const verifyAccount = async (req: Request, res: Response) => {
       id: string;
       email: string;
     };
-    console.log(decodedToken);
+
     const user = await User.findOne({
       where: { email: decodedToken.email, verified: false }
     });
@@ -105,23 +106,8 @@ export const userLogin = async (req: Request, res: Response) => {
     if (!verifyPassword) {
       return res.status(403).json({ error: "Incorrect password" });
     }
-
-    const payload = {
-      email: req.body.email,
-      id: user.id
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
-      expiresIn: process.env.JWT_EXPIRE
-    });
-
-    res.status(200).send({
-      message: "Login successful ",
-      success: true,
-      token: `Bearer ${token}`
-    });
+    isCheckSeller(user.dataValues.id, req.body.email, req, res);
   } catch (err) {
-    console.log(err);
     res
       .status(500)
       .json({ error: "There is an error in login please try again" });

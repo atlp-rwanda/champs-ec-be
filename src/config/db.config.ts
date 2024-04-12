@@ -22,6 +22,7 @@ switch (APP_MODE) {
     break;
 }
 
+// eslint-disable-next-line no-unused-expressions
 DB_HOST_MODE === "local"
   ? (dialect_option = {})
   : (dialect_option = {
