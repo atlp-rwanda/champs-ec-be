@@ -9,7 +9,6 @@ import {
   deleteRole
 } from "../controllers/role.controllers";
 import {
-  isRoleIdExist,
   isRoleIdExistFromPram,
   isRoleNameExist,
   validateRole
