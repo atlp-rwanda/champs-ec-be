@@ -38,7 +38,7 @@ const updateSchema = z.object({
     .max(20, "maximum number for phone field are 20"),
   birthDate: z.coerce
     .date({ required_error: "the date is required" })
-    .refine((data) => data < new Date(), {
+    .refine((data: any) => data < new Date(), {
       message: `Thedate must be the date `
     }),
   profileImage: z.any(),
@@ -69,5 +69,34 @@ const userLoginValidation = z
       .regex(passwordStrength, "You are using wrong password please try again")
   })
   .strict();
-
-export { userSchema, updateSchema, userLoginValidation };
+const userUpdatePassValidation = z
+  .object({
+    oldPassword: z
+      .string({ required_error: "oldPassword is required" })
+      .min(8, "password of length less than 8")
+      .regex(
+        passwordStrength,
+        "Password must be alphaNumeric don't exit 15 characters"
+      ),
+    newPassword: z
+      .string({ required_error: "newPassword is required" })
+      .min(8, "password of length less than 8")
+      .regex(
+        passwordStrength,
+        "Password must be alphaNumeric don't exit 15 characters"
+      ),
+    confirmPassword: z
+      .string({ required_error: "confirmPassword is required" })
+      .min(8, "password of length less than 8")
+      .regex(
+        passwordStrength,
+        "Password must be alphaNumeric don't exit 15 characters"
+      )
+  })
+  .strict();
+export {
+  userSchema,
+  updateSchema,
+  userLoginValidation,
+  userUpdatePassValidation
+};

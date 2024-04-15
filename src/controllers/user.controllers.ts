@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 import { UserAttributes } from "../types/user.types";
-import { passwordEncrypt } from "../utils/encrypt";
+import { passwordCompare, passwordEncrypt } from "../utils/encrypt";
 import User from "../models/user";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Role from "../models/Role";
@@ -14,6 +14,8 @@ import { isCheckSeller } from "../middlewares/user.auth";
 import { sendResetMail, sendVerificationMail } from "../utils/mailer";
 import { passwordStrength } from "../utils/validations/user.validations";
 import { findUserByEmail } from "../utils/finders";
+import { matchPasswords } from "../utils/matchPasswords";
+import BlacklistedToken from "../models/Blacklist";
 
 config();
 interface JToken extends jwt.Jwt {
@@ -292,3 +294,74 @@ export const assignRoleToUser = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+interface Data {
+  dataValues: {
+    id: string;
+    password: string;
+  };
+}
+export const updateUserPassword = async (req: Request, res: Response) => {
+  try {
+    const logedInUser = req.user as Data;
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+    const user = await User.findOne({
+      where: {
+        id: logedInUser.dataValues.id
+      }
+    });
+
+    const passwordMatch = await passwordCompare(
+      user?.dataValues.password as string,
+      oldPassword
+    );
+
+    if (!passwordMatch) {
+      return res.status(400).send({ error: "Incorrect old password" });
+    }
+    const matchIncommingPasswords = await matchPasswords(
+      newPassword,
+      confirmPassword
+    );
+    if (!matchIncommingPasswords) {
+      return res.status(400).send({ error: "Passwords doesn't match" });
+    }
+
+    const hashedPassword = await passwordEncrypt(newPassword);
+    const updatePassword = await user?.update({ password: hashedPassword });
+    if (!updatePassword) {
+      return res.status(400).send({ message: "failed to update password!" });
+    }
+    return res.status(200).send({ message: "Password Updated Successfully!" });
+  } catch (error) {
+    return res.status(500).send({ error: "Internal server error" });
+  }
+};
+async function blacklistToken(req: Request, res: Response, next: NextFunction) {
+  const tokenHeader = req.headers.authorization?.split(" ")[1];
+
+  if (!tokenHeader) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Token is required" });
+  }
+
+  try {
+    const token = tokenHeader; // Parse token from header
+    req.logout(function (err) {
+      if (err) {
+        return next(err);
+      }
+      // res.redirect('/');
+    });
+    await BlacklistedToken.create({ token });
+    return res
+      .status(200)
+      .json({ success: true, message: "logged out successfully" });
+  } catch (error) {
+    console.error("Error blacklisting token:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+}
+export default blacklistToken;

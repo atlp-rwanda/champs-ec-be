@@ -112,6 +112,37 @@
         }
       }
     },
+    "/api/users/logout": {
+      "post": {
+        "summary": "Logout",
+        "tags": ["Authentication"],
+        "responses": {
+          "200": {
+            "description": "user logout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                  }
+                }
+              }
+            }
+          },
+          "400":{
+            "description":"Token is required"
+          },
+          "500":{
+            "description":"internal server error"
+          }
+          
+        },
+         
+        "security": [{ "Bearer": [] }]
+
+      
+      }
+    },
    
     "/api/users/reset-password": {
       "post": {
@@ -510,6 +541,44 @@
                 "schema": { "type": "array", "items": {} }
               }
             }
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/users/passwordUpdate":{
+      "patch": {
+        "summary": "Updating user's password",
+        "description": "Allowing user's to update their password",
+        "tags": ["Updating password"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "oldPassword": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  },
+                  "confirmPassword": {
+                    "type": "string"
+                  }
+                },
+                "required": ["oldPassword", "newPassword", "confirmPassword"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Password updated successfully"
+          },
+          "400":{
+            "description": "Bad request"
           }
         },
         "security": [{ "Bearer": [] }]

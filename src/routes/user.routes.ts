@@ -1,7 +1,7 @@
 import express from "express";
 import multerupload from "../utils/multer";
 
-import {
+import blacklistToken, {
   userSignup,
   userLogin,
   userProfile,
@@ -10,7 +10,8 @@ import {
   assignRoleToUser,
   getAllUsers,
   sendResetInstructions,
-  resetUserPassword
+  resetUserPassword,
+  updateUserPassword
 } from "../controllers/user.controllers";
 import { authenticate } from "../middlewares/user.auth";
 
@@ -19,18 +20,21 @@ import {
   isValidUser,
   isValidUserUpdate,
   isAdmin,
-  isValidUserLogin
+  isValidUserLogin,
+  isValidPasswordUpdated,
+  isUserEmailValid
 } from "../middlewares/user.middleware";
 import { verifyOtp } from "../controllers/otpauth.controllers";
 import { isRoleIdExist } from "../middlewares/role.middleware";
 import { isDecodeOTP } from "../middlewares/otpauth.middleware";
 
-const userRoutes = express.Router();
+const userRoutes = express.Router({ mergeParams: true });
 
 userRoutes.post("/reset-password", sendResetInstructions);
 userRoutes.patch("/reset-password/:token", resetUserPassword);
 userRoutes.post("/signup", isValidUser, isUserExist, userSignup);
 userRoutes.post("/login", isValidUserLogin, userLogin);
+userRoutes.post("/logout", authenticate, blacklistToken);
 userRoutes.get("/profile", authenticate, userProfile);
 userRoutes.get("/", authenticate, isAdmin, getAllUsers);
 userRoutes.put(
@@ -51,4 +55,12 @@ userRoutes.patch(
   isRoleIdExist,
   assignRoleToUser
 );
+userRoutes.patch(
+  "/passwordUpdate",
+  authenticate,
+  isUserEmailValid,
+  isValidPasswordUpdated,
+  updateUserPassword
+);
+
 export default userRoutes;
