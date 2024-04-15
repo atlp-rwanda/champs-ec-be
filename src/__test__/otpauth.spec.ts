@@ -40,6 +40,7 @@ describe("Two factor authentication with Email", () => {
         otp: ""
       })
       .end((err, res) => {
+        console.log("======== res body", res);
         expect(err).to.be.null;
         expect(res).to.have.status(404);
         expect(res.body.message).to.equal("Invalid OTP");
