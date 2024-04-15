@@ -5,6 +5,8 @@ import { userLoginValidation } from "../utils/validations/user.validations";
 import Role from "../models/Role";
 
 const isUserExist = async (req: Request, res: Response, next: NextFunction) => {
+  // const { email, userId } = req.body;
+
   if (req.body.email) {
     // Check if user exists by email
     const userByEmail = await User.findOne({
@@ -81,7 +83,6 @@ const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const role = await Role.findByPk(user.dataValues.roleId);
-
     if (!role) {
       return res.status(404).json({ error: "Role not found" });
     }
@@ -94,6 +95,7 @@ const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
         .json({ error: "Unauthorized, user is not an admin" });
     }
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

@@ -11,6 +11,7 @@ import { sendVerificationMail } from "../utils/mailer";
 import { userToken } from "../utils/token.generator";
 import uploadImage from "../utils/cloudinary";
 import { isUserExist } from "../middlewares/user.middleware";
+import { isCheckSeller } from "../middlewares/user.auth";
 
 config();
 export const userSignup = async (req: Request, res: Response) => {
@@ -52,6 +53,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
     res.status(200).json(users);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -95,7 +97,7 @@ export const userLogin = async (req: Request, res: Response) => {
     });
 
     if (!user) {
-      return res.status(404).json({ error: "Incorrect user Email " });
+      return res.status(404).json({ error: "Incorrect user name " });
     }
 
     const verifyPassword = await bcrypt.compare(
@@ -105,12 +107,7 @@ export const userLogin = async (req: Request, res: Response) => {
     if (!verifyPassword) {
       return res.status(403).json({ error: "Incorrect password" });
     }
-    const token = await userToken(user.dataValues.id, req.body.email);
-    res.status(200).send({
-      message: "Login successful ",
-      success: true,
-      token: `Bearer ${token}`
-    });
+    isCheckSeller(user.dataValues.id, req.body.email, req, res);
   } catch (err) {
     res
       .status(500)
@@ -118,37 +115,8 @@ export const userLogin = async (req: Request, res: Response) => {
   }
 };
 
-export const userProfile = async (req: Request, res: Response) => {
-  try {
-    const newuser: any = await req.user;
-    const {
-      firstName,
-      lastName,
-      profileImage,
-      phone,
-      birthDate,
-      preferredLanguage,
-      whereYouLive,
-      preferredcurrency,
-      billingAddress
-    } = newuser.dataValues;
-
-    const userResult = {
-      firstName,
-      lastName,
-      profileImage,
-      phone,
-      birthDate,
-      preferredLanguage,
-      whereYouLive,
-      billingAddress,
-      preferredcurrency
-    };
-
-    res.status(200).json({ User: userResult });
-  } catch (error) {
-    return res.status(400).json("user profile is not exist");
-  }
+export const userProfile = (req: Request, res: Response) => {
+  res.status(200).json({ User: req.user });
 };
 
 export const editUser = async (req: any, res: Response) => {
@@ -165,9 +133,10 @@ export const editUser = async (req: any, res: Response) => {
       billingAddress
     } = req.body;
     if (!firstName && !lastName && !profileImage) {
-      return res.status(400).send({
+      res.status(400).send({
         error: "At least one property is required to update the user"
       });
+      return;
     }
 
     if (req.body.email || req.body.password) {
@@ -182,11 +151,7 @@ export const editUser = async (req: any, res: Response) => {
       }
     });
 
-    let uploadedImage: any;
-    if (!req.file) {
-      return res.status(400).json({ Error: "profile image is required" });
-    }
-
+    let uploadedImage;
     if (req.file) {
       uploadedImage = await uploadImage(req.file.buffer);
     }
@@ -219,6 +184,7 @@ export const assignRoleToUser = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "Role assigned to user successfully" });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

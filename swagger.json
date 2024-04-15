@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8000",
+      "url": "http://localhost:5000",
       "description": "Development server"
     },
     {
@@ -111,104 +111,10 @@
         }
       }
     },
-    "/api/users/login/google": {
-      "get": {
-        "summary": "Google Login",
-        "description": "Allows users to log in using their Google account. When the user clicks the 'Sign in with Google' button, they will be redirected to this endpoint, which will handle the Google OAuth2 authentication flow.",
-        "tags": ["Authentication"],
-        "responses": {
-          "302": {
-            "description": "Redirect to Google Login",
-            "headers": {
-              "Location": {
-                "schema": {"type": "string"},
-                "description": "http://localhost:4000/api/users/login/google"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/users": {
-      "get": {
-        "summary": "Get All Users",
-        "description": "Get a list of all users",
-        "tags": ["Users"],
-        "responses": {
-          "200": {
-            "description": "List of all users"
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/api/users/profile": {
-      "get": {
-        "summary": "User Profile",
-        "tags": ["User profile page"],
-        "responses": {
-          "200": {
-            "description": "Profile page",
-            "content": {
-              "application/json": {
-                "schema": {"type": "array", "items": {}}
-              }
-            }
-          }
-        },
-        "security": [{"Bearer": []}]
-      }
-    },
-    "/api/users/profiles": {
-      "put": {
-        "summary": "Edit Profile",
-        "tags": ["User profile page"],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "firstName": {"type": "string"},
-                  "lastName": {"type": "string"},
-                  "phone": {"type": "string"},
-                  "birthDate": {"type": "string", "format": "date"},
-                  "preferredLanguage": {"type": "string"},
-                  "preferredCurrency": {"type": "string"},
-                  "whereYouLive": {"type": "string"},
-                  "billingAddress": {"type": "string"},
-                  "profileImage": {"type": "string", "format": "binary"}
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {"description": "Updated profile page"},
-          "400": {"description": "Fail to update"}
-        },
-        "security": [{"Bearer": []}]
-      }
-    },
-    "/api/users/otp": {
-      "post": {
-        "tags": ["Two factor OTP"],
-        "summary": "Send OTP request",
-        "security": [{"Bearer": []}],
-        "responses": {
-          "201": {"description": "Verification code sent successfully"}
-        }
-      }
-    },
     "/api/users/otp/{token}": {
       "post": {
-        "tags": ["Two factor OTP"],
-        "summary": "Verify OTP",
-        "security": [{"Bearer": []}],
+        "tags": ["Authentication"],
+        "summary": "Verify OTP for the seller",
         "parameters": [
           {
             "name": "token",
@@ -231,7 +137,7 @@
           }
         },
         "responses": {
-          "200": {"description": "Access granted"},
+          "200": {"description": "Login Successful"},
           "401": {"description": "Wrong OTP entered"},
           "404": {"description": "Invalid token"}
         }
@@ -438,7 +344,90 @@
         ]
       }
     }
-  },
+    },
+    "/api/users/login/google": {
+      "get": {
+        "summary": "Google Login",
+        "description": "Allows users to log in using their Google account. When the user clicks the 'Sign in with Google' button, they will be redirected to this endpoint, which will handle the Google OAuth2 authentication flow.",
+        "tags": ["Authentication"],
+        "responses": {
+          "302": {
+            "description": "Redirect to Google Login",
+            "headers": {
+              "Location": {
+                "schema": {"type": "string"},
+                "description": "http://localhost:4000/api/users/login/google"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "summary": "Get All Users",
+        "description": "Get a list of all users",
+        "tags": ["Users"],
+        "responses": {
+          "200": {
+            "description": "List of all users"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/users/profile": {
+      "get": {
+        "summary": "User Profile",
+        "tags": ["User profile page"],
+        "responses": {
+          "200": {
+            "description": "Profile page",
+            "content": {
+              "application/json": {
+                "schema": {"type": "array", "items": {}}
+              }
+            }
+          }
+        },
+        "security": [{"Bearer": []}]
+      }
+    },
+    "/api/users/profiles": {
+      "put": {
+        "summary": "Edit Profile",
+        "tags": ["User profile page"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {"type": "string"},
+                  "lastName": {"type": "string"},
+                  "phone": {"type": "string"},
+                  "birthDate": {"type": "string", "format": "date"},
+                  "preferredLanguage": {"type": "string"},
+                  "preferredCurrency": {"type": "string"},
+                  "whereYouLive": {"type": "string"},
+                  "billingAddress": {"type": "string"},
+                  "profileImage": {"type": "string", "format": "binary"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Updated profile page"},
+          "400": {"description": "Fail to update"}
+        },
+        "security": [{"Bearer": []}]
+      }
+    },
     "/api/roles": {
       "post": {
         "summary": "Create Role",
