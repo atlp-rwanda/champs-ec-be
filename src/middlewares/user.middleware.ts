@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/user";
+import Role from "../models/Role";
 import {
   updateSchema,
   userLoginValidation,
-  userSchema
+  userSchema,
+  userUpdatePassValidation
 } from "../validations/user.validations";
-import Role from "../models/Role";
+import { UserAttributes } from "../types/user.types";
 
 const isUserExist = async (req: Request, res: Response, next: NextFunction) => {
   if (req.body.email) {
@@ -78,7 +80,20 @@ const isValidUserUpdate = (req: Request, res: Response, next: NextFunction) => {
     return res.status(400).json({ error: error.errors[0].message });
   }
 };
-
+const isValidPasswordUpdated = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const validation = userUpdatePassValidation.parse(req.body);
+    if (validation) {
+      next();
+    }
+  } catch (error: any) {
+    return res.status(400).json({ error: error.errors[0].message });
+  }
+};
 const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
   const { user }: any = req;
 
@@ -146,6 +161,14 @@ const isAdminOrSeller = async (
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+const isUserEmailValid = (req: Request, res: Response, next: NextFunction) => {
+  // type UserType=z.infer<typeof userSchema>
+  const result: UserAttributes | any = req.user as UserAttributes;
+  if (!result.dataValues.verified) {
+    return res.status(400).json({ error: "Email is not verified" });
+  }
+  next();
+};
 
 export {
   isUserExist,
@@ -154,5 +177,7 @@ export {
   isValidUserUpdate,
   isAdmin,
   isAdminOrSeller,
-  isSeller
+  isSeller,
+  isValidPasswordUpdated,
+  isUserEmailValid
 };

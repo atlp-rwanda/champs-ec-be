@@ -10,7 +10,8 @@ import {
   assignRoleToUser,
   getAllUsers,
   sendResetInstructions,
-  resetUserPassword
+  resetUserPassword,
+  updateUserPassword
 } from "../controllers/user.controllers";
 import { authenticate } from "../middlewares/user.auth";
 
@@ -19,13 +20,15 @@ import {
   isValidUser,
   isValidUserUpdate,
   isAdmin,
-  isValidUserLogin
+  isValidUserLogin,
+  isValidPasswordUpdated,
+  isUserEmailValid
 } from "../middlewares/user.middleware";
 import { verifyOtp } from "../controllers/otpauth.controllers";
 import { isRoleIdExist } from "../middlewares/role.middleware";
 import { isDecodeOTP } from "../middlewares/otpauth.middleware";
 
-const userRoutes = express.Router();
+const userRoutes = express.Router({ mergeParams: true });
 
 userRoutes.post("/reset-password", sendResetInstructions);
 userRoutes.patch("/reset-password/:token", resetUserPassword);
@@ -51,4 +54,12 @@ userRoutes.patch(
   isRoleIdExist,
   assignRoleToUser
 );
+userRoutes.patch(
+  "/passwordUpdate",
+  authenticate,
+  isUserEmailValid,
+  isValidPasswordUpdated,
+  updateUserPassword
+);
+
 export default userRoutes;
