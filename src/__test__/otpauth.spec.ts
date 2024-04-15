@@ -2,7 +2,6 @@ import { describe, it } from "mocha";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { config } from "dotenv";
-// eslint-disable-next-line import/no-unresolved
 import sinon from "sinon";
 import app from "../app";
 import { passwordCompare, passwordEncrypt } from "../utils/encrypt";
@@ -12,35 +11,23 @@ import { tokenVerify } from "../utils/token.generator";
 
 config();
 chai.use(chaiHttp);
-let token: string = "";
 let otpToken: string = "";
 // Two factor authentication tests
 describe("Two factor authentication with Email", () => {
-  before((done) => {
+  it("Email sent successfully", (done) => {
     chai
       .request(app)
       .post("/api/users/login")
       .send({
-        email: "usertest@gmail.com",
-        password: "Test@12345"
+        password: "Seller1234@",
+        email: "anotheruser1@gmail.com"
       })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        token = res.body.token;
-        done();
-      });
-  });
-  it("Email sent successfully", (done) => {
-    chai
-      .request(app)
-      .post("/api/users/otp")
-      .set("Authorization", token)
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(201);
         otpToken = res.body.otpToken;
         expect(res.body.message).to.equal(
-          "Verification code sent successfully"
+          "Verify with 2FA before access is granted"
         );
         done();
       });
@@ -49,7 +36,6 @@ describe("Two factor authentication with Email", () => {
     chai
       .request(app)
       .post(`/api/users/otp/${otpToken}`)
-      .set("Authorization", token)
       .send({
         otp: ""
       })
@@ -64,7 +50,6 @@ describe("Two factor authentication with Email", () => {
     chai
       .request(app)
       .post(`/api/users/otp/${otpToken}`)
-      .set("Authorization", token)
       .send({
         otp: "great"
       })
@@ -79,7 +64,6 @@ describe("Two factor authentication with Email", () => {
     chai
       .request(app)
       .post(`/api/users/otp/hello`)
-      .set("Authorization", token)
       .send({
         otp: "123456"
       })
@@ -90,39 +74,37 @@ describe("Two factor authentication with Email", () => {
         done();
       });
   });
-  it("should validate expired tokens", (done) => {
+  it("should send a new token in case of expired tokens", async () => {
     const otpTokenExpired = process.env.EXPIRED_JWT_TOKEN as string;
-    chai
+    await chai
       .request(app)
       .post(`/api/users/otp/${otpTokenExpired}`)
-      .set("Authorization", token)
       .send({
-        otp: "123456"
+        otp: "123467"
       })
       .end((err, res) => {
         expect(err).to.be.null;
-        expect(res).to.have.status(401);
-        expect(res.body.message).to.equal("Token has expired");
-        done();
+        expect(res).to.have.status(403);
+        expect(res.body.message).to.equal("Token expired, new Token generated");
       });
   });
   it("should Validate otp input", async () => {
     let otpCode: string = "";
-    const resultOtpToken = (err: Error, data: DataInfo) => {
+    const resultOtpToken = async (err: Error, data: DataInfo) => {
       const decoded = data;
       otpCode = decoded.body.otp;
       return decoded;
     };
-    tokenVerify(otpToken, resultOtpToken);
+    await tokenVerify(otpToken, resultOtpToken);
     chai
       .request(app)
       .post(`/api/users/otp/${otpToken}`)
-      .set("Authorization", token)
       .send({ otp: `${otpCode}` })
-      .end((err, res) => {
+      .end(async (err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(200);
-        expect(res.body.message).to.equal("Access granted");
+        expect(res.body.message).to.equal("Login seller successful");
+        expect(res.body.token).to.be.undefined;
       });
   });
   it("should bring error in Mail sending email", async () => {

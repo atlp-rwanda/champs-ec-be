@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import passport from "../config/passport.config";
 import User from "../models/user";
+import Role from "../models/Role";
+import { sendOtp, UserData } from "../controllers/otpauth.controllers";
+import { userToken } from "../utils/token.generator";
 
 const authenticate = (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate("jwt", { session: false }, (error: any, user: any) => {
@@ -19,4 +22,31 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
   })(req, res, next);
 };
 
-export default authenticate;
+const isCheckSeller = async (
+  id: string,
+  email: string,
+  req: Request,
+  res: Response
+) => {
+  const user = (await User.findOne({
+    where: {
+      email
+    }
+  })) as UserData;
+
+  const userRoleId = await user.dataValues.roleId;
+  const userRole = await Role.findOne({ where: { id: userRoleId } });
+
+  if (userRole?.dataValues.name === "seller") {
+    sendOtp(req, res, email);
+  } else {
+    const token = await userToken(id, email);
+
+    res.status(200).send({
+      message: "Login successful",
+      success: true,
+      token: `Bearer ${token}`
+    });
+  }
+};
+export { authenticate, isCheckSeller };

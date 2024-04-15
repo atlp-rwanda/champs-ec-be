@@ -9,7 +9,7 @@ import swaggerDocument from "../swagger.json";
 import userRoutes from "./routes/user.routes";
 import roleRoutes from "./routes/role.routes";
 import passport from "./config/passport.config";
-import authenticate from "./middlewares/user.auth";
+import { authenticate } from "./middlewares/user.auth";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { isAdmin } from "./middlewares/user.middleware";
 import authRoutes from "./routes/auth.routes";

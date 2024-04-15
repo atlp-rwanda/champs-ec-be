@@ -58,10 +58,14 @@ before(async function () {
         roleId: "8736b050-1117-4614-a599-005dd76ff332"
       });
 
-      // console.log("Users created:");
-      // console.log(user1.toJSON());
-      // console.log(user2.toJSON());
-      return [user1, user2];
+      const user3 = await User.create({
+        firstName: "Another",
+        lastName: "User",
+        password: await passwordEncrypt("Seller1234@"),
+        email: "anotheruser1@gmail.com",
+        roleId: "8736b050-1117-4614-a599-005dd76ff333"
+      });
+      return [user1, user2, user3];
     } catch (error) {
       console.error("Error creating users:", error);
     }
