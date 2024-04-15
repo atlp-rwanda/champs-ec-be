@@ -10,7 +10,6 @@ export const createRole = async (req: Request, res: Response) => {
 
     res.status(201).json({ message: "Role created successfully", newRole });
   } catch (error) {
-    console.error("fail to create", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -22,7 +21,6 @@ export const getAllRoles = async (req: Request, res: Response) => {
 
     res.status(200).json(roles);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -42,7 +40,6 @@ export const getRoleById = async (req: Request, res: Response) => {
 
     res.status(200).json({ role });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -65,7 +62,6 @@ export const updateRole = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "Role updated successfully", role });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -86,7 +82,6 @@ export const deleteRole = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "Role deleted successfully" });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

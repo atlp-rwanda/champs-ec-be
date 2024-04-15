@@ -7,29 +7,45 @@ import { dbConnect } from "../config/db.config";
 import User from "../models/user";
 import Role from "../models/Role";
 import { passwordEncrypt } from "../utils/encrypt";
+import Product from "../models/Product";
+import ProductCategory from "../models/product_category";
+import { tokenVerify } from "../utils/token.generator";
+import { DataInfo } from "../controllers/otpauth.controllers";
 
-const imageFilePath = "./src/__test__/image/test.jpg";
-console.log("final image-------------------------", imageFilePath);
-let headerToken: any;
+const imageFilePath = "./src/__test__/image/JobIcon.png";
+
+const notAllowedFormat = "./src/__test__/image/svgrepo.svg";
+const bigSizePicture = "./src/__test__/image/svgrepo.svg";
+
+let productId: string;
+let image_id: string;
+
+let headerTokenSeller: string;
+let verifyTkn: string;
+let catId: string;
+let headerToken: string;
 let userId1: string;
 chai.use(chaiHttp);
+
 before(async function () {
   this.timeout(50000);
   await dbConnect();
+  await ProductCategory.truncate({ cascade: true });
+  await Product.truncate({ cascade: true });
   await Role.truncate({ cascade: true });
-  Role.create({
+  await Role.create({
     id: "8736b050-1117-4614-a599-005dd76ff331",
     name: "admin",
     createdAt: new Date(),
     updatedAt: new Date()
   });
-  Role.create({
+  await Role.create({
     id: "8736b050-1117-4614-a599-005dd76ff332",
     name: "user",
     createdAt: new Date(),
     updatedAt: new Date()
   });
-  Role.create({
+  await Role.create({
     id: "8736b050-1117-4614-a599-005dd76ff333",
     name: "seller",
     createdAt: new Date(),
@@ -53,11 +69,10 @@ before(async function () {
       const user2 = await User.create({
         firstName: "Another",
         lastName: "User",
-        password: await passwordEncrypt("AnotherPassword"),
+        password: await passwordEncrypt("Another@123"),
         email: "anotheruser@gmail.com",
         roleId: "8736b050-1117-4614-a599-005dd76ff332"
       });
-
       const user3 = await User.create({
         firstName: "Another",
         lastName: "User",
@@ -65,7 +80,14 @@ before(async function () {
         email: "anotheruser1@gmail.com",
         roleId: "8736b050-1117-4614-a599-005dd76ff333"
       });
-      return [user1, user2, user3];
+      const user4 = await User.create({
+        firstName: "Another",
+        lastName: "User",
+        password: await passwordEncrypt("Another@123"),
+        email: "anotheruser3@gmail.com",
+        roleId: "8736b050-1117-4614-a599-005dd76ff333"
+      });
+      return [user1, user2, user3, user4];
     } catch (error) {
       console.error("Error creating users:", error);
     }
@@ -90,11 +112,10 @@ describe("test a user signup endpoint", () => {
       })
       .end((err, res) => {
         expect(err).to.be.null;
-
         expect(res).to.have.status(201);
         done();
       });
-  });
+  }).timeout(5000);
 
   it("should return user exist", (done) => {
     chai
@@ -158,25 +179,61 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
-  // it("should show 500 error in creating the user", (done) => {
-  //   const userStub = sinon
-  //     .stub(User, "create")
-  //     .throws(new Error("internal server error"));
-  //   chai
-  //     .request(app)
-  //     .post("/api/users/signup")
-  //     .send({
-  //       firstName: "Ernest",
-  //       lastName: "Tchami",
-  //       password: "Test@12345",
-  //       email: "emailfortest33@gmail.com"
-  //     })
-  //     .end((err, res) => {
-  //       userStub.restore();
-  //       expect(res.statusCode).to.equal(500);
-  //       done();
-  //     });
-  // }).timeout(5000);
+
+  it("Login s seller user point test", (done) => {
+    chai
+      .request(app)
+      .post("/api/users/login")
+      .send({
+        password: "Seller1234@",
+        email: "anotheruser1@gmail.com"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        verifyTkn = res.body.token;
+        expect(res).to.have.status(201);
+        done();
+      });
+  });
+  it("Email sent successfully", (done) => {
+    chai
+      .request(app)
+      .post("/api/users/login")
+      .send({
+        password: "Seller1234@",
+        email: "anotheruser1@gmail.com"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(201);
+        verifyTkn = res.body.otpToken;
+        expect(res.body.message).to.equal(
+          "Verify with 2FA before access is granted"
+        );
+        done();
+      });
+  });
+  it("should Validate otp input", async () => {
+    let otpCode: string = "";
+    const resultOtpToken = async (err: Error, data: DataInfo) => {
+      const decoded = data;
+      otpCode = decoded.body.otp;
+      return decoded;
+    };
+    await tokenVerify(verifyTkn, resultOtpToken);
+    chai
+      .request(app)
+      .post(`/api/users/otp/${verifyTkn}`)
+      .send({ otp: `${otpCode}` })
+      .end(async (err, res) => {
+        headerTokenSeller = res.body.token;
+
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.equal("Login seller successful");
+        expect(res.body.token).to.be.undefined;
+      });
+  });
 
   it("should show 500 error in logining in the user", (done) => {
     const userStub = sinon
@@ -293,7 +350,7 @@ describe("user Signin controller and passport", () => {
   //     .field("firstName", "Ernest")
   //     .field("lastName", "Tchami");
   //   expect(res).to.have.status(201);
-  //   console.log(res);
+
   // });
   it("update user profile with an image", () => {
     chai
@@ -320,10 +377,6 @@ describe("user Signin controller and passport", () => {
   let createdRoleId: any;
   // Create a role
   it("should create a new role", (done) => {
-    console.log(
-      "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
-      headerToken
-    );
     chai
       .request(app)
       .post(`/api/roles/`)
@@ -340,7 +393,7 @@ describe("user Signin controller and passport", () => {
 
         done();
       });
-  });
+  }).timeout(5000);
   it("should create a new role and get server error ", (done) => {
     const roleStub = sinon
       .stub(Role, "create")
@@ -381,9 +434,7 @@ describe("user Signin controller and passport", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(401);
-
         done();
-        console.log(createdRoleId);
       });
   });
 
@@ -398,7 +449,6 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(200);
 
         done();
-        console.log(createdRoleId);
       });
   });
 
@@ -428,7 +478,6 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(200);
 
         done();
-        console.log(createdRoleId);
       });
   });
   // Get role by unexisting id
@@ -455,7 +504,6 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(200);
         expect(res.body).to.have.property("role");
         done();
-        console.log(createdRoleId);
       });
   });
   // Get role by ID
@@ -539,10 +587,11 @@ describe("user Signin controller and passport", () => {
       });
   });
   // Update
+
   it("should update a role server error", (done) => {
     chai
       .request(app)
-      .put(`/api/roles/8bb8bbc1-364b-46e6a5-fb2e4614c659`)
+      .put(`/api/roles/f11b7418-f367-4a11-bd7d-729e979ffbf9bbbbbbb`)
       .set("Authorization", headerToken)
       .send({ name: "Updated" })
       .end((err, res) => {
@@ -550,7 +599,6 @@ describe("user Signin controller and passport", () => {
         expect(res).to.have.status(500);
 
         done();
-        console.log(res.body.token);
       });
   });
 
@@ -582,4 +630,496 @@ describe("user Signin controller and passport", () => {
         });
     });
   });
+  // test for creating product category --------------------------------------------------------------------
+
+  it("it shoult test to list product categories but it is not created", (done) => {
+    chai
+      .request(app)
+      .get("/api/categories")
+      .set("Authorization", headerToken)
+      .end((err, res) => {
+        expect(res.body.message).to.equal(
+          "no Product category found , please add new"
+        );
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("it shoult test product category creation", (done) => {
+    chai
+      .request(app)
+      .post("/api/categories")
+      .set("Authorization", headerToken)
+      .send({
+        categoryName: "TEST CAT"
+      })
+      .end((err, res) => {
+        expect(res.body.message).to.equal("Product category is created");
+        expect(res).to.have.status(201);
+        done();
+      });
+  });
+  it("it shoult test to list product categories with success", (done) => {
+    chai
+      .request(app)
+      .get("/api/categories")
+      .set("Authorization", headerToken)
+
+      .end((err, res) => {
+        catId = res.body.categories[0].id;
+
+        expect(res.body.message).to.equal("success");
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("it shoult test getting single product category", (done) => {
+    chai
+      .request(app)
+      .get(`/api/categories/${catId}`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res.body.message).to.equal("success");
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("it shoult test getting unexisting product category  ", (done) => {
+    chai
+      .request(app)
+      .get(`/api/categories/d62aa7d1-23b3-437b-8407-adaf24b3eb4c`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res.body.error).to.equal(
+          "The product category is not found , please try again"
+        );
+        expect(res).to.have.status(404);
+        done();
+      });
+  });
+  it("it shoult test getting product category internal error ", (done) => {
+    chai
+      .request(app)
+      .get(`/api/categories/d62aa7d1-23b3-437b-8407-adaf24b3eb4chhhhhhgg`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
+  it("it shoult test product category with existing name ", (done) => {
+    chai
+      .request(app)
+      .post("/api/categories")
+      .set("Authorization", headerToken)
+      .send({
+        categoryName: "TEST CAT"
+      })
+      .end((err, res) => {
+        expect(res.body.message).to.equal("This Category alread exists");
+        expect(res).to.have.status(409);
+        done();
+      });
+  });
+  it("it shoult test product category  with validation fail", (done) => {
+    chai
+      .request(app)
+      .post("/api/categories")
+      .set("Authorization", headerToken)
+      .send({
+        categoryName: "TEST CAT@@@"
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+  it("it shoult test product category update ", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/categories/${catId}`)
+      .set("Authorization", headerToken)
+      .send({
+        categoryName: "TEST CAT UPDATE"
+      })
+      .end((err, res) => {
+        expect(res.body.message).to.equal(
+          "Product category updated successful"
+        );
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("it shoult test product category update validation fail ", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/categories/${catId}`)
+      .set("Authorization", headerToken)
+      .send({
+        categoryName: "TEST CAT UPDATE@@@@@"
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  // test for product start here ---------------------------------------------------------
+
+  it("list product items in seller collection not found", (done) => {
+    chai
+      .request(app)
+      .get("/api/products")
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res.body.message).to.equal("no product found, please add new");
+        expect(res).to.have.status(404);
+        done();
+      });
+  });
+  it("create product item sucessful in seller collection", (done) => {
+    chai
+      .request(app)
+      .post("/api/products")
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", imageFilePath)
+      .attach("productImage", imageFilePath)
+      .attach("productImage", imageFilePath)
+      .attach("productImage", imageFilePath)
+      .field("productName", "Testproduct")
+      .field("stockLevel", "100 kg")
+      .field("productCategory", catId)
+      .field("productPrice", "100")
+      .field("productCurrency", "rwf")
+      .field("productDiscount", "0")
+      .field(
+        "productDescription",
+        "If you’re developing in an environment with support for promises"
+      )
+      .field("expireDate", "2025-12-12")
+      .end((err, res) => {
+        expect(res.body.message).to.equal("Product item is successful created");
+        expect(res).to.have.status(201);
+        done();
+      });
+  }).timeout(70000);
+  it("create product item in seller collection with minimal images", (done) => {
+    chai
+      .request(app)
+      .post("/api/products")
+      .set("Authorization", headerTokenSeller)
+
+      .field("productName", "Test product Exist")
+      .field("stockLevel", "100 kg")
+      .field("productCategory", catId)
+      .field("productPrice", "100")
+      .field("productCurrency", "rwf")
+      .field("productDiscount", "0")
+      .field(
+        "productDescription",
+        "If you’re developing in an environment with support for promises"
+      )
+      .field("expireDate", "2025-12-12")
+      .end((err, res) => {
+        expect(res.body.error).to.equal(
+          "Product item should have 4 up to 8 images"
+        );
+        expect(res).to.have.status(403);
+        done();
+      });
+  });
+
+  it("create product item in seller collection with invalid image format", (done) => {
+    chai
+      .request(app)
+      .post("/api/products")
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", notAllowedFormat)
+      .field("productName", "Test product")
+      .field("stockLevel", "100 kg")
+      .field("productCategory", catId)
+      .field("productPrice", "100")
+      .field("productCurrency", "rwf")
+      .field("productDiscount", "0")
+      .field(
+        "productDescription",
+        "If you’re developing in an environment with support for promises"
+      )
+      .field("expireDate", "2025-12-12")
+      .end((err, res) => {
+        expect(res.body.error).to.equal(
+          "Image upload error, Only .png, .jpg and .jpeg format allowed!"
+        );
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+  it("create product item in seller collection with big size image", (done) => {
+    chai
+      .request(app)
+      .post("/api/products")
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", bigSizePicture)
+      .field("productName", "Test product")
+      .field("stockLevel", "100 kg")
+      .field("productCategory", catId)
+      .field("productPrice", "100")
+      .field("productCurrency", "rwf")
+      .field("productDiscount", "0")
+      .field(
+        "productDescription",
+        "If you’re developing in an environment with support for promises"
+      )
+      .field("expireDate", "2025-12-12")
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  }).timeout(5000);
+
+  it("create product item in seller validation input fail", (done) => {
+    chai
+      .request(app)
+      .post("/api/products")
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", imageFilePath)
+      .attach("productImage", imageFilePath)
+      .attach("productImage", imageFilePath)
+      .attach("productImage", imageFilePath)
+      .field("productName", "Test product@@@")
+      .field("productCategory", catId)
+      .field("productPrice", "10rr0")
+      .field("productCurrency", "rwf")
+      .field("productDiscount", "0")
+      .field(
+        "productDescription",
+        "If you’re developing in an environment with support for promises"
+      )
+      .field("expireDate", "2025-12-12")
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it("create product item duplicate name in seller collection", (done) => {
+    chai
+      .request(app)
+      .post("/api/products")
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", imageFilePath)
+      .attach("productImage", imageFilePath)
+      .attach("productImage", imageFilePath)
+      .attach("productImage", imageFilePath)
+      .field("productName", "Testproduct")
+      .field("stockLevel", "100 kg")
+      .field("productCategory", catId)
+      .field("productPrice", "100")
+      .field("productCurrency", "rwf")
+      .field("productDiscount", "0")
+      .field(
+        "productDescription",
+        "If you’re developing in an environment with support for promises"
+      )
+      .field("expireDate", "2025-12-12")
+      .end((err, res) => {
+        expect(res.body.message).to.equals("This item already exists");
+        expect(res).to.have.status(409);
+        done();
+      });
+  });
+
+  it("list product items in seller collection sucessfull", (done) => {
+    chai
+      .request(app)
+      .get("/api/products")
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        productId = res.body.products[0].id;
+
+        image_id = res.body.products[0].productPictures[0].imgId;
+
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it("Seller crud operation get single product sucessful", (done) => {
+    chai
+      .request(app)
+      .get(`/api/products/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+      });
+    done();
+  });
+
+  it("check if product item exist in database", (done) => {
+    chai
+      .request(app)
+      .get("/api/products/688b69db-ffff-407f-9622-f12d375ce02a")
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res.body.message).to.equal(
+          "The product is not found , please try again"
+        );
+        expect(res).to.have.status(404);
+        done();
+      });
+  });
+  it("check if product item exist in database return internal server error", (done) => {
+    chai
+      .request(app)
+      .get(
+        "/api/products/688b69db-ffff-407f-9622-f12d375ce02a-ttrtr-rhhhdh-333444"
+      )
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res.body.error).to.equal("Internal server error");
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
+  it("Seller crud operation update product", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", imageFilePath)
+      .field("productName", "Test product")
+      .field("stockLevel", "100 kg")
+      .end((err, res) => {
+        expect(res.body.message).to.equal("product item is updated sucessful");
+        expect(res).to.have.status(200);
+        done();
+      });
+  }).timeout(5000);
+  it("Seller crud operation update product validation fail", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .field("productName", "Test product###!!!")
+      .end((err, res) => {
+        expect(res.body.error).to.equal(
+          "use characters and numbers for the product item name"
+        );
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+  /*
+  it("Seller crud operation replace specific image no image set ", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/pictures/${image_id}`)
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", "")
+      .end((err, res) => {
+        expect(res.body.message).to.equal(
+          "Please select a new image for product item"
+        );
+        expect(res).to.have.status(403);
+        done();
+      });
+  });
+  */
+  it("Seller crud operation replace specific image", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/pictures/${image_id}`)
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", imageFilePath)
+      .end((err, res) => {
+        expect(res.body.message).to.equal("image pictures is updated");
+        expect(res).to.have.status(201);
+        image_id = res.body.product.productPictures[0].imgId;
+        done();
+      });
+  }).timeout(5000);
+
+  it("Seller crud operation update image thumbnail", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/profile/${image_id}`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res.body.message).to.equal("the item thumbnail is updated");
+        expect(res).to.have.status(201);
+
+        image_id = res.body.product.productPictures[0].imgId;
+        done();
+      });
+  }).timeout(5000);
+
+  it("Seller crud operation want to product thumnail  but image not exist ", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/pictures/111111yyyy`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        done();
+      });
+  }).timeout(5000);
+  it("Seller crud operation want to replace specific image but not exist ", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/pictures/111111`)
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", imageFilePath)
+      .end((err, res) => {
+        expect(res.body.message).to.equal("the image id doesn't exist");
+        expect(res).to.have.status(404);
+        done();
+      });
+  });
+
+  it("Seller crud operation delete specific image", (done) => {
+    chai
+      .request(app)
+      .delete(`/api/products/${productId}/pictures/${image_id}`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res.body.message).to.equal("image pictures is removed");
+        expect(res).to.have.status(203);
+        done();
+      });
+  });
+  it("Seller crud operation want to delete specific image but not exist ", (done) => {
+    chai
+      .request(app)
+      .delete(`/api/products/${productId}/pictures/111111`)
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", imageFilePath)
+      .end((err, res) => {
+        expect(res.body.message).to.equal("the image id doesn't exist");
+        expect(res).to.have.status(404);
+        done();
+      });
+  });
+  it("Seller crud operation want to delete product ", (done) => {
+    chai
+      .request(app)
+      .delete(`/api/products/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", imageFilePath)
+      .end((err, res) => {
+        expect(res).to.have.status(203);
+        done();
+      });
+  });
+  /*
+  it("it shoult test product category delete ", (done) => {
+    chai
+      .request(app)
+      .delete(`/api/categories/${catId}`)
+      .set("Authorization", headerToken)
+      .end((err, res) => {
+        expect(res).to.have.status(203);
+        done();
+      });
+  });
+  */
 });

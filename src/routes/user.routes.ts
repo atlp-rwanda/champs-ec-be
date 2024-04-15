@@ -15,9 +15,9 @@ import { authenticate } from "../middlewares/user.auth";
 import {
   isUserExist,
   isValidUser,
-  isValidUserLogin,
   isValidUserUpdate,
-  isAdmin
+  isAdmin,
+  isValidUserLogin
 } from "../middlewares/user.middleware";
 import { verifyOtp } from "../controllers/otpauth.controllers";
 import { isRoleIdExist } from "../middlewares/role.middleware";

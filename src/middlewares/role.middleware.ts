@@ -12,7 +12,7 @@ export const validateRole = async (
     if (check) {
       next();
     }
-    // console.log("this is check:",check)
+
     // return res.status(403).json("bad request")
     // next()
   } catch (error: any) {

@@ -1,10 +1,5 @@
-// eslint-disable-next-line import/no-import-module-exports
-import { config } from "dotenv";
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { v4: uuidv4 } = require("uuid");
-
-config();
 
 module.exports = {
   async up(queryInterface) {
@@ -27,7 +22,8 @@ module.exports = {
           googleId: "tttttttttttt",
           lastName: "munezero",
           email: "test1@gmail.com",
-          password: uuidv4(),
+          password:
+            "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           phone: "+250786534332",
           birthDate: new Date(),
           preferredLanguage: "kinyarwanda",
@@ -45,7 +41,8 @@ module.exports = {
           lastName: "Rwigimba",
           googleId: "tttttttttttt",
           email: "princerwigimba@gmail.com",
-          password: process.env.PASSWORD_SEED,
+          password:
+            "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           phone: "+250784948614",
           birthDate: new Date(),
           preferredLanguage: "kinyarwanda",
@@ -63,7 +60,8 @@ module.exports = {
           googleId: "tttttttttttt",
           lastName: "munezero",
           email: "tes2t3@gmail.com",
-          password: uuidv4(),
+          password:
+            "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           phone: "+250786534332",
           birthDate: new Date(),
           preferredLanguage: "kinyarwanda",
@@ -80,7 +78,8 @@ module.exports = {
           firstName: "Emmanuel-buyer",
           lastName: "munezero",
           email: "test5@gmail.com",
-          password: uuidv4(),
+          password:
+            "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           googleId: "tttttttttttt",
           phone: "+250786534332",
           birthDate: new Date(),
@@ -98,7 +97,8 @@ module.exports = {
           firstName: "Emmanuel",
           lastName: "munezero",
           email: "testwde2@gmail.com",
-          password: uuidv4(),
+          password:
+            "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           phone: "+250786534332",
           birthDate: new Date(),
           preferredLanguage: "kinyarwanda",
