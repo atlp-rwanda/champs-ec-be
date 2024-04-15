@@ -10,7 +10,7 @@ import {
   assignRoleToUser,
   getAllUsers
 } from "../controllers/user.controllers";
-import authenticate from "../middlewares/user.auth";
+import { authenticate } from "../middlewares/user.auth";
 
 import {
   isUserExist,
@@ -19,8 +19,9 @@ import {
   isValidUserUpdate,
   isAdmin
 } from "../middlewares/user.middleware";
-import { sendOtp, verifyOtp } from "../controllers/otpauth.controllers";
+import { verifyOtp } from "../controllers/otpauth.controllers";
 import { isRoleIdExist } from "../middlewares/role.middleware";
+import { isDecodeOTP } from "../middlewares/otpauth.middleware";
 
 const userRoutes = express.Router();
 
@@ -37,8 +38,7 @@ userRoutes.put(
 );
 
 userRoutes.route("/:token/verify-email").get(verifyAccount);
-userRoutes.post("/otp", authenticate, sendOtp);
-userRoutes.post("/otp/:token", authenticate, verifyOtp);
+userRoutes.post("/otp/:token", isDecodeOTP, verifyOtp);
 userRoutes.patch(
   "/:userId/roles",
   authenticate,
