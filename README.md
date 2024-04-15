@@ -20,12 +20,8 @@
 
 - [Installation](#installation)
 - [Features](#Features)
-
 - [Tests](#tests)
 - [Built with](#Built-with)
-- [Docker](#docker)
-_ [Local](#local)
-_ [Public](#public)
 
 # Installation
 

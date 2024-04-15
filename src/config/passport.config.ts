@@ -9,7 +9,6 @@ const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.JWT_SECRET as string
 };
-
 const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {
     const user = await User.findOne({

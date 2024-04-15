@@ -1,15 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import Jwt from "jsonwebtoken";
-import { Console } from "console";
 import User from "../models/user";
 import { updateSchema, userSchema } from "../validations/user.validations";
 import { userLoginValidation } from "../utils/validations/user.validations";
 import Role from "../models/Role";
-import { isValidUUID } from "../utils/uuid";
 
 const isUserExist = async (req: Request, res: Response, next: NextFunction) => {
-  const { email, userId } = req.body;
-
   if (req.body.email) {
     // Check if user exists by email
     const userByEmail = await User.findOne({
@@ -28,7 +23,6 @@ const isUserExist = async (req: Request, res: Response, next: NextFunction) => {
 
     // Check if user exists by userId
     const userById = await User.findOne({ where: { id: user_id } });
-    console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkk", user_id);
     if (!userById) {
       return res.status(404).json({
         error: "User with this ID not exists"
@@ -87,10 +81,7 @@ const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const role = await Role.findByPk(user.dataValues.roleId);
-    console.log(
-      "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ",
-      role
-    );
+
     if (!role) {
       return res.status(404).json({ error: "Role not found" });
     }
@@ -103,7 +94,6 @@ const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
         .json({ error: "Unauthorized, user is not an admin" });
     }
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

@@ -1,9 +1,7 @@
 /* eslint-disable func-names */
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-import { exec } from "child_process";
 import sinon from "sinon";
-import { error } from "console";
 import app from "../app";
 import { dbConnect } from "../config/db.config";
 import User from "../models/user";
@@ -11,7 +9,7 @@ import Role from "../models/Role";
 import { passwordEncrypt } from "../utils/encrypt";
 
 const imageFilePath = "./src/__test__/image/test.jpg";
-
+console.log("final image-------------------------", imageFilePath);
 let headerToken: any;
 let userId1: string;
 chai.use(chaiHttp);
@@ -89,7 +87,6 @@ describe("test a user signup endpoint", () => {
       .end((err, res) => {
         expect(err).to.be.null;
 
-        console.log("user created ------------------------------------");
         expect(res).to.have.status(201);
         done();
       });
@@ -302,6 +299,12 @@ describe("user Signin controller and passport", () => {
       .attach("profileImage", imageFilePath)
       .field("firstName", "Ernest")
       .field("lastName", "Tchami")
+      .field("phone", "+250 74554545454")
+      .field("birthDate", "03/12/2023")
+      .field("preferredLanguage", "kinyarwanda")
+      .field("whereYouLive", "kigali")
+      .field("preferredCurrency", "dollar")
+      .field("billingAddress", "kigali muhanga")
       .then((res) => {
         expect(res).to.have.status(201);
       })
@@ -309,7 +312,6 @@ describe("user Signin controller and passport", () => {
         throw err;
       });
   });
-
   const wrongRoleId = "f11b7418-f367-4a11-bd7d-729e979ffbf9";
   let createdRoleId: any;
   // Create a role
@@ -506,6 +508,17 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
+  it("getting all users", (done) => {
+    chai
+      .request(app)
+      .get(`/api/users`)
+      .set("Authorization", headerToken)
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
 
   // Update a role
   it("should update a role", (done) => {
@@ -551,5 +564,18 @@ describe("user Signin controller and passport", () => {
           .equal("Role deleted successfully");
         done();
       });
+    it("update user profile with an image", () => {
+      chai
+        .request(app)
+        .put("/api/users/profiles")
+        .set("Authorization", headerToken)
+        .send({})
+        .then((res) => {
+          expect(res).to.have.status(400);
+        })
+        .catch((err) => {
+          throw err;
+        });
+    });
   });
 });
