@@ -11,6 +11,7 @@ import { sendVerificationMail } from "../utils/mailer";
 import { userToken } from "../utils/token.generator";
 import uploadImage from "../utils/cloudinary";
 import { isUserExist } from "../middlewares/user.middleware";
+import { isCheckSeller } from "../middlewares/user.auth";
 
 config();
 export const userSignup = async (req: Request, res: Response) => {
@@ -106,14 +107,7 @@ export const userLogin = async (req: Request, res: Response) => {
     if (!verifyPassword) {
       return res.status(403).json({ error: "Incorrect password" });
     }
-
-    const token = await userToken(user.dataValues.id, req.body.email);
-
-    res.status(200).send({
-      message: "Login successful ",
-      success: true,
-      token: `Bearer ${token}`
-    });
+    isCheckSeller(user.dataValues.id, req.body.email, req, res);
   } catch (err) {
     res
       .status(500)
