@@ -5,12 +5,12 @@ import { config } from "dotenv";
 import { UserAttributes } from "../types/user.types";
 import { passwordEncrypt } from "../utils/encrypt";
 import User from "../models/user";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import Role from "../models/Role";
+// import Role from "../models/Role";
 import { sendVerificationMail } from "../utils/mailer";
 import { userToken } from "../utils/token.generator";
 import uploadImage from "../utils/cloudinary";
 import { isUserExist } from "../middlewares/user.middleware";
+import { isCheckSeller } from "../middlewares/user.auth";
 
 config();
 export const userSignup = async (req: Request, res: Response) => {
@@ -106,14 +106,7 @@ export const userLogin = async (req: Request, res: Response) => {
     if (!verifyPassword) {
       return res.status(403).json({ error: "Incorrect password" });
     }
-
-    const token = await userToken(user.dataValues.id, req.body.email);
-
-    res.status(200).send({
-      message: "Login successful ",
-      success: true,
-      token: `Bearer ${token}`
-    });
+    isCheckSeller(user.dataValues.id, req.body.email, req, res);
   } catch (err) {
     res
       .status(500)

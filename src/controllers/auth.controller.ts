@@ -1,9 +1,8 @@
 /* eslint-disable import/no-duplicates */
 import { Request, Response, NextFunction } from "express";
 import passport from "../config/google.config";
-import { userToken } from "../utils/token.generator";
-// eslint-disable-next-line import/no-duplicates
 import { UserModel } from "../config/google.config";
+import { isCheckSeller } from "../middlewares/user.auth";
 
 const initiateGoogleLogin = (
   req: Request,
@@ -29,14 +28,9 @@ const handleGoogleCallback = async (req: Request, res: Response) => {
     }
 
     try {
-      const token = await userToken(user.id, user.email);
-      res.status(200).json({
-        status: "success",
-        message: "Login successful",
-        data: {
-          token
-        }
-      });
+      isCheckSeller(user.id, user.email, req, res);
+      // const token = await userToken(user.email, user.id);
+      // res.status(200).json({ message: "Successful Login", token });
     } catch (error) {
       return res.status(500).json({
         status: "not success",

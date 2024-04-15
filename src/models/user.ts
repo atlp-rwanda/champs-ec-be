@@ -42,6 +42,8 @@ class User
   declare createdAt: Date;
 
   declare updatedAt: Date;
+
+  static dataValues: any;
 }
 
 User.init(

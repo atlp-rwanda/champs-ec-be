@@ -1,6 +1,6 @@
 import express from "express";
 import { isAdmin } from "../middlewares/user.middleware";
-import authenticate from "../middlewares/user.auth";
+import { authenticate } from "../middlewares/user.auth";
 import {
   createRole,
   getAllRoles,
@@ -9,7 +9,6 @@ import {
   deleteRole
 } from "../controllers/role.controllers";
 import {
-  isRoleIdExist,
   isRoleIdExistFromPram,
   isRoleNameExist,
   validateRole
