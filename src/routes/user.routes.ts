@@ -1,7 +1,7 @@
 import express from "express";
 import multerupload from "../utils/multer";
 
-import {
+import blacklistToken, {
   userSignup,
   userLogin,
   userProfile,
@@ -34,6 +34,7 @@ userRoutes.post("/reset-password", sendResetInstructions);
 userRoutes.patch("/reset-password/:token", resetUserPassword);
 userRoutes.post("/signup", isValidUser, isUserExist, userSignup);
 userRoutes.post("/login", isValidUserLogin, userLogin);
+userRoutes.post("/logout", authenticate, blacklistToken);
 userRoutes.get("/profile", authenticate, userProfile);
 userRoutes.get("/", authenticate, isAdmin, getAllUsers);
 userRoutes.put(

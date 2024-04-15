@@ -4,22 +4,32 @@ import User from "../models/user";
 import Role from "../models/Role";
 import { sendOtp, UserData } from "../controllers/otpauth.controllers";
 import { userToken } from "../utils/token.generator";
+import BlacklistedToken from "../models/Blacklist";
 
 const authenticate = (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate("jwt", { session: false }, (error: any, user: any) => {
-    if (error) {
-      return res.status(500).json({ error: error.message });
-    }
+  passport.authenticate(
+    "jwt",
+    { session: false },
+    async (error: any, user: any) => {
+      const tokenHeader = req.headers.authorization?.split(" ")[1];
+      if (error) {
+        return res.status(500).json({ error: error.message });
+      }
 
-    if (!user) {
-      return res
-        .status(401)
-        .json({ error: "Unauthorized User. Please login to continue" });
+      let blacklistedToken;
+      blacklistedToken = await BlacklistedToken.findOne({
+        where: { token: tokenHeader }
+      });
+      if (!user || blacklistedToken) {
+        return res
+          .status(401)
+          .json({ error: "Unauthorized User. Please login to continue" });
+      }
+      const loggedUser: User = user;
+      req.user = loggedUser;
+      return next();
     }
-    const loggedUser: User = user;
-    req.user = loggedUser;
-    return next();
-  })(req, res, next);
+  )(req, res, next);
 };
 
 const isCheckSeller = async (

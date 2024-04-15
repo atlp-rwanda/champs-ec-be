@@ -15,6 +15,7 @@ import { sendResetMail, sendVerificationMail } from "../utils/mailer";
 import { passwordStrength } from "../utils/validations/user.validations";
 import { findUserByEmail } from "../utils/finders";
 import { matchPasswords } from "../utils/matchPasswords";
+import BlacklistedToken from "../models/Blacklist";
 
 config();
 interface JToken extends jwt.Jwt {
@@ -335,3 +336,32 @@ export const updateUserPassword = async (req: Request, res: Response) => {
     return res.status(500).send({ error: "Internal server error" });
   }
 };
+async function blacklistToken(req: Request, res: Response, next: NextFunction) {
+  const tokenHeader = req.headers.authorization?.split(" ")[1];
+
+  if (!tokenHeader) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Token is required" });
+  }
+
+  try {
+    const token = tokenHeader; // Parse token from header
+    req.logout(function (err) {
+      if (err) {
+        return next(err);
+      }
+      // res.redirect('/');
+    });
+    await BlacklistedToken.create({ token });
+    return res
+      .status(200)
+      .json({ success: true, message: "logged out successfully" });
+  } catch (error) {
+    console.error("Error blacklisting token:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+}
+export default blacklistToken;

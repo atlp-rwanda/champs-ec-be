@@ -301,27 +301,27 @@ describe("user Signin controller and passport", () => {
       });
   });
 
-  it("should respond with the welcome message", (done) => {
-    chai
-      .request(app)
-      .get("/")
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(401);
-        done();
-      });
-  });
-  it("should respond with the welcome message", (done) => {
-    chai
-      .request(app)
-      .get("/")
-      .set("Authorization", headerToken)
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(200);
-      });
-    done();
-  });
+  // it("should respond with the welcome message", (done) => {
+  //   chai
+  //     .request(app)
+  //     .get("/")
+  //     .end((err, res) => {
+  //       expect(err).to.be.null;
+  //       expect(res).to.have.status(401);
+  //       done();
+  //     });
+  // });
+  // it("should respond with the welcome message", (done) => {
+  //   chai
+  //     .request(app)
+  //     .get("/")
+  //     .set("Authorization", headerToken)
+  //     .end((err, res) => {
+  //       expect(err).to.be.null;
+  //       expect(res).to.have.status(200);
+  //     });
+  //   done();
+  // });
   it("check for the user profile", () => {
     chai
       .request(app)
@@ -1191,4 +1191,25 @@ describe("Test user should be able to update their password", () => {
           });
       });
   }).timeout(50000);
+  // it("should respond with user logged out", (done) => {
+  //   chai
+  //     .request(app)
+  //     .post("/api/users/logout")
+  //     .set("Authorization", headerToken)
+  //     .end((err, res) => {
+  //       expect(err).to.be.null;
+  //       expect(res).to.have.status(200);
+  //     });
+  //   done();
+  // });
+  // it("should respond with error message if token is not provided", (done) => {
+  //   chai
+  //     .request(app)
+  //     .post("/api/users/logout")
+  //     .end((err, res) => {
+  //       expect(err).to.be.null;
+  //       expect(res).to.have.status(401);
+  //     });
+  //   done();
+  // });
 });

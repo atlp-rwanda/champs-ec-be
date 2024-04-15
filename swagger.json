@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000",
+      "url": "http://localhost:8000",
       "description": "Development server"
     },
     {
@@ -110,6 +110,37 @@
           "200": { "description": "User authenticated successfully" },
           "401": { "description": "Invalid credentials" }
         }
+      }
+    },
+    "/api/users/logout": {
+      "post": {
+        "summary": "Logout",
+        "tags": ["Authentication"],
+        "responses": {
+          "200": {
+            "description": "user logout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                  }
+                }
+              }
+            }
+          },
+          "400":{
+            "description":"Token is required"
+          },
+          "500":{
+            "description":"internal server error"
+          }
+          
+        },
+         
+        "security": [{ "Bearer": [] }]
+
+      
       }
     },
    
@@ -515,6 +546,44 @@
         "security": [{ "Bearer": [] }]
       }
     },
+    "/api/users/passwordUpdate":{
+      "patch": {
+        "summary": "Updating user's password",
+        "description": "Allowing user's to update their password",
+        "tags": ["Updating password"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "oldPassword": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  },
+                  "confirmPassword": {
+                    "type": "string"
+                  }
+                },
+                "required": ["oldPassword", "newPassword", "confirmPassword"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Password updated successfully"
+          },
+          "400":{
+            "description": "Bad request"
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
     "/api/roles": {
       "post": {
         "summary": "Create Role",
@@ -529,7 +598,6 @@
                   "name": {
                     "type": "string"
                   }
-                
                 },
                 "required": ["name"]
               }
@@ -669,7 +737,7 @@
       }
     },
     "/api/users/{userId}/roles": {
-      "post": {
+      "patch": {
         "summary": "Assign Role to User",
         "description": "Assign a role to a specific user",
         "tags": ["AssignRole"],
@@ -717,54 +785,11 @@
         ]
       }
     },
-    "/api/users/passwordUpdate":{
-      "patch": {
-        "summary": "Updating user's password",
-        "description": "Allowing user's to update their password",
-        "tags": ["Updating password"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "oldPassword": {
-                    "type": "string"
-                  },
-                  "newPassword": {
-                    "type": "string"
-                  },
-                  "confirmPassword": {
-                    "type": "string"
-                  }
-                },
-                "required": ["oldPassword", "newPassword", "confirmPassword"]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Password updated successfully"
-          },
-          "400":{
-            "description": "Bad request"
-          }
-        },
-        "security": [{ "Bearer": [] }]
-      }
-    },
     "/api/categories": {
       "post": {
         "summary": "Product categories",
         "description": "add new product Category",
         "tags": ["Product Category"],
-    "/api/users/passwordUpdate": {
-      "patch": {
-        "summary": "updating user's password",
-        "description": "Users should be able to update their password",
-        "tags": ["update password"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -773,12 +798,7 @@
                 "properties": {
                   "categoryName": { "type": "string" }
                 },
-                "required": ["categoryName"],
-                  "oldPassword": {"type": "string"},
-                  "newPassword": {"type": "string"},
-                  "confirmPassword": {"type": "string"}
-                },
-                "required": ["oldPassword", "newPassword", "confirmPassword"]
+                "required": ["categoryName"]
               }
             }
           },
@@ -1233,16 +1253,7 @@
           },
           "500": { "description": "Internal Server Error" }
         },
-        "security": [{ "Bearer": [] }],
-          "200": {"description": "Password Updated Successfully!"},
-          "400": {"description": "failed to update password!"},
-          "500": {"description":"Internal server error"}
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     }
   },
