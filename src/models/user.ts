@@ -57,16 +57,14 @@ User.init(
       allowNull: false,
       validate: {
         notEmpty: true
-      },
-      field: "firstName"
+      }
     },
     lastName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true
-      },
-      field: "lastName"
+      }
     },
     email: {
       type: DataTypes.STRING,
@@ -122,7 +120,7 @@ User.init(
     },
     roleId: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: Role,
         key: "id"

@@ -5,6 +5,7 @@ import { config } from "dotenv";
 import { UserAttributes } from "../types/user.types";
 import { passwordEncrypt } from "../utils/encrypt";
 import User from "../models/user";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Role from "../models/Role";
 import { sendVerificationMail } from "../utils/mailer";
 import { userToken } from "../utils/token.generator";
