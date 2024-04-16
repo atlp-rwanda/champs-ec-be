@@ -158,7 +158,7 @@ export const sendResetInstructions = async (
   next: NextFunction
 ) => {
   try {
-    const foundUser = await findUserByEmail(req, res, next);
+    const foundUser = await findUserByEmail(req);
     if (!foundUser) return res.status(404).json({ msg: "User not found" });
     const { firstName, id, email } = foundUser.dataValues;
 
@@ -214,8 +214,7 @@ export const resetUserPassword = async (
     }
 
     const pass = await passwordEncrypt(newPassword);
-    foundUser.password = pass;
-    await foundUser.update(foundUser);
+    await foundUser.update({ password: pass });
 
     return res.status(200).json({ msg: "Password updated succesfully" });
   } catch (err) {
@@ -253,7 +252,6 @@ export const editUser = async (req: any, res: Response) => {
         id: req.user.dataValues.id
       }
     });
-
     let uploadedImage: any;
     if (!req.file) {
       return res.status(400).json({ Error: "profile image is required" });
