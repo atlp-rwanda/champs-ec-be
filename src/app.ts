@@ -11,11 +11,12 @@ import roleRoutes from "./routes/role.routes";
 import passport from "./config/passport.config";
 import { authenticate } from "./middlewares/user.auth";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { isAdmin } from "./middlewares/user.middleware";
 import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";
 import productCategoryRoutes from "./routes/productCategory.routes";
 import cartRouter from "./routes/cart.routes";
+import productWishRoutes from "./routes/wish.routes";
+import { checkRole } from "./middlewares/user.middleware";
 
 dotenv.config();
 
@@ -45,10 +46,11 @@ app.use(
 
 app.get("/", authenticate, Home);
 app.use("/api/users", userRoutes);
-app.use("/api/roles", roleRoutes);
+app.use("/api/roles", authenticate, checkRole(["admin"]), roleRoutes);
 app.use("/api/users/", authRoutes);
 app.use("/api/carts/", cartRouter);
 
 app.use("/api/products", productRoutes);
-app.use("/api/categories", productCategoryRoutes);
+app.use("/api/wishes", authenticate, productWishRoutes);
+app.use("/api/categories", authenticate, productCategoryRoutes);
 export default app;

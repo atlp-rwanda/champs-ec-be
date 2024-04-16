@@ -49,6 +49,7 @@ export const userSignup = async (req: Request, res: Response) => {
         const link: string = `api/users/${token}/verify-email`;
 
         sendVerificationMail(email, link, firstName);
+
         res.status(201).json({
           message: "user is registered, please verify through email"
         });
@@ -124,17 +125,11 @@ export const userLogin = async (req: Request, res: Response) => {
     const { email } = req.body;
     const user: any = await User.findOne({
       where: {
-        email
+        email,
+        verified: true,
+        isActive: true
       }
     });
-
-    if (!user.dataValues.isActive) {
-      const data = {
-        message: "your account is blocked",
-        reason: user.dataValues.reasonForDeactivation
-      };
-      return res.status(401).json(data);
-    }
 
     const verifyPassword = await bcrypt.compare(
       req.body.password,
@@ -371,6 +366,7 @@ async function blacklistToken(req: Request, res: Response, next: NextFunction) {
       .status(200)
       .json({ success: true, message: "logged out successfully" });
   } catch (error) {
+    console.log("===== error", error);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error" });

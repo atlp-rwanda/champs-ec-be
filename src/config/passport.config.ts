@@ -14,12 +14,12 @@ const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {
     const user = await User.findOne({
       where: {
-        email: payload.email
+        email: payload.email,
+        verified: true
       },
       include: [
         {
           model: Role,
-          // as: "roles",
           attributes: ["id", "name"]
         }
       ]

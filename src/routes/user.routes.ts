@@ -21,7 +21,7 @@ import {
   isUserExist,
   isValidUser,
   isValidUserUpdate,
-  isAdmin,
+  checkRole,
   isValidUserLogin,
   isValidPasswordUpdated,
   isUserEmailValid,
@@ -40,8 +40,7 @@ userRoutes.post("/signup", isValidUser, isUserExist, userSignup);
 userRoutes.post("/login", isValidUserLogin, checkIfUserBlocked, userLogin);
 userRoutes.post("/logout", authenticate, blacklistToken);
 userRoutes.get("/profile", authenticate, userProfile);
-userRoutes.get("/", authenticate, isAdmin, getAllUsers);
-
+userRoutes.get("/", authenticate, checkRole(["admin"]), getAllUsers);
 userRoutes.put(
   "/profiles",
   authenticate,
@@ -55,7 +54,7 @@ userRoutes.post("/otp/:token", isDecodeOTP, verifyOtp);
 userRoutes.patch(
   "/:userId/roles",
   authenticate,
-  isAdmin,
+  checkRole(["admin"]),
   isUserExist,
   isRoleIdExist,
   assignRoleToUser
@@ -68,12 +67,12 @@ userRoutes.patch(
   updateUserPassword
 );
 
-userRoutes.get("/:userId", authenticate, isAdmin, getSingleUser);
+userRoutes.get("/:userId", authenticate, checkRole(["admin"]), getSingleUser);
 
 userRoutes.patch(
   "/:userId/status",
   authenticate,
-  isAdmin,
+  checkRole(["admin"]),
   accountStatusValidation,
   changeAccountStatus
 );

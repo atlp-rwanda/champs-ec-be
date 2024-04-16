@@ -10,49 +10,43 @@ import {
   isCategoryNameExist,
   isExistProductCategory
 } from "../middlewares/productCategory.middlewares";
-import { isAdmin, isAdminOrSeller } from "../middlewares/user.middleware";
+import { checkRole } from "../middlewares/user.middleware";
 import {
   isValidCategoryInsert,
   isValidCategoryUpdate
 } from "../validations/productCategories.validations";
-import { authenticate } from "../middlewares/user.auth";
 
 const productCategoryRoutes = express.Router();
 
 productCategoryRoutes.post(
   "/",
-  authenticate,
   isValidCategoryInsert,
   isCategoryNameExist,
-  isAdmin,
+  checkRole(["admin"]),
   createProductCategory
 );
 productCategoryRoutes.get(
   "/",
-  authenticate,
-  isAdminOrSeller,
+  checkRole(["admin", "seller"]),
   getProductCategory
 );
 productCategoryRoutes.get(
   "/:catId",
-  authenticate,
-  isAdminOrSeller,
+  checkRole(["admin", "seller"]),
   isExistProductCategory,
   singleProductCategory
 );
 productCategoryRoutes.patch(
   "/:catId",
-  authenticate,
   isValidCategoryUpdate,
-  isAdmin,
+  checkRole(["admin", "seller"]),
   isExistProductCategory,
   isCategoryNameExist,
   updateProductCategory
 );
 productCategoryRoutes.delete(
   "/:catId",
-  authenticate,
-  isAdmin,
+  checkRole(["admin", "seller"]),
   isExistProductCategory,
   deleteProductCategory
 );

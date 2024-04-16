@@ -66,6 +66,7 @@ before(async function () {
         firstName: "Ernest",
         lastName: "Tchami",
         password: await passwordEncrypt("Test@12345"),
+        verified: true,
         email: "usertest@gmail.com",
         roleId: "8736b050-1117-4614-a599-005dd76ff331"
       });
@@ -84,23 +85,36 @@ before(async function () {
         lastName: "User",
         password: await passwordEncrypt("Seller1234@"),
         email: "anotheruser1@gmail.com",
+        verified: true,
         roleId: "8736b050-1117-4614-a599-005dd76ff333"
       });
       const user4 = await User.create({
         firstName: "Another",
         lastName: "User",
         password: await passwordEncrypt("Another@123"),
+        verified: true,
         email: "anotheruser3@gmail.com",
         roleId: "8736b050-1117-4614-a599-005dd76ff333"
       });
+
       const user5 = await User.create({
-        firstName: "Another",
+        firstName: "Another2",
         lastName: "User",
         password: await passwordEncrypt("Another@123"),
         email: "anotheruser5@gmail.com",
         roleId: "8736b050-1117-4614-a599-005dd76ff333"
       });
-      return [user1, user2, user3, user4, user5];
+
+      const user6 = await User.create({
+        firstName: "Another2",
+        lastName: "User",
+        password: await passwordEncrypt("Another@123"),
+        email: "userbuyer@gmail.com",
+        verified: true,
+        roleId: "8736b050-1117-4614-a599-005dd76ff332"
+      });
+
+      return [user1, user2, user3, user4, user5, user6];
     } catch (error) {
       return error;
     }
@@ -197,15 +211,11 @@ describe("user Signin controller and passport", () => {
       .request(app)
       .post("/api/users/login")
       .send({
-        password: "Test@12345",
-        email: "emailfortest3@gmail.com"
+        password: "Another@123",
+        email: "userbuyer@gmail.com"
       })
       .end((err, res) => {
         buyerTKN = res.body.token;
-        console.log(
-          "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
-          buyerTKN
-        );
         expect(err).to.be.null;
         expect(res).to.have.status(200);
         done();
@@ -803,12 +813,12 @@ describe("user Signin controller and passport", () => {
       )
       .field("expireDate", "2025-12-12")
       .end((err, res) => {
-        expect(res.body.error).to.equal("Unauthorized, user is not an seller");
+        expect(res.body.error).to.equal("Unauthorized, for this user type");
         expect(res).to.have.status(403);
         done();
       });
   }).timeout(70000);
-  it("create product item sucessful in seller collection", (done) => {
+  it("create product item successful in seller collection", (done) => {
     chai
       .request(app)
       .post("/api/products")
@@ -1142,7 +1152,7 @@ describe("user Signin controller and passport", () => {
       .field("productName", "Test product")
       .field("stockLevel", "100")
       .end((err, res) => {
-        expect(res.body.message).to.equal("product item is updated sucessful");
+        expect(res.body.message).to.equal("product item is updated successful");
         expect(res).to.have.status(200);
         done();
       });
@@ -1282,6 +1292,83 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
+  // start test wishlists =======================================================
+  it("should get empty product wishes", (done) => {
+    chai
+      .request(app)
+      .get(`/api/wishes/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it("should create add product to wishes", (done) => {
+    chai
+      .request(app)
+      .post(`/api/wishes/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it("should get product wishes", (done) => {
+    chai
+      .request(app)
+      .get(`/api/wishes/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it("should get users wishes/ wishlist", (done) => {
+    chai
+      .request(app)
+      .get(`/api/wishes/`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("should flush user wishlist", (done) => {
+    chai
+      .request(app)
+      .get(`/api/wishes/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it("should create add product 2 to wishes", (done) => {
+    chai
+      .request(app)
+      .post(`/api/wishes/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it("should create remove product 2 to wishes", (done) => {
+    chai
+      .request(app)
+      .post(`/api/wishes/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  // end test wishlists  ========================================================
   it("Seller crud operation want to delete product ", (done) => {
     chai
       .request(app)
@@ -1356,32 +1443,7 @@ describe("Test user should be able to update their password", () => {
         done();
       });
   });
-  it("update password failed because of user is not verified", (done) => {
-    const rightData = {
-      oldPassword: "Test@12345",
-      newPassword: "String23@oi",
-      confirmPassword: "String23@oi"
-    };
-    chai
-      .request(app)
-      .post("/api/users/login")
-      .send({
-        email: "usertest@gmail.com",
-        password: "Test@12345"
-      })
-      .end((err, res) => {
-        chai
-          .request(app)
-          .patch(`/api/users/passwordUpdate`)
-          .set("Authorization", res.body.token)
-          .send(rightData)
-          .end((err, res) => {
-            expect(err).to.be.null;
-            expect(res).to.have.status(400);
-            done();
-          });
-      });
-  });
+
   it("should return password sucessfully updated", (done) => {
     const rightData = {
       oldPassword: "Another@123",

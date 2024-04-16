@@ -39,6 +39,10 @@
     {
       "name": "Carts",
       "description": "API endpoints for access the user cart"
+    },
+    {
+      "name": "Wishes",
+      "description": "API endpoints for creating and managing wishlist"
     }
   ],
   "paths": {
@@ -308,7 +312,6 @@
         },
         "security": [{ "Bearer": [] }]
       }
-      
     },
 
     "/api/users/google": {
@@ -442,7 +445,7 @@
         "security": [{ "Bearer": [] }]
       }
     },
-   
+
     "/api/roles": {
       "post": {
         "summary": "Create Role",
@@ -1197,6 +1200,77 @@
         },
         "security": [{ "Bearer": [] }]
       }
+    },
+    "/api/wishes/{productId}": {
+      "post": {
+        "tags": ["Wishes"],
+        "summary": "Add/remove product to wish",
+        "description": "A buyer add and remove product in wish, adding/remove product into wishlist",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "ID of the product",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "product saved into wishes successfully" }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "get": {
+        "tags": ["Wishes"],
+        "summary": "Get product wishes.",
+        "description": "A seller or admin can see wishes on product",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "ID of the product",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product wishes"
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/wishes/": {
+      "get": {
+        "tags": ["Wishes"],
+        "summary": "Get wishlist",
+        "description": "A buyer can see products in wish, exploring or visiting wishlist",
+        "responses": {
+          "200": {
+            "description": "Buyer Wishes/wishlist"
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "delete": {
+        "tags": ["Wishes"],
+        "summary": "flush/clear wishlist.",
+        "description": "A buyer can clear his wishlist at once to remove all products in wish",
+        "responses": {
+          "200": {
+            "description": "Wish list cleared successfully"
+          },
+          "404": {
+            "description": "not found"
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
     }
   },
   "components": {
@@ -1303,6 +1377,20 @@
                 }
               }
             }
+          }
+        }
+      },
+      "Wish": {
+        "type": "object",
+        "required": ["Product Id"],
+        "properties": {
+          "productId": {
+            "type": "string",
+            "description": "Product id"
+          },
+          "userId": {
+            "type": "string",
+            "description": "User id"
           }
         }
       }
