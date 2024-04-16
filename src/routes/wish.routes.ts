@@ -2,14 +2,14 @@ import { Router } from "express";
 import {
   createRemoveWish,
   flushUserWishes,
-  getProductWishes,
   getUserWishes
 } from "../controllers/wish.controller";
+import { checkRole } from "../middlewares/user.middleware";
 
 const productWishRoutes = Router();
-productWishRoutes.route("/").get(getUserWishes).delete(flushUserWishes);
 productWishRoutes
-  .route("/:product_id")
-  .post(createRemoveWish)
-  .get(getProductWishes);
+  .route("/")
+  .post(checkRole(["buyer"]), createRemoveWish)
+  .get(checkRole(["buyer", "seller"]), getUserWishes)
+  .delete(checkRole(["buyer"]), flushUserWishes);
 export default productWishRoutes;

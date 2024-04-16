@@ -14,7 +14,7 @@ import {
 
 import multerImage from "../utils/uploader";
 
-import { isAdmin, checkRole } from "../middlewares/user.middleware";
+import { checkRole } from "../middlewares/user.middleware";
 import { isExistProductCategory } from "../middlewares/productCategory.middlewares";
 import {
   isValidItem,
@@ -55,10 +55,7 @@ productRoutes.get(
   checkRoles(["seller", "admin", "buyer"]),
   getAllSellerProducts
 );
-// productRoutes.get(
-//   "/:productId",
-//   authenticate,
-//   checkRole(["seller"]),
+
 productRoutes.get(
   "/:productId",
   isAnonymous,
@@ -66,6 +63,7 @@ productRoutes.get(
   isExistSellerProduct,
   getSingleProduct
 );
+
 productRoutes.get(
   "/",
   isAnonymous,
@@ -73,12 +71,6 @@ productRoutes.get(
   getAllSellerProducts
 );
 
-// productRoutes.get(
-//   "/:productId",
-//   authenticate,
-//   isExistSellerProduct,
-//   getSingleProduct
-// );
 productRoutes.patch(
   "/:productId",
   authenticate,
@@ -129,7 +121,7 @@ productRoutes.delete(
 productRoutes.post(
   "/check-expiration",
   authenticate,
-  isAdmin,
+  checkRole(["admin"]),
   productExpirationChecker
 );
 productRoutes.patch(

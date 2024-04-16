@@ -13,7 +13,7 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
     async (error: any, user: any) => {
       const tokenHeader = req.headers.authorization?.split(" ")[1];
       if (!tokenHeader) {
-        return res.status(401).json({ error: "you are not logged in" });
+        return res.status(401).json({ error: "you are not loggged in" });
       }
       if (error) {
         return res.status(500).json({ error: error.message });
