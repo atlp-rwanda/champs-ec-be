@@ -14,8 +14,8 @@ const productSchema = z
     stockLevel: z
       .string({ required_error: "the stock level is required" })
       .regex(
-        /[0-9-A-Za-z]$/,
-        "use numbers and characters for stock level ex: 100 kg"
+        /^\d+\s+[A-Za-z]+$/,
+        "use numbers space and characters for stock level ex: 100 kg"
       ),
 
     productCategory: z
@@ -72,8 +72,8 @@ const productUpdateSchema = z
     stockLevel: z
       .string()
       .regex(
-        /[0-9-A-Za-z]$/,
-        " numbers and characters only for the item category"
+        /^\d+\s+[A-Za-z]+$/,
+        " use numbers space and characters for stock level ex: 100 kg"
       )
       .optional()
       .or(z.literal("")),
@@ -106,7 +106,7 @@ const productUpdateSchema = z
     expireDate: z.coerce
       .date()
       .refine((data) => data > new Date(), {
-        message: `The expire date must be future date}`
+        message: `The expire date must be future date`
       })
       .optional()
       .or(z.literal(""))

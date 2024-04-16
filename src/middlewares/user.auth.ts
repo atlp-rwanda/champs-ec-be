@@ -12,12 +12,14 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
     { session: false },
     async (error: any, user: any) => {
       const tokenHeader = req.headers.authorization?.split(" ")[1];
+      if (!tokenHeader) {
+        return res.status(401).json({ error: "you are not loged in" });
+      }
       if (error) {
         return res.status(500).json({ error: error.message });
       }
 
-      let blacklistedToken;
-      blacklistedToken = await BlacklistedToken.findOne({
+      const blacklistedToken = await BlacklistedToken.findOne({
         where: { token: tokenHeader }
       });
       if (!user || blacklistedToken) {

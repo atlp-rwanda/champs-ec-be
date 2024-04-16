@@ -48,12 +48,12 @@ const updateSchema = z.object({
     .max(70, "No more than 50 character for preffedLanguage"),
   whereYouLive: z
     .string({ required_error: "Where you live  is required" })
-    .min(5, "Use atleast 3 character for whereYouLive")
+    .min(3, "Use atleast 3 character for whereYouLive")
     .max(70, "No more than 50 character for whereYouLive"),
   preferredCurrency: z
     .string({ required_error: "PreffedCurrency is required" })
-    .min(5, "Use atleast 3 character for preffedCurrency")
-    .max(70, "No more than 50 character for preffedCurrency"),
+    .min(2, "Use atleast 2 character for preffedCurrency")
+    .max(10, "No more than 10 character for preffedCurrency"),
   billingAddress: z
     .string({ required_error: "Your Address  is required" })
     .min(5, "Use atleast 3 character for billingAddress")

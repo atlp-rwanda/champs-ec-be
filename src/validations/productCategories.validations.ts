@@ -7,7 +7,7 @@ const productCategorySchema = z
       .string({ required_error: "the product category is required" })
       .min(3, "Use atleast 3 characters for category name")
       .max(50, "Don't exceed 50 characters category name ")
-      .regex(/^[a-zA-Z ]+$/, "use onyl characters for category name")
+      .regex(/^[a-zA-Z ]+$/, "use only characters for category name")
   })
   .strict();
 
@@ -17,7 +17,7 @@ const productCategoryUpdateSchema = z
       .string()
       .min(3, "Use atleast 3 characters for category name")
       .max(50, "Don't exceed 50 characters category name ")
-      .regex(/^[a-zA-Z ]+$/, "use onyl characters for category name")
+      .regex(/^[a-zA-Z ]+$/, "use only characters for category name")
       .optional()
       .or(z.literal(""))
   })

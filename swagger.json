@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8000",
+      "url": "http://localhost:5500",
       "description": "Development server"
     },
     {
@@ -112,38 +112,38 @@
         }
       }
     },
-    "/api/users/logout": {
+    "/api/users/otp/{token}": {
       "post": {
-        "summary": "Logout",
         "tags": ["Authentication"],
-        "responses": {
-          "200": {
-            "description": "user logout",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                  }
+        "summary": "Verify OTP for the seller",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "OTP Token",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "otp": { "type": "string" }
                 }
               }
             }
-          },
-          "400":{
-            "description":"Token is required"
-          },
-          "500":{
-            "description":"internal server error"
           }
-          
         },
-         
-        "security": [{ "Bearer": [] }]
-
-      
+        "responses": {
+          "200": { "description": "Login Successful" },
+          "401": { "description": "Wrong OTP entered" },
+          "404": { "description": "Invalid token" }
+        }
       }
     },
-   
     "/api/users/reset-password": {
       "post": {
         "summary": "User Reset Password",
@@ -182,12 +182,12 @@
         "tags": ["Authentication"],
         "parameters": [
           {
-              "name": "token",
-              "in": "path",
-              "description": "token",
-              "schema": {
-                  "type": "string"
-              }
+            "name": "token",
+            "in": "path",
+            "description": "token",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -237,280 +237,6 @@
       }
     },
 
-    "/api/users/profiles": {
-      "put": {
-        "summary": "Edit Profile",
-        "tags": ["User profile page"],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "firstName": {"type": "string"},
-                  "lastName": {"type": "string"},
-                  "phone": {"type": "string"},
-                  "birthDate": {"type": "string", "format": "date"},
-                  "preferredLanguage": {"type": "string"},
-                  "preferredCurrency": {"type": "string"},
-                  "whereYouLive": {"type": "string"},
-                  "billingAddress": {"type": "string"},
-                  "profileImage": {"type": "string", "format": "binary"}
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {"description": "Updated profile page"},
-          "400": {"description": "Fail to update"}
-        },
-        "security": [{"Bearer": []}]
-      }
-    },
-    "/api/users/otp": {
-      "post": {
-        "tags": ["Two factor OTP"],
-        "summary": "Send OTP request",
-        "security": [{"Bearer": []}],
-        "responses": {
-          "201": {"description": "Verification code sent successfully"}
-        }
-      }
-    },
-    "/api/users/otp/{token}": {
-      "post": {
-        "tags": ["Authentication"],
-        "summary": "Verify OTP for the seller",
-        "parameters": [
-          {
-            "name": "token",
-            "in": "path",
-            "description": "OTP Token",
-            "schema": { "type": "string" }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "otp": { "type": "string" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": { "description": "Login Successful" },
-          "401": { "description": "Wrong OTP entered" },
-          "404": { "description": "Invalid token" }
-        }
-      },
-      "/api/roles": {
-        "post": {
-          "summary": "Create Role",
-          "description": "Create a new role",
-          "tags": ["Roles"],
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["name"]
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "201": {
-              "description": "Role created successfully"
-            }
-          },
-          "security": [
-            {
-              "Bearer": []
-            }
-          ]
-        },
-        "get": {
-          "summary": "Get All Roles",
-          "description": "Get a list of all roles",
-          "tags": ["Roles"],
-          "responses": {
-            "200": {
-              "description": "List of all roles"
-            }
-          },
-          "security": [
-            {
-              "Bearer": []
-            }
-          ]
-        }
-      },
-      "/api/roles/{id}": {
-        "get": {
-          "summary": "Get Role by ID",
-          "description": "Get a role by its ID",
-          "tags": ["Roles"],
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "description": "ID of the role",
-              "required": true,
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Role found"
-            },
-            "404": {
-              "description": "Role not found"
-            }
-          },
-          "security": [
-            {
-              "Bearer": []
-            }
-          ]
-        },
-        "put": {
-          "summary": "Update Role",
-          "description": "Update a role by its ID",
-          "tags": ["Roles"],
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "description": "ID of the role",
-              "required": true,
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Role updated successfully"
-            },
-            "404": {
-              "description": "Role not found"
-            }
-          },
-          "security": [
-            {
-              "Bearer": []
-            }
-          ]
-        },
-        "delete": {
-          "summary": "Delete Role",
-          "description": "Delete a role by its ID",
-          "tags": ["Roles"],
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "description": "ID of the role",
-              "required": true,
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Role deleted successfully"
-            },
-            "404": {
-              "description": "Role not found"
-            }
-          },
-          "security": [
-            {
-              "Bearer": []
-            }
-          ]
-        }
-      },
-      "/api/users/{userId}/roles": {
-        "post": {
-          "summary": "Assign Role to User",
-          "description": "Assign a role to a specific user",
-          "tags": ["AssignRole"],
-          "parameters": [
-            {
-              "name": "userId",
-              "in": "path",
-              "description": "ID of the user",
-              "required": true,
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "roleId": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Role assigned to user successfully"
-            },
-            "404": {
-              "description": "User or Role not found"
-            },
-            "500": {
-              "description": "Internal server error"
-            }
-          },
-          "security": [
-            {
-              "Bearer": []
-            }
-          ]
-        }
-      }
-    },
     "/api/users/google": {
       "get": {
         "summary": "Google Login",
@@ -521,12 +247,39 @@
             "description": "Redirect to Google Login",
             "headers": {
               "Location": {
-                "schema": {"type": "string"},
+                "schema": { "type": "string" },
                 "description": "https://champs-ec-be.onrender.com/api/users/google"
               }
             }
           }
         }
+      }
+    },
+    "/api/users/logout": {
+      "post": {
+        "summary": "Logout",
+        "tags": ["Authentication"],
+        "responses": {
+          "200": {
+            "description": "user logout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Token is required"
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        },
+
+        "security": [{ "Bearer": [] }]
       }
     },
     "/api/users/profile": {
@@ -546,7 +299,38 @@
         "security": [{ "Bearer": [] }]
       }
     },
-    "/api/users/passwordUpdate":{
+    "/api/users/profiles": {
+      "put": {
+        "summary": "Edit Profile",
+        "tags": ["User profile page"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": { "type": "string" },
+                  "lastName": { "type": "string" },
+                  "phone": { "type": "string" },
+                  "birthDate": { "type": "string", "format": "date" },
+                  "preferredLanguage": { "type": "string" },
+                  "preferredCurrency": { "type": "string" },
+                  "whereYouLive": { "type": "string" },
+                  "billingAddress": { "type": "string" },
+                  "profileImage": { "type": "string", "format": "binary" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Updated profile page" },
+          "400": { "description": "Fail to update" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/users/passwordUpdate": {
       "patch": {
         "summary": "Updating user's password",
         "description": "Allowing user's to update their password",
@@ -577,13 +361,14 @@
           "201": {
             "description": "Password updated successfully"
           },
-          "400":{
+          "400": {
             "description": "Bad request"
           }
         },
         "security": [{ "Bearer": [] }]
       }
     },
+
     "/api/roles": {
       "post": {
         "summary": "Create Role",
@@ -1277,6 +1062,16 @@
           }
         }
       },
+      "Role": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Role's name"
+          }
+        }
+      },
       "SellerProduct": {
         "type": "object",
         "properties": {
@@ -1298,7 +1093,6 @@
           },
           "productCurrency": {
             "type": "string",
-            "format": "password",
             "description": "the product curreny unit"
           },
           "productDescription": {
