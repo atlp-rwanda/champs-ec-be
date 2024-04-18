@@ -91,3 +91,24 @@ export const sendResetMail = (email: string, link: string, name: string) => {
   };
   sendMail(options);
 };
+
+export const sendNotificationInactiveAccount = (
+  mail: string,
+  name: string,
+  message: string
+) => {
+  const options = {
+    ...mailOptions,
+    to: mail,
+    subject: "User account status notification",
+    html: `
+  
+    ${message}
+   
+    <br/><br/>
+    Regards,
+      Champs Bay
+    `
+  };
+  sendMail(options);
+};

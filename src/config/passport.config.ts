@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import { config } from "dotenv";
 import User from "../models/user";
+import Role from "../models/Role";
 
 config();
 
@@ -15,7 +16,13 @@ const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
       where: {
         email: payload.email
       },
-      attributes: { exclude: ["password"] }
+      include: [
+        {
+          model: Role,
+          // as: "roles",
+          attributes: ["id", "name"]
+        }
+      ]
     });
     if (!user) {
       return done(null, false);

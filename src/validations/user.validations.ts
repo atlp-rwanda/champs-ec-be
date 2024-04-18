@@ -1,4 +1,6 @@
+import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
+import { isValidUUID } from "../utils/uuid";
 
 const passwordStrength =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&^])[A-Za-z\d@.#$!%*?&]{8,15}$/;
@@ -94,9 +96,56 @@ const userUpdatePassValidation = z
       )
   })
   .strict();
+
+const accountSChema = z
+  .object({
+    status: z.enum(["activate", "deactivate"]),
+    message: z
+      .string()
+      .min(
+        10,
+        "Please provive a clear message why you deactivated this user account with atleast 10 minimum characters "
+      )
+      .optional()
+      .or(z.literal(""))
+  })
+  .strict();
+
+const accountStatusValidation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const result = accountSChema.parse(req.body);
+    if (result) {
+      const isValidId: boolean = isValidUUID(req.params.userId);
+      if (!isValidId) {
+        return res.status(403).json({
+          error: "invalid user Id, please try again"
+        });
+      }
+      if (result.status === "deactivate" && !result.message) {
+        return res.status(400).json({
+          err: "Message field is required. please provide a clear message why you are deactivating this account "
+        });
+      }
+      if (result.status === "activate" && result.message) {
+        return res.status(400).json({
+          err: "Message field is not required to activate user"
+        });
+      }
+      next();
+    }
+  } catch (error: any) {
+    return res.status(400).json({ err: error.errors[0].message });
+  }
+};
+
 export {
   userSchema,
   updateSchema,
   userLoginValidation,
-  userUpdatePassValidation
+  userUpdatePassValidation,
+  accountStatusValidation
 };

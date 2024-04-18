@@ -13,11 +13,7 @@ const productSchema = z
       ),
     stockLevel: z
       .string({ required_error: "the stock level is required" })
-      .regex(
-        /^\d+\s+[A-Za-z]+$/,
-        "use numbers space and characters for stock level ex: 100 kg"
-      ),
-
+      .regex(/[0-9]$/, "use numbers for the product stock level"),
     productCategory: z
       .string({ required_error: "the item category is required" })
       .uuid("invalid product category id ")
@@ -71,10 +67,7 @@ const productUpdateSchema = z
       .or(z.literal("")),
     stockLevel: z
       .string()
-      .regex(
-        /^\d+\s+[A-Za-z]+$/,
-        " use numbers space and characters for stock level ex: 100 kg"
-      )
+      .regex(/[0-9]$/, "use numbers for the product stock level")
       .optional()
       .or(z.literal("")),
     productPrice: z

@@ -240,6 +240,76 @@
         ]
       }
     },
+    "/api/users/{userId}": {
+      "get": {
+        "summary": "admin get single Users",
+        "description": "get a single user information",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "user Id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "user information"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+
+    "/api/users/{userId}/status": {
+      "patch": {
+        "summary": "Activate/Deactivate user account",
+        "description": "admin should able to deactivate user account for various reason",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "user Id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string" },
+                  "message": { "type": "string" }
+                },
+                "required": ["status"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "User account deactiavted/reactivated" },
+          "401": { "description": "Invalid credentials" },
+          "404": { "description": "user not found" },
+          "500": { "description": "internal server error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+      
+    },
 
     "/api/users/google": {
       "get": {
@@ -372,7 +442,7 @@
         "security": [{ "Bearer": [] }]
       }
     },
-
+   
     "/api/roles": {
       "post": {
         "summary": "Create Role",
