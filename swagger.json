@@ -35,6 +35,10 @@
     {
       "name": "AssignRole",
       "description": "API endpoints for assigning roles to users"
+    },
+    {
+      "name": "Carts",
+      "description": "API endpoints for access the user cart"
     }
   ],
   "paths": {
@@ -211,7 +215,7 @@
         },
         "responses": {
           "200": {
-            "description": "Password updated succesfully"
+            "description": "Password updated succesffully"
           },
           "400": {
             "description": "Passwords don't match"
@@ -1040,6 +1044,89 @@
         },
         "security": [{ "Bearer": [] }]
       }
+    },
+    "/api/carts": {
+      "post": {
+        "tags": ["Carts"],
+        "summary": "get the cart for the single user",
+        "description": "Creat the new cart for the user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "productId": {
+                      "type": "string"
+                    },
+                    "Quantity": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "required": ["productId", "Quantity"]
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "201": { "description": "Cart is created" },
+          "404": {
+            "description": "if there is error happen  "
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "put": {
+        "tags": ["Carts"],
+        "summary": "Update the cart for the single user",
+        "description": "Update the  user Cart",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "productId": {
+                      "type": "string"
+                    },
+                    "Quantity": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "required": ["productId", "Quantity"]
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "201": { "description": "Cart is created" },
+          "404": {
+            "description": "if there is error happen  "
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "get": {
+        "tags": ["Carts"],
+        "summary": "Update the cart for the single user",
+        "description": "Update the  user Cart",
+
+        "responses": {
+          "200": { "description": "user Cart" },
+          "404": {
+            "description": "if there is error happen  "
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
     }
   },
   "components": {
@@ -1093,7 +1180,7 @@
           },
           "productCurrency": {
             "type": "string",
-            "description": "the product curreny unit"
+            "description": "the product currency unit"
           },
           "productDescription": {
             "type": "string",
@@ -1119,6 +1206,33 @@
           "categoryName": {
             "type": "string",
             "description": "product item category"
+          }
+        }
+      },
+      "Cart": {
+        "type": "object",
+        "required": ["userId", "product"],
+        "properties": {
+          "userId": {
+            "type": "string",
+            "descption": "this come from the user who are logged in "
+          },
+          "product": {
+            "type": "array",
+            "description": "add different product object which contain product and also the quantity",
+            "items": {
+              "type": "object",
+              "properties": {
+                "productId": {
+                  "type": "string",
+                  "description": "the ID of the product."
+                },
+                "Quantity": {
+                  "type": "integer",
+                  "description": "the Quantity of the product you need to add to your cart"
+                }
+              }
+            }
           }
         }
       }

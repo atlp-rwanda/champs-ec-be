@@ -21,7 +21,7 @@ module.exports = {
           firstName: "Emmanuel-user",
           googleId: "tttttttttttt",
           lastName: "munezero",
-          email: "test1@gmail.com",
+          email: "test1ssd@gmail.com",
           password:
             "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           phone: "+250786534332",
@@ -40,7 +40,7 @@ module.exports = {
           firstName: "Prince-admin",
           lastName: "Rwigimba",
           googleId: "tttttttttttt",
-          email: "princerwigimba@gmail.com",
+          email: "princerwigimbdsdsa@gmail.com",
           password:
             "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           phone: "+250784948614",
@@ -59,7 +59,7 @@ module.exports = {
           firstName: "Emmanuel-seller",
           googleId: "tttttttttttt",
           lastName: "munezero",
-          email: "tes2t3@gmail.com",
+          email: "tes2t322@gmail.com",
           password:
             "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           phone: "+250786534332",
@@ -77,7 +77,7 @@ module.exports = {
           id: uuidv4(),
           firstName: "Emmanuel-buyer",
           lastName: "munezero",
-          email: "test5@gmail.com",
+          email: "testsasas5@gmail.com",
           password:
             "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           googleId: "tttttttttttt",
@@ -96,7 +96,7 @@ module.exports = {
           id: uuidv4(),
           firstName: "Emmanuel",
           lastName: "munezero",
-          email: "testwde2@gmail.com",
+          email: "testwde2asasasds@gmail.com",
           password:
             "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           phone: "+250786534332",

@@ -14,7 +14,8 @@ const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
     const user = await User.findOne({
       where: {
         email: payload.email
-      }
+      },
+      attributes: { exclude: ["password"] }
     });
     if (!user) {
       return done(null, false);
