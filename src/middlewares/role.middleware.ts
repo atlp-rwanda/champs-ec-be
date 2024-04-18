@@ -61,3 +61,23 @@ export const isRoleNameExist = async (
     res.status(404).json(error);
   }
 };
+
+export const checkRoles =
+  (roles: string[]) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (req.user) {
+        const { user }: any = req;
+        const role = await Role.findByPk(user.dataValues.roleId);
+
+        if (!role) {
+          return res.status(404).json({ error: "Role not found" });
+        }
+      } else {
+        req.user = "anonymous";
+      }
+      next();
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  };

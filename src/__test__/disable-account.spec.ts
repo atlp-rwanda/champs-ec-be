@@ -2,6 +2,7 @@ import { describe, it } from "mocha";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { config } from "dotenv";
+import { error } from "console";
 import app from "../app";
 
 config();

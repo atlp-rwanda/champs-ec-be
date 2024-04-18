@@ -31,7 +31,7 @@ describe("Two factor authentication with Email", () => {
         );
         done();
       });
-  });
+  }).timeout(5000);
   it("should input OTP", (done) => {
     chai
       .request(app)

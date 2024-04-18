@@ -142,6 +142,7 @@ export const userLogin = async (req: Request, res: Response) => {
 
     await isCheckSeller(user, req, res);
   } catch (err) {
+    console.log("ERROR", err);
     res
       .status(500)
       .json({ error: "There is an error in login please try again" });
@@ -350,7 +351,6 @@ export const blacklistToken = async (
   next: NextFunction
 ) => {
   const tokenHeader = req.headers.authorization?.split(" ")[1];
-
   if (!tokenHeader) {
     return res
       .status(400)
@@ -359,18 +359,11 @@ export const blacklistToken = async (
 
   try {
     const token = tokenHeader; // Parse token from header
-    req.logout(function (err) {
-      if (err) {
-        return next(err);
-      }
-      // res.redirect('/');
-    });
     await BlacklistedToken.create({ token });
     return res
       .status(200)
       .json({ success: true, message: "logged out successfully" });
   } catch (error) {
-    console.log("===== error", error);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error" });

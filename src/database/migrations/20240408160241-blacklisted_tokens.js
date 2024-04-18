@@ -6,10 +6,10 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("blacklisted_tokens", {
       id: {
-        type: DataTypes.UUID,
         allowNull: false,
         primaryKey: true,
-        defaultValue: DataTypes.UUIDV4
+        defaultValue: DataTypes.UUIDV4,
+        type: Sequelize.UUID
       },
       token: {
         type: Sequelize.STRING

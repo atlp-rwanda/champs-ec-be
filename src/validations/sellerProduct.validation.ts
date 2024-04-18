@@ -105,6 +105,9 @@ const productUpdateSchema = z
       .or(z.literal(""))
   })
   .strict();
+const isAvailable = z.boolean({
+  invalid_type_error: "isAvailable must be a boolean"
+});
 
 export const isValidItem = (
   req: Request,
@@ -133,6 +136,23 @@ export const isValidUpdate = (
     if (result) {
       next();
     }
+  } catch (error: any) {
+    return res.status(400).json({ error: error.errors[0].message });
+  }
+};
+
+export const isValidStatus = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { isAvailable } = req.body;
+    if (typeof isAvailable === "boolean") {
+      return next();
+    }
+
+    return res.status(400).json({ error: "isAvailable must be a boolean" });
   } catch (error: any) {
     return res.status(400).json({ error: error.errors[0].message });
   }

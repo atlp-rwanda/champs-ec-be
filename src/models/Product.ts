@@ -31,6 +31,8 @@ class Product
 
   public productThumbnail!: string;
 
+  public productStatus!: boolean;
+
   public expireDate!: Date;
 
   public createdAt!: Date;
@@ -86,6 +88,11 @@ Product.init(
       validate: {
         notEmpty: true
       }
+    },
+    isAvailable: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false
     },
     productCurrency: {
       type: DataTypes.STRING,

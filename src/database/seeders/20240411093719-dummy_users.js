@@ -9,9 +9,9 @@ module.exports = {
       queryInterface.rawSelect("roles", { where: { name: "buyer" } }, ["id"])
     ]);
 
-    if (!adminRole || !sellerRole || !buyerRole) {
+    if (!adminRole || !buyerRole || !sellerRole) {
       throw new Error(
-        "Roles 'admin' and/or 'buyer/seller' not found in Role table."
+        "Roles ,'admin' or  'buyer' or 'seller' not found in Role table."
       );
     }
     await queryInterface.bulkInsert(
@@ -57,13 +57,13 @@ module.exports = {
         },
         {
           id: uuidv4(),
-          firstName: "Emmanuel-seller",
+          firstName: "janet",
           googleId: "tttttttttttt",
-          lastName: "munezero",
-          email: "princerwigimba07@gmail.com",
+          lastName: "barbie",
+          email: "uwimanajanet563@gmail.com",
           password:
-            "$2b$12$b87PcckZ2LrQYa.7epI6RulBbXx1yAq7R5xDnh7lb8uD6LKkIPmey",
-          phone: "+250786534332",
+            "$2b$12$pbHJg2PczT/OB3NVEOTVT.d9cIZxTGY9FrIz4RjyqJcqVAZCCIjqe",
+          phone: "+250783727445",
           birthDate: new Date(),
           preferredLanguage: "kinyarwanda",
           preferredCurrency: "$",
@@ -107,7 +107,7 @@ module.exports = {
           whereYouLive: "kigali street KN 250 st",
           billingAddress: "kigali street KN 250 st",
           profileImage: "test.png",
-          roleId: buyerRole,
+          roleId: sellerRole,
           createdAt: new Date(),
           updatedAt: new Date()
         }
