@@ -33,6 +33,33 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
     }
   )(req, res, next);
 };
+const isAnonymous = (req: Request, res: Response, next: NextFunction) => {
+  passport.authenticate(
+    "jwt",
+    { session: false },
+    async (error: any, user: any) => {
+      const tokenHeader = req.headers.authorization?.split(" ")[1];
+      if (!tokenHeader) {
+        (req as any).isLoggedin = false;
+        return next();
+      }
+
+      const blacklistedToken = await BlacklistedToken.findOne({
+        where: { token: tokenHeader }
+      });
+      if (!user || blacklistedToken) {
+        (req as any).isLoggedin = false;
+        return next();
+      }
+
+      (req as any).isLoggedin = true;
+      const loggedUser: User = user;
+      req.user = loggedUser;
+
+      return next();
+    }
+  )(req, res, next);
+};
 
 const isCheckSeller = async (user: UserData, req: Request, res: Response) => {
   const userRoleId = await user.dataValues.roleId;
@@ -49,5 +76,4 @@ const isCheckSeller = async (user: UserData, req: Request, res: Response) => {
     });
   }
 };
-
-export { authenticate, isCheckSeller };
+export { authenticate, isCheckSeller, isAnonymous };

@@ -64,3 +64,21 @@ export const isCategoryNameExist = async (
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const getCategoryIdByName = async (
+  categoryName: string
+): Promise<string | null> => {
+  try {
+    const category = await ProductCategory.findOne({
+      where: { categoryName }
+    });
+
+    if (category) {
+      return category.dataValues.id as string;
+    }
+    return null; // Category not found
+  } catch (error) {
+    console.error("Error fetching category ID:", error);
+    return null;
+  }
+};
