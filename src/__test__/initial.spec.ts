@@ -379,6 +379,8 @@ describe("user Signin controller and passport", () => {
       .set("Authorization", headerToken)
       .send({ name: "TestRole" })
       .end((err, res) => {
+        console.log(err);
+        console.log("Role created");
         expect(err).to.be.null;
         expect(res).to.have.status(201);
         expect(res.body)
@@ -386,7 +388,6 @@ describe("user Signin controller and passport", () => {
           .equal("Role created successfully");
         expect(res.body).to.have.property("newRole");
         createdRoleId = res.body.newRole.id;
-
         done();
       });
   }).timeout(5000);
