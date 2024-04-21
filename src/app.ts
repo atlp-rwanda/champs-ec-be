@@ -10,6 +10,7 @@ import userRoutes from "./routes/user.routes";
 import roleRoutes from "./routes/role.routes";
 import passport from "./config/passport.config";
 import { authenticate } from "./middlewares/user.auth";
+import chatsRoutes from "./routes/chats.routes";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { isAdmin } from "./middlewares/user.middleware";
 import authRoutes from "./routes/auth.routes";
@@ -49,4 +50,6 @@ app.use("/api/users/", authRoutes);
 
 app.use("/api/products", productRoutes);
 app.use("/api/categories", productCategoryRoutes);
+
+app.use("/api", chatsRoutes);
 export default app;
