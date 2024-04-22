@@ -1,0 +1,36 @@
+version: '3.9'
+services:
+  database:
+    container_name: database
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_DEV_USER}
+      POSTGRES_PASSWORD: ${DB_DEV_PASS}
+      POSTGRES_DB: ${DB_DEV_NAME} 
+      POSTGRES_HOST: ${DB_HOST} 
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ['/bin/bash', './entrypoint.sh']
+    env_file:
+      - .env
+    environment:
+      PGDATABASE: ${DB_DEV_NAME}
+      PGUSER: ${DB_DEV_USER}
+      PGHOST: ${DB_HOST}
+      PGPASSWORD: ${DB_DEV_PASS}
+      EXTERNAL_PORT: ${PORT}
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      - database
+    container_name: champs-api
+volumes:
+  db:
