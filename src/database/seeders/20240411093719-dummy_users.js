@@ -96,7 +96,7 @@ module.exports = {
           id: uuidv4(),
           firstName: "Emmanuel",
           lastName: "munezero",
-          email: "testwde2asasasds@gmail.com",
+          email: "test320@gmail.com",
           password:
             "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           phone: "+250786534332",

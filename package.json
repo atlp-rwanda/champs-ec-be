@@ -4,7 +4,7 @@
   "description": "",
   "main": "./dist/server.js",
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsc",
     "start": "node ./dist/server.js",
     "dev": "npx tsc && nodemon ./dist/server.js",
     "lint": "eslint \"src/**/*.{js,ts,css,html,json,md}\"",
@@ -56,7 +56,8 @@
     "supertest": "^6.3.4",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
-    "typescript": "^5.4.3",
+    "tsc": "^2.0.4",
+    "typescript": "^5.4.5",
     "uuid": "^9.0.1",
     "zod": "^3.22.4"
   },

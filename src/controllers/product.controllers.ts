@@ -143,7 +143,15 @@ export const updateSellerProduct = async (req: Request, res: Response) => {
     if (req.body.productCurrency) {
       product.productCurrency = req.body.productCurrency;
     }
+
     if (req.body.productDiscount) {
+      const discount: number = parseInt(req.body.productDiscount, 10);
+      const price: number = parseInt(product.dataValues.productPrice, 10);
+      if (discount > price) {
+        return res
+          .status(403)
+          .json({ error: "product discount can't be greater than price" });
+      }
       product.productDiscount = req.body.productDiscount;
     }
     if (req.body.productDescription) {

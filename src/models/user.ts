@@ -39,6 +39,10 @@ class User
 
   declare googleId: string;
 
+  public isActive!: boolean;
+
+  public reasonForDeactivation!: string;
+
   declare createdAt: Date;
 
   declare updatedAt: Date;
@@ -125,6 +129,15 @@ User.init(
         model: Role,
         key: "id"
       }
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
+    },
+    reasonForDeactivation: {
+      type: DataTypes.STRING,
+      allowNull: true
     },
     createdAt: {
       allowNull: false,

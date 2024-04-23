@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import ProductCategory from "../models/product_category";
 import formatString from "../utils/string.manipulation";
+import { isValidUUID } from "../utils/uuid";
 
 export const isExistProductCategory = async (
   req: Request,
@@ -12,6 +13,12 @@ export const isExistProductCategory = async (
     let catId: string;
     if (req.params.catId) {
       catId = req.params.catId;
+      const isValidId: boolean = isValidUUID(req.params.catId);
+      if (!isValidId) {
+        return res.status(403).json({
+          error: " invalid Id for category ID please check and try again"
+        });
+      }
     } else {
       catId = req.body.productCategory;
     }

@@ -8,34 +8,70 @@ import {
   userUpdatePassValidation
 } from "../validations/user.validations";
 import { UserAttributes } from "../types/user.types";
+import { isValidUUID } from "../utils/uuid";
 
 const isUserExist = async (req: Request, res: Response, next: NextFunction) => {
-  if (req.body.email) {
-    // Check if user exists by email
-    const userByEmail = await User.findOne({
-      where: { email: req.body.email }
-    });
+  try {
+    if (req.body.email) {
+      // Check if user exists by email
+      const userByEmail = await User.findOne({
+        where: { email: req.body.email }
+      });
 
-    if (userByEmail) {
-      return res.status(409).json({
-        error: "User with this email already exists"
+      if (userByEmail) {
+        return res.status(409).json({
+          error: "User with this email already exists"
+        });
+      }
+    }
+
+    if (req.params.userId) {
+      const isValidId: boolean = isValidUUID(req.params.userId);
+      if (!isValidId) {
+        return res.status(404).json({
+          error: "User with this ID not valid please check and try again"
+        });
+      }
+
+      const user_id = req.params.userId;
+
+      // Check if user exists by userId
+      const userById = await User.findOne({ where: { id: user_id } });
+      if (!userById) {
+        return res.status(404).json({
+          error: "User with this ID not exists"
+        });
+      }
+    }
+
+    next();
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+const checkIfUserBlocked = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "Incorrect username" });
+    }
+
+    if (!user?.dataValues.isActive) {
+      return res.status(401).json({
+        error: "your account is blocked ",
+        reason: user?.dataValues.reasonForDeactivation
       });
     }
+    next();
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error" });
   }
-
-  if (req.params.userId) {
-    const user_id = req.params.userId;
-
-    // Check if user exists by userId
-    const userById = await User.findOne({ where: { id: user_id } });
-    if (!userById) {
-      return res.status(404).json({
-        error: "User with this ID not exists"
-      });
-    }
-  }
-
-  next();
 };
 const isValidUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -43,10 +79,12 @@ const isValidUser = async (req: Request, res: Response, next: NextFunction) => {
 
     if (result) {
       // Assuming your user model has a 'roleId' field
-      const userRole = await Role.findOne({ where: { name: "user" } });
+      const userRole = await Role.findOne({ where: { name: "buyer" } });
 
       if (!userRole) {
-        return res.status(500).json({ error: "Default role 'user' not found" });
+        return res
+          .status(500)
+          .json({ error: "Default role 'buyer' not found" });
       }
 
       // Assigning the roleId to the user
@@ -94,17 +132,16 @@ const isValidPasswordUpdated = (
     return res.status(400).json({ error: error.errors[0].message });
   }
 };
+
 const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
-  const { user }: any = req;
-
   try {
-    const role = await Role.findByPk(user.dataValues.roleId);
-
+    // const role = await Role.findByPk(user.dataValues.roleId);
+    const role = (req.user as any).Role.dataValues.name;
     if (!role) {
       return res.status(404).json({ error: "Role not found" });
     }
 
-    if (role.dataValues.name === "admin") {
+    if (role === "admin") {
       next();
     } else {
       return res
@@ -161,6 +198,7 @@ const isAdminOrSeller = async (
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
 const isUserEmailValid = (req: Request, res: Response, next: NextFunction) => {
   // type UserType=z.infer<typeof userSchema>
   const result: UserAttributes | any = req.user as UserAttributes;
@@ -179,5 +217,6 @@ export {
   isAdminOrSeller,
   isSeller,
   isValidPasswordUpdated,
-  isUserEmailValid
+  isUserEmailValid,
+  checkIfUserBlocked
 };

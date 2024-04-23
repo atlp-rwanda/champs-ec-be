@@ -25,7 +25,7 @@ describe("Password resetting via email", () => {
         done();
       });
   });
-  it("should return 200 if user exists", (done) => {
+  it("should return 200 if user exists ", (done) => {
     chai
       .request(app)
       .post("/api/users/reset-password")

@@ -4,6 +4,7 @@ import Product from "../models/Product";
 import User from "../models/user";
 import ProductCategory from "../models/product_category";
 import formatString from "../utils/string.manipulation";
+import { isValidUUID } from "../utils/uuid";
 
 export const isExistSellerProduct = async (
   req: Request,
@@ -11,6 +12,12 @@ export const isExistSellerProduct = async (
   next: NextFunction
 ) => {
   try {
+    const isValidId: boolean = isValidUUID(req.params.productId);
+    if (!isValidId) {
+      return res.status(403).json({
+        error: "Invalid product ID  please check and try again"
+      });
+    }
     const logedSeller: any = req.user;
     const userId: string = logedSeller.dataValues.id;
     const product = await Product.findOne({
@@ -36,20 +43,22 @@ export const isProductNameExist = async (
   next: NextFunction
 ) => {
   try {
-    const logedUser: User = req.user as User;
-    const userId: string = logedUser.dataValues.id as string;
-    const productName = formatString(req.body.productName);
-    const product = await Product.findOne({
-      where: {
-        sellerId: userId,
-        productName
-      }
-    });
-    if (product) {
-      return res.status(409).json({
-        message: "This item already exists",
-        product
+    if (req.body.productName) {
+      const logedUser: User = req.user as User;
+      const userId: string = logedUser.dataValues.id as string;
+      const productName = formatString(req.body.productName);
+      const product = await Product.findOne({
+        where: {
+          sellerId: userId,
+          productName
+        }
       });
+      if (product) {
+        return res.status(409).json({
+          message: "This item already exists",
+          product
+        });
+      }
     }
     next();
   } catch (error) {

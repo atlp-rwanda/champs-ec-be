@@ -15,6 +15,8 @@ export interface UserAttributes {
   billingAddress?: string;
   verified?: boolean;
   roleId?: string;
+  isActive?: boolean;
+  reasonForDeactivation?: string;
   createdAt?: Date;
   updatedAt?: Date;
   googleId?: string;

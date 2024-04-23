@@ -34,26 +34,14 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
   )(req, res, next);
 };
 
-const isCheckSeller = async (
-  id: string,
-  email: string,
-  req: Request,
-  res: Response
-) => {
-  const user = (await User.findOne({
-    where: {
-      email
-    }
-  })) as UserData;
-
+const isCheckSeller = async (user: UserData, req: Request, res: Response) => {
   const userRoleId = await user.dataValues.roleId;
   const userRole = await Role.findOne({ where: { id: userRoleId } });
 
   if (userRole?.dataValues.name === "seller") {
-    sendOtp(req, res, email);
+    sendOtp(req, res, user.dataValues.email);
   } else {
-    const token = await userToken(id, email);
-
+    const token = await userToken(user.dataValues.id, user.dataValues.email);
     res.status(200).send({
       message: "Login successful",
       success: true,

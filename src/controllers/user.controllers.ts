@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
@@ -6,16 +6,20 @@ import { UserAttributes } from "../types/user.types";
 import { passwordCompare, passwordEncrypt } from "../utils/encrypt";
 import User from "../models/user";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import Role from "../models/Role";
 import { userToken, tokenVerify, tokenAssign } from "../utils/token.generator";
 import uploadImage from "../utils/cloudinary";
 import { isUserExist } from "../middlewares/user.middleware";
 import { isCheckSeller } from "../middlewares/user.auth";
-import { sendResetMail, sendVerificationMail } from "../utils/mailer";
+import {
+  sendNotificationInactiveAccount,
+  sendResetMail,
+  sendVerificationMail
+} from "../utils/mailer";
 import { passwordStrength } from "../utils/validations/user.validations";
 import { findUserByEmail } from "../utils/finders";
 import { matchPasswords } from "../utils/matchPasswords";
 import BlacklistedToken from "../models/Blacklist";
+import { ResponseOutPut, userStatusData } from "../helper/handleUserStatusData";
 
 config();
 interface JToken extends jwt.Jwt {
@@ -60,9 +64,29 @@ export const getAllUsers = async (req: Request, res: Response) => {
     const users = await User.findAll({
       attributes: { exclude: ["password"] }
     });
-    res.status(200).json(users);
+    res.status(200).json({ users });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getSingleUser = async (req: Request, res: Response) => {
+  try {
+    const user: User | null = await User.findOne({
+      where: {
+        id: req.params.userId
+      },
+      attributes: { exclude: ["password"] }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        error: "User with this ID not exists"
+      });
+    }
+    return res.status(200).json({ message: "user information", user });
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -97,24 +121,31 @@ export const verifyAccount = async (req: Request, res: Response) => {
 
 export const userLogin = async (req: Request, res: Response) => {
   try {
+    const { email } = req.body;
     const user: any = await User.findOne({
       where: {
-        email: req.body.email
+        email
       }
     });
 
-    if (!user) {
-      return res.status(404).json({ error: "Incorrect user name " });
+    if (!user.dataValues.isActive) {
+      const data = {
+        message: "your account is blocked",
+        reason: user.dataValues.reasonForDeactivation
+      };
+      return res.status(401).json(data);
     }
 
     const verifyPassword = await bcrypt.compare(
       req.body.password,
       user?.dataValues?.password
     );
+
     if (!verifyPassword) {
       return res.status(403).json({ error: "Incorrect password" });
     }
-    isCheckSeller(user.dataValues.id, req.body.email, req, res);
+
+    await isCheckSeller(user, req, res);
   } catch (err) {
     res
       .status(500)
@@ -340,10 +371,33 @@ async function blacklistToken(req: Request, res: Response, next: NextFunction) {
       .status(200)
       .json({ success: true, message: "logged out successfully" });
   } catch (error) {
-    console.error("Error blacklisting token:", error);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error" });
   }
 }
+
+export const changeAccountStatus = async (req: any, res: Response) => {
+  const data: ResponseOutPut = await userStatusData(req.body);
+  await User.update(
+    {
+      isActive: data.isActive,
+      reasonForDeactivation: data.message
+    },
+    { where: { id: req.params.userId }, returning: true }
+  )
+    .then((result) => {
+      const user: Array<User> = result[1];
+
+      sendNotificationInactiveAccount(
+        user[0].dataValues.email as string,
+        user[0].dataValues.firstName as string,
+        data.emailNotification
+      );
+      return res.status(200).json({ message: data.success });
+    })
+    .catch((err) => {
+      if (err) return res.status(200).json({ error: "user ID not exist" });
+    });
+};
 export default blacklistToken;

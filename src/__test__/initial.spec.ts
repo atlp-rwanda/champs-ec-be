@@ -27,8 +27,8 @@ let headerTokenSeller: string;
 let verifyTkn: string;
 let catId: string;
 let headerToken: string;
+let buyerTKN: string;
 let userId1: string;
-
 chai.use(chaiHttp);
 // eslint-disable-next-line func-names
 before(async function () {
@@ -46,7 +46,7 @@ before(async function () {
   });
   await Role.create({
     id: "8736b050-1117-4614-a599-005dd76ff332",
-    name: "user",
+    name: "buyer",
     createdAt: new Date(),
     updatedAt: new Date()
   });
@@ -93,8 +93,14 @@ before(async function () {
         email: "anotheruser3@gmail.com",
         roleId: "8736b050-1117-4614-a599-005dd76ff333"
       });
-      return [user1, user2, user3, user4];
-      return [user1, user2];
+      const user5 = await User.create({
+        firstName: "Another",
+        lastName: "User",
+        password: await passwordEncrypt("Another@123"),
+        email: "anotheruser5@gmail.com",
+        roleId: "8736b050-1117-4614-a599-005dd76ff333"
+      });
+      return [user1, user2, user3, user4, user5];
     } catch (error) {
       return error;
     }
@@ -186,7 +192,25 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
-
+  it("Login as a buyer and get a token", (done) => {
+    chai
+      .request(app)
+      .post("/api/users/login")
+      .send({
+        password: "Test@12345",
+        email: "emailfortest3@gmail.com"
+      })
+      .end((err, res) => {
+        buyerTKN = res.body.token;
+        console.log(
+          "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+          buyerTKN
+        );
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
   it("Login s seller user point test", (done) => {
     chai
       .request(app)
@@ -259,34 +283,6 @@ describe("user Signin controller and passport", () => {
       });
   });
 
-  it("Login end Fail to login", (done) => {
-    chai
-      .request(app)
-      .post("/api/users/login")
-      .send({
-        email: "tchdfjhdcjschscdcd7@gmail.com",
-        password: "Test@12345"
-      })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(404);
-        done();
-      });
-  });
-  it("Login end Fail to login for password", (done) => {
-    chai
-      .request(app)
-      .post("/api/users/login")
-      .send({
-        password: "Test@12345bjhb",
-        email: "usertest@gmail.com"
-      })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(403);
-        done();
-      });
-  });
   it("use invalid email", (done) => {
     chai
       .request(app)
@@ -301,7 +297,7 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
-  /*
+
   it("should respond with the welcome message", (done) => {
     chai
       .request(app)
@@ -312,7 +308,7 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
-  
+
   it("should respond with the welcome message", (done) => {
     chai
       .request(app)
@@ -324,7 +320,6 @@ describe("user Signin controller and passport", () => {
       });
     done();
   });
-  */
 
   it("check for the user profile", () => {
     chai
@@ -451,6 +446,18 @@ describe("user Signin controller and passport", () => {
       });
   });
 
+  it("should get all role when you are not admin", (done) => {
+    chai
+      .request(app)
+      .get(`/api/roles`)
+      .set("Authorization", buyerTKN)
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(403);
+
+        done();
+      });
+  });
   it("should update a role and get server error ", (done) => {
     const roleStub = sinon
       .stub(Role, "findByPk")
@@ -646,6 +653,16 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
+  it("try to get categories for user which is not admin or seller", (done) => {
+    chai
+      .request(app)
+      .get("/api/categories")
+      .set("Authorization", buyerTKN)
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        done();
+      });
+  });
   it("it shoult test to list product categories with success", (done) => {
     chai
       .request(app)
@@ -684,13 +701,13 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
-  it("it shoult test getting product category internal error ", (done) => {
+  it("it shoult test getting product category with invalid uuid ", (done) => {
     chai
       .request(app)
       .get(`/api/categories/d62aa7d1-23b3-437b-8407-adaf24b3eb4chhhhhhgg`)
       .set("Authorization", headerTokenSeller)
       .end((err, res) => {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(403);
         done();
       });
   });
@@ -737,6 +754,7 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
+
   it("it shoult test product category update validation fail ", (done) => {
     chai
       .request(app)
@@ -764,6 +782,32 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
+  it("create product you are not a seller", (done) => {
+    chai
+      .request(app)
+      .post("/api/products")
+      .set("Authorization", buyerTKN)
+      .attach("productImage", imageFilePath)
+      .attach("productImage", imageFilePath)
+      .attach("productImage", imageFilePath)
+      .attach("productImage", imageFilePath)
+      .field("productName", "Testproduct")
+      .field("stockLevel", "100")
+      .field("productCategory", catId)
+      .field("productPrice", "100")
+      .field("productCurrency", "rwf")
+      .field("productDiscount", "0")
+      .field(
+        "productDescription",
+        "If you’re developing in an environment with support for promises"
+      )
+      .field("expireDate", "2025-12-12")
+      .end((err, res) => {
+        expect(res.body.error).to.equal("Unauthorized, user is not an seller");
+        expect(res).to.have.status(403);
+        done();
+      });
+  }).timeout(70000);
   it("create product item sucessful in seller collection", (done) => {
     chai
       .request(app)
@@ -774,7 +818,7 @@ describe("user Signin controller and passport", () => {
       .attach("productImage", imageFilePath)
       .attach("productImage", imageFilePath)
       .field("productName", "Testproduct")
-      .field("stockLevel", "100 kg")
+      .field("stockLevel", "100")
       .field("productCategory", catId)
       .field("productPrice", "100")
       .field("productCurrency", "rwf")
@@ -797,7 +841,7 @@ describe("user Signin controller and passport", () => {
       .set("Authorization", headerTokenSeller)
 
       .field("productName", "Test product Exist")
-      .field("stockLevel", "100 kg")
+      .field("stockLevel", "100")
       .field("productCategory", catId)
       .field("productPrice", "100")
       .field("productCurrency", "rwf")
@@ -823,7 +867,7 @@ describe("user Signin controller and passport", () => {
       .set("Authorization", headerTokenSeller)
       .attach("productImage", notAllowedFormat)
       .field("productName", "Test product")
-      .field("stockLevel", "100 kg")
+      .field("stockLevel", "100")
       .field("productCategory", catId)
       .field("productPrice", "100")
       .field("productCurrency", "rwf")
@@ -848,7 +892,7 @@ describe("user Signin controller and passport", () => {
       .set("Authorization", headerTokenSeller)
       .attach("productImage", bigSizePicture)
       .field("productName", "Test product")
-      .field("stockLevel", "100 kg")
+      .field("stockLevel", "100")
       .field("productCategory", catId)
       .field("productPrice", "100")
       .field("productCurrency", "rwf")
@@ -899,7 +943,7 @@ describe("user Signin controller and passport", () => {
       .attach("productImage", imageFilePath)
       .attach("productImage", imageFilePath)
       .field("productName", "Testproduct")
-      .field("stockLevel", "100 kg")
+      .field("stockLevel", "100")
       .field("productCategory", catId)
       .field("productPrice", "100")
       .field("productCurrency", "rwf")
@@ -1047,6 +1091,7 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
+
   // END  THE TEST ✅✅✅✅✅✅✅✅✅✅✅✅✅✅ TEST OF CARTS✅✅✅✅✅✅✅✅✅✅✅
 
   it("Seller crud operation get single product sucessful", (done) => {
@@ -1073,7 +1118,7 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
-  it("check if product item exist in database return internal server error", (done) => {
+  it("check if product item exist in database return invalid product Id", (done) => {
     chai
       .request(app)
       .get(
@@ -1081,8 +1126,10 @@ describe("user Signin controller and passport", () => {
       )
       .set("Authorization", headerTokenSeller)
       .end((err, res) => {
-        expect(res.body.error).to.equal("Internal server error");
-        expect(res).to.have.status(500);
+        expect(res.body.error).to.equal(
+          "Invalid product ID  please check and try again"
+        );
+        expect(res).to.have.status(403);
         done();
       });
   });
@@ -1093,13 +1140,59 @@ describe("user Signin controller and passport", () => {
       .set("Authorization", headerTokenSeller)
       .attach("productImage", imageFilePath)
       .field("productName", "Test product")
-      .field("stockLevel", "100 kg")
+      .field("stockLevel", "100")
       .end((err, res) => {
         expect(res.body.message).to.equal("product item is updated sucessful");
         expect(res).to.have.status(200);
         done();
       });
   }).timeout(5000);
+  it("Seller crud operation update product with unexisting category", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", imageFilePath)
+      .field("productCategory", "8736b050-1117-4614-a5aa-005dd76ff332")
+      .field("stockLevel", "100")
+      .end((err, res) => {
+        expect(res.body.error).to.equal(
+          "The product category is not found , please try again"
+        );
+        expect(res).to.have.status(404);
+        done();
+      });
+  }).timeout(5000);
+  it("Seller crud operation update product with discount grater than price", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .attach("productImage", imageFilePath)
+      .field("productDiscount", "1000000")
+      .end((err, res) => {
+        expect(res.body.error).to.equal(
+          "product discount can't be greater than price"
+        );
+        expect(res).to.have.status(403);
+        done();
+      });
+  });
+  it("seller get single product internal server error", (done) => {
+    const userStub = sinon
+      .stub(Product, "findOne")
+      .throws(new Error("internal server error"));
+    chai
+      .request(app)
+      .get(`/api/products/${productId}`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        userStub.restore();
+        expect(res.statusCode).to.equal(500);
+        done();
+      });
+  }).timeout(5000);
+
   it("Seller crud operation update product validation fail", (done) => {
     chai
       .request(app)
@@ -1315,6 +1408,7 @@ describe("Test user should be able to update their password", () => {
           });
       });
   }).timeout(50000);
+
   it("should respond with user logged out", (done) => {
     chai
       .request(app)

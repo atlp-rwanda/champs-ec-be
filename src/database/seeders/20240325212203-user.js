@@ -42,7 +42,7 @@ module.exports = {
           id: uuidv4(),
           firstName: "Emmanuel",
           lastName: "munezero",
-          email: "test5@gmail.com",
+          email: "test55@gmail.com",
           password: uuidv4(),
           phone: "+250786534332",
           birthDate: new Date(),
