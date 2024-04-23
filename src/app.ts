@@ -15,6 +15,7 @@ import { isAdmin } from "./middlewares/user.middleware";
 import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";
 import productCategoryRoutes from "./routes/productCategory.routes";
+import cartRouter from "./routes/cart.routes";
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ app.get("/", authenticate, Home);
 app.use("/api/users", userRoutes);
 app.use("/api/roles", roleRoutes);
 app.use("/api/users/", authRoutes);
+app.use("/api/carts/", cartRouter);
 
 app.use("/api/products", productRoutes);
 app.use("/api/categories", productCategoryRoutes);

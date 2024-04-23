@@ -12,6 +12,7 @@ import Product from "../models/Product";
 import ProductCategory from "../models/product_category";
 import { tokenVerify } from "../utils/token.generator";
 import { DataInfo } from "../controllers/otpauth.controllers";
+import Cart from "../models/Cart";
 
 const imageFilePath = "./src/__test__/image/JobIcon.png";
 
@@ -21,6 +22,7 @@ const bigSizePicture = "./src/__test__/image/svgrepo.svg";
 let productId: string;
 let image_id: string;
 
+// eslint-disable-next-line import/no-mutable-exports
 let headerTokenSeller: string;
 let verifyTkn: string;
 let catId: string;
@@ -35,6 +37,7 @@ before(async function () {
   await ProductCategory.truncate({ cascade: true });
   await Product.truncate({ cascade: true });
   await Role.truncate({ cascade: true });
+  await Cart.truncate({ cascade: true });
   await Role.create({
     id: "8736b050-1117-4614-a599-005dd76ff331",
     name: "admin",
@@ -231,7 +234,6 @@ describe("user Signin controller and passport", () => {
       .send({ otp: `${otpCode}` })
       .end(async (err, res) => {
         headerTokenSeller = res.body.token;
-
         expect(err).to.be.null;
         expect(res).to.have.status(200);
         expect(res.body.message).to.equal("Login seller successful");
@@ -923,11 +925,129 @@ describe("user Signin controller and passport", () => {
         productId = res.body.products[0].id;
 
         image_id = res.body.products[0].productPictures[0].imgId;
-
+        console.log("all the product>>>>>>>>>>>>>", productId);
         expect(res).to.have.status(200);
         done();
       });
   });
+
+  // THE TEST ✅✅✅✅✅✅✅✅✅✅✅✅✅✅ TEST OF CARTS✅✅✅✅✅✅✅✅✅✅✅
+
+  it("user invalid uuid 993", (done) => {
+    chai
+      .request(app)
+      .post(`/api/carts`)
+      .set("Authorization", headerToken)
+      .send("knknkjn")
+      .end((err, res) => {
+        console.log("status ==========", res.body.status);
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+  it("user get carts if you don't have it", (done) => {
+    chai
+      .request(app)
+      .get(`/api/carts`)
+      .set("Authorization", headerToken)
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+  it("user Create the new Carts with more quantity than exist on line 934", (done) => {
+    chai
+      .request(app)
+      .post(`/api/carts`)
+      .set("Authorization", headerToken)
+      .send([
+        {
+          productId: `${productId}`,
+          Quantity: 1
+        },
+        {
+          productId: `${productId}`,
+          Quantity: 2
+        },
+        {
+          productId: `${productId}`,
+          Quantity: 209
+        }
+      ])
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+  it("user Create the new Carts with post on line 934", (done) => {
+    chai
+      .request(app)
+      .post(`/api/carts`)
+      .set("Authorization", headerToken)
+      .send([
+        {
+          productId: `${productId}`,
+          Quantity: 1
+        },
+        {
+          productId: `${productId}`,
+          Quantity: 2
+        },
+        {
+          productId: `${productId}`,
+          Quantity: 9
+        }
+      ])
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        done();
+      });
+  });
+
+  it("user update cat with put 1006", (done) => {
+    chai
+      .request(app)
+      .put(`/api/carts`)
+      .set("Authorization", headerToken)
+      .send([
+        {
+          productId: `${productId}`,
+          Quantity: 10
+        }
+      ])
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        done();
+      });
+  });
+  it("user update cat with put with error 1006", (done) => {
+    chai
+      .request(app)
+      .put(`/api/carts`)
+      .set("Authorization", headerToken)
+      .send([
+        {
+          productId: `${productId}`,
+          Quantity: 200
+        }
+      ])
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it("user get carts", (done) => {
+    chai
+      .request(app)
+      .get(`/api/carts`)
+      .set("Authorization", headerToken)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  // END  THE TEST ✅✅✅✅✅✅✅✅✅✅✅✅✅✅ TEST OF CARTS✅✅✅✅✅✅✅✅✅✅✅
 
   it("Seller crud operation get single product sucessful", (done) => {
     chai
@@ -1092,6 +1212,7 @@ describe("user Signin controller and passport", () => {
       });
   });
 });
+
 describe("Test user should be able to update their password", () => {
   it("should return 400 if request data is missing", (done) => {
     chai

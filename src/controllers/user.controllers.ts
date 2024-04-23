@@ -57,8 +57,9 @@ export const userSignup = async (req: Request, res: Response) => {
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = await User.findAll();
-
+    const users = await User.findAll({
+      attributes: { exclude: ["password"] }
+    });
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -124,30 +125,8 @@ export const userLogin = async (req: Request, res: Response) => {
 export const userProfile = async (req: Request, res: Response) => {
   try {
     const newuser: any = await req.user;
-    const {
-      firstName,
-      lastName,
-      profileImage,
-      phone,
-      birthDate,
-      preferredLanguage,
-      whereYouLive,
-      preferredcurrency,
-      billingAddress
-    } = newuser.dataValues;
 
-    const userResult = {
-      firstName,
-      lastName,
-      profileImage,
-      phone,
-      birthDate,
-      preferredLanguage,
-      whereYouLive,
-      billingAddress,
-      preferredcurrency
-    };
-    res.status(200).json({ User: userResult });
+    res.status(200).json({ User: newuser });
   } catch (error) {
     return res.status(400).json("user profile is not exist");
   }
@@ -274,7 +253,12 @@ export const editUser = async (req: any, res: Response) => {
     };
 
     await user?.update(updatedUser);
-    res.status(201).json({ message: "user are updated successfully", user });
+    const userWithoutPassword = { ...user?.dataValues };
+    delete userWithoutPassword.password;
+    res.status(201).json({
+      message: "user are updated successfully",
+      user: userWithoutPassword
+    });
   } catch (error) {
     res.status(400).json({ error: "there is an error user are not updated" });
   }
