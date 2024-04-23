@@ -59,21 +59,6 @@ class ChatsController {
           callback({ status: "error", error: error.message });
         }
       });
-
-      socket.on("get single message", async (messageId, callback) => {
-        try {
-          const message = await ChatsController.singleMessage(messageId);
-          if (message) {
-            callback({ status: "ok", message });
-          } else {
-            callback({ status: "error", error: "Message not found" });
-          }
-        } catch (error: any) {
-          console.error("Error getting single message:", error.message);
-          callback({ status: "error", error: error.message });
-        }
-      });
-
       socket.on("typing", () => {
         ChatsController.typingUsers[userId] = true;
         socket.emit("typing", Object.keys(ChatsController.typingUsers));
@@ -106,19 +91,6 @@ class ChatsController {
       ]
     });
     return messages;
-  }
-
-  static async singleMessage(id: string) {
-    const message = await Message.findByPk(id, {
-      include: [
-        {
-          model: User,
-          as: "sender",
-          attributes: ["id", "firstName", "email"]
-        }
-      ]
-    });
-    return message;
   }
 }
 

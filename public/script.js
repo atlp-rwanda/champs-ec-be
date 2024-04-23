@@ -29,7 +29,7 @@ const initChat = () => {
     senderNameElement.textContent = isSentByCurrentUser
       ? "You"
       : message.sender.firstName;
-    senderNameElement.style.color = "orange"; // Set the color to orange
+    senderNameElement.style.color = "white";
 
     // Append sender name to message element
     messageElement.appendChild(senderNameElement);
