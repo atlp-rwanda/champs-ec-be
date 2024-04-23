@@ -5,8 +5,8 @@
   "main": "./dist/server.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "node ./dist/server.js",
-    "dev": "npx tsc && nodemon ./dist/server.js",
+    "start": "concurrently \"node ./dist/server.js\" \"node ./dist/socketServer.js\"",
+    "dev": "npx tsc && concurrently \"nodemon ./dist/server.js\" \"node ./dist/socketServer.js\"",
     "lint": "eslint \"src/**/*.{js,ts,css,html,json,md}\"",
     "prettier": "eslint \"src/**/*.{js,ts,css,html,json,md}\"",
     "lint:staged": "lint-staged",
@@ -87,6 +87,7 @@
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
+    "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",

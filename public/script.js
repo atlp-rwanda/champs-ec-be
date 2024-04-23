@@ -92,36 +92,26 @@ const initChat = () => {
       chatInput.value = "";
     }
   });
+  chatInput?.addEventListener("input", () => {
+    clearTimeout(typingTimeout);
+    socket.emit("typing");
+    typingTimeout = setTimeout(() => {
+      socket.emit("stop typing");
+    }, 500);
+  });
 
-  // Listen for "typing" event and display typing indicator
   socket.on("typing", (data) => {
     const typingIndicator = document.createElement("div");
     typingIndicator.classList.add("typing-indicator");
     typingIndicator.textContent = `${data.sender.firstName} is typing...`;
-    chatMessagesContainer.appendChild(typingIndicator);
+    chatMessagesContainer?.appendChild(typingIndicator);
   });
 
-  // Listen for "stop typing" event and remove typing indicator
   socket.on("stop typing", () => {
     const typingIndicator = document.querySelector(".typing-indicator");
     if (typingIndicator) {
-      chatMessagesContainer.removeChild(typingIndicator);
+      chatMessagesContainer?.removeChild(typingIndicator);
     }
-  });
-
-  // Typing indicator logic
-  let typingTimeout;
-  chatInput.addEventListener("input", () => {
-    clearTimeout(typingTimeout);
-    socket.emit("typing", {
-      sender: {
-        id: tokenDecode(token).id,
-        firstName: tokenDecode(token).firstName
-      }
-    });
-    typingTimeout = setTimeout(() => {
-      socket.emit("stop typing");
-    }, 500);
   });
 };
 
