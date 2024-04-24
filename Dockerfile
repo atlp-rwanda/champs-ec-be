@@ -9,4 +9,4 @@ EXPOSE ${PORT}
 
 COPY . .
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]

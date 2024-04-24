@@ -126,7 +126,6 @@ export const userLogin = async (req: Request, res: Response) => {
     const user: any = await User.findOne({
       where: {
         email,
-        verified: true,
         isActive: true
       }
     });

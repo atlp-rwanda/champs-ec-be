@@ -32,6 +32,8 @@ import {
 } from "../middlewares/sellerproduct.middlewares";
 import { authenticate, isAnonymous } from "../middlewares/user.auth";
 import { checkRoles } from "../middlewares/role.middleware";
+import { isReviewProduct } from "../middlewares/reviews.middlewares";
+import { productReview } from "../controllers/reviews.controller";
 
 const productRoutes = express.Router({ mergeParams: true });
 
@@ -140,4 +142,12 @@ productRoutes.patch(
 
 // productRoutes.get("/items/:productId",isExistSellerProduct,getAvailableProductById)
 // productRoutes.get('/',[admin,buyer,])
+productRoutes.post(
+  "/:productId/reviews",
+  authenticate,
+  checkRole(["buyer"]),
+  isReviewProduct,
+  productReview
+);
+
 export default productRoutes;
