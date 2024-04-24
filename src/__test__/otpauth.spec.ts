@@ -83,6 +83,8 @@ describe("Two factor authentication with Email", () => {
         otp: "123467"
       })
       .end((err, res) => {
+        console.log("body   drsfsdfdgdf", res.body);
+        console.log("error   drsfsdfdgdf", err);
         expect(err).to.be.null;
         expect(res).to.have.status(403);
         expect(res.body.message).to.equal("Token expired, new Token generated");

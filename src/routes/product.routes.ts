@@ -12,7 +12,7 @@ import {
 
 import multerImage from "../utils/uploader";
 
-import { isSeller } from "../middlewares/user.middleware";
+import { checkRole } from "../middlewares/user.middleware";
 import { isExistProductCategory } from "../middlewares/productCategory.middlewares";
 import {
   isValidItem,
@@ -34,7 +34,7 @@ const productRoutes = express.Router();
 productRoutes.post(
   "/",
   authenticate,
-  isSeller,
+  checkRole(["seller"]),
   multerImage.array("productImage", 8),
   isValidImage,
   isValidItem,
@@ -43,18 +43,23 @@ productRoutes.post(
   isProductNameExist,
   createProducts
 );
-productRoutes.get("/", authenticate, isSeller, getAllSellerProducts);
+productRoutes.get(
+  "/",
+  authenticate,
+  checkRole(["seller", "admin", "user"]),
+  getAllSellerProducts
+);
 productRoutes.get(
   "/:productId",
   authenticate,
-  isSeller,
+  checkRole(["seller"]),
   isExistSellerProduct,
   getSingleProduct
 );
 productRoutes.patch(
   "/:productId",
   authenticate,
-  isSeller,
+  checkRole(["seller"]),
   multerImage.single("productImage"),
   isValidImage,
   isValidUpdate,
@@ -67,7 +72,7 @@ productRoutes.patch(
 productRoutes.delete(
   "/:productId",
   authenticate,
-  isSeller,
+  checkRole(["seller"]),
   isExistSellerProduct,
   removeSellerProduct
 );
@@ -75,7 +80,7 @@ productRoutes.delete(
 productRoutes.patch(
   "/:productId/profile/:imgId",
   authenticate,
-  isSeller,
+  checkRole(["seller"]),
   isExistSellerProduct,
   setProductThumbnail
 );
@@ -85,7 +90,7 @@ productRoutes.patch(
   authenticate,
   multerImage.single("productImage"),
   isValidImage,
-  isSeller,
+  checkRole(["seller"]),
   isSingleImageUpload,
   isExistSellerProduct,
   updateProductPictures
@@ -94,7 +99,7 @@ productRoutes.patch(
 productRoutes.delete(
   "/:productId/pictures/:imgId",
   authenticate,
-  isSeller,
+  checkRole(["seller"]),
   isExistSellerProduct,
   removeProductPictures
 );

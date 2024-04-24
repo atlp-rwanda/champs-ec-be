@@ -1,6 +1,4 @@
 import express from "express";
-import { isAdmin } from "../middlewares/user.middleware";
-import { authenticate } from "../middlewares/user.auth";
 import {
   createRole,
   getAllRoles,
@@ -16,40 +14,15 @@ import {
 
 const roleRoutes = express.Router();
 
-roleRoutes.post(
-  "/",
-  authenticate,
-  isAdmin,
-  validateRole,
-  isRoleNameExist,
-  createRole
-);
+roleRoutes
+  .route("/")
+  .post(validateRole, isRoleNameExist, createRole)
+  .get(getAllRoles);
 
-roleRoutes.get("/", authenticate, isAdmin, getAllRoles);
-
-roleRoutes.get(
-  "/:id",
-  authenticate,
-  isAdmin,
-  isRoleIdExistFromPram,
-  getRoleById
-);
-
-roleRoutes.put(
-  "/:id",
-  authenticate,
-  isAdmin,
-  validateRole,
-  isRoleNameExist,
-  updateRole
-);
-
-roleRoutes.delete(
-  "/:id",
-  authenticate,
-  isAdmin,
-  isRoleIdExistFromPram,
-  deleteRole
-);
+roleRoutes
+  .route("/:id")
+  .get(isRoleIdExistFromPram, getRoleById)
+  .put(validateRole, isRoleNameExist, updateRole)
+  .delete(isRoleIdExistFromPram, deleteRole);
 
 export default roleRoutes;
