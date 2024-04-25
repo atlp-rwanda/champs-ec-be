@@ -12,14 +12,10 @@ export const validateRole = async (
     if (check) {
       next();
     }
-
-    // return res.status(403).json("bad request")
-    // next()
   } catch (error: any) {
     return res.status(400).json({ error: error.errors[0].message });
   }
 };
-
 export const isRoleIdExist = async (
   req: Request,
   res: Response,
@@ -50,7 +46,6 @@ export const isRoleIdExistFromPram = async (
     res.status(404).json(error);
   }
 };
-
 export const isRoleNameExist = async (
   req: Request,
   res: Response,

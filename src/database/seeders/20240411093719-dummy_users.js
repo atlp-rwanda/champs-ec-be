@@ -3,15 +3,16 @@ const { v4: uuidv4 } = require("uuid");
 
 module.exports = {
   async up(queryInterface) {
-    const [adminRole, userRole, sellerRole, buyerRole] = await Promise.all([
+    const [adminRole, sellerRole, buyerRole] = await Promise.all([
       queryInterface.rawSelect("roles", { where: { name: "admin" } }, ["id"]),
-      queryInterface.rawSelect("roles", { where: { name: "user" } }, ["id"]),
       queryInterface.rawSelect("roles", { where: { name: "seller" } }, ["id"]),
       queryInterface.rawSelect("roles", { where: { name: "buyer" } }, ["id"])
     ]);
 
-    if (!adminRole || !userRole) {
-      throw new Error("Roles 'admin' and/or 'user' not found in Role table.");
+    if (!adminRole || !sellerRole || !buyerRole) {
+      throw new Error(
+        "Roles 'admin' and/or 'buyer/seller' not found in Role table."
+      );
     }
     await queryInterface.bulkInsert(
       "users",
@@ -31,7 +32,7 @@ module.exports = {
           whereYouLive: "kigali street KN 250 st",
           billingAddress: "kigali street KN 250 st",
           profileImage: "test.png",
-          roleId: userRole,
+          roleId: buyerRole,
           createdAt: new Date(),
           updatedAt: new Date()
         },
@@ -40,9 +41,9 @@ module.exports = {
           firstName: "Prince-admin",
           lastName: "Rwigimba",
           googleId: "tttttttttttt",
-          email: "princerwigimbdsdsa@gmail.com",
+          email: "princerwigimba@gmail.com",
           password:
-            "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
+            "$2b$12$b87PcckZ2LrQYa.7epI6RulBbXx1yAq7R5xDnh7lb8uD6LKkIPmey",
           phone: "+250784948614",
           birthDate: new Date(),
           preferredLanguage: "kinyarwanda",
@@ -59,9 +60,9 @@ module.exports = {
           firstName: "Emmanuel-seller",
           googleId: "tttttttttttt",
           lastName: "munezero",
-          email: "tes2t322@gmail.com",
+          email: "princerwigimba07@gmail.com",
           password:
-            "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
+            "$2b$12$b87PcckZ2LrQYa.7epI6RulBbXx1yAq7R5xDnh7lb8uD6LKkIPmey",
           phone: "+250786534332",
           birthDate: new Date(),
           preferredLanguage: "kinyarwanda",
@@ -106,7 +107,7 @@ module.exports = {
           whereYouLive: "kigali street KN 250 st",
           billingAddress: "kigali street KN 250 st",
           profileImage: "test.png",
-          roleId: userRole,
+          roleId: buyerRole,
           createdAt: new Date(),
           updatedAt: new Date()
         }

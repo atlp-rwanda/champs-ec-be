@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5500",
+      "url": "http://localhost:8000",
       "description": "Development server"
     },
     {
@@ -18,6 +18,10 @@
   "tags": [
     {
       "name": "Welcome",
+      "description": "API endpoints for landing page"
+    },
+    {
+      "name": "Search",
       "description": "API endpoints for landing page"
     },
     {
@@ -66,7 +70,72 @@
         "security": [{ "Bearer": [] }]
       }
     },
-
+    "/api/search": {
+      "get": {
+        "summary": "Search items",
+        "description": "Search for products or users based on query parameters. If authenticated, the search results will be filtered based on the user's role.",
+        "tags": ["Search"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Name of the item to search",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "minPrice",
+            "in": "query",
+            "description": "Minimum price of the product",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "maxPrice",
+            "in": "query",
+            "description": "Maximum price of the product",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "Category of the product",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of items matching the search criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Invalid item type or missing required parameters"
+          },
+          "404": {
+            "description": "No items found matching the search criteria"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+,    
     "/api/users/signup": {
       "post": {
         "summary": "User Sign Up",

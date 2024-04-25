@@ -30,7 +30,6 @@ import {
 import { authenticate } from "../middlewares/user.auth";
 
 const productRoutes = express.Router();
-
 productRoutes.post(
   "/",
   authenticate,

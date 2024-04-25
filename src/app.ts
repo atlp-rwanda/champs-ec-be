@@ -17,6 +17,7 @@ import productCategoryRoutes from "./routes/productCategory.routes";
 import cartRouter from "./routes/cart.routes";
 import productWishRoutes from "./routes/wish.routes";
 import { checkRole } from "./middlewares/user.middleware";
+import searchRoutes from "./routes/search.routes";
 
 dotenv.config();
 
@@ -49,7 +50,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/roles", authenticate, checkRole(["admin"]), roleRoutes);
 app.use("/api/users/", authRoutes);
 app.use("/api/carts/", cartRouter);
-
+app.use("/api/search/", searchRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/wishes", authenticate, productWishRoutes);
 app.use("/api/categories", authenticate, productCategoryRoutes);

@@ -398,6 +398,7 @@ describe("user Signin controller and passport", () => {
         done();
       });
   }).timeout(5000);
+
   it("should create a new role and get server error ", (done) => {
     const roleStub = sinon
       .stub(Role, "create")
@@ -735,6 +736,38 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
+  it("should return 500 with product(seller(category))", (done) => {
+    chai
+      .request(app)
+      .get("/api/search")
+      .query({ category: "TEST CAT" })
+      .end((err, res) => {
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
+
+  it("should return 200 with product(seller(minPrice))", (done) => {
+    chai
+      .request(app)
+      .get("/api/search")
+      .query({ minPrice: 10 })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("should return 200 with product(seller(maxPrice))", (done) => {
+    chai
+      .request(app)
+      .get("/api/search")
+      .query({ maxPrice: 100 })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
   it("it shoult test product category  with validation fail", (done) => {
     chai
       .request(app)
@@ -917,6 +950,28 @@ describe("user Signin controller and passport", () => {
         done();
       });
   }).timeout(5000);
+  it("should return 200 with product(seller)", (done) => {
+    chai
+      .request(app)
+      .get("/api/search")
+      .set("Authorization", headerTokenSeller)
+      .query({ name: "product" })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it("should return 200 with product(others)", (done) => {
+    chai
+      .request(app)
+      .get("/api/search")
+      .query({ name: "product" })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
 
   it("create product item in seller validation input fail", (done) => {
     chai
