@@ -161,9 +161,29 @@ const checkRole =
       return res.status(500).json({ error: "Internal server error" });
     }
   };
+const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // const role = await Role.findByPk(user.dataValues.roleId);
+    const role = (req.user as any).Role.dataValues.name;
+    if (!role) {
+      return res.status(404).json({ error: "Role not found" });
+    }
+
+    if (role === "admin") {
+      next();
+    } else {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized, user is not an admin" });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 export {
   isUserExist,
+  isAdmin,
   isValidUser,
   isValidUserLogin,
   isValidUserUpdate,

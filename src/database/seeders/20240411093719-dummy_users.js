@@ -78,7 +78,7 @@ module.exports = {
           id: uuidv4(),
           firstName: "Emmanuel-buyer",
           lastName: "munezero",
-          email: "testsasas5@gmail.com",
+          email: "test54@gmail.com",
           password:
             "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           googleId: "tttttttttttt",
@@ -97,7 +97,7 @@ module.exports = {
           id: uuidv4(),
           firstName: "Emmanuel",
           lastName: "munezero",
-          email: "test320@gmail.com",
+          email: "testwde24@gmail.com",
           password:
             "$2b$12$Kq9AzP89EFaDgNmxh7RrjOl.b0WI7x.mb9epID2lFZfa0VQNUk3rG",
           phone: "+250786534332",

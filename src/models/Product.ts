@@ -36,6 +36,8 @@ class Product
   public createdAt!: Date;
 
   public updatedAt!: Date;
+
+  public isExpired!: boolean;
 }
 
 Product.init(
@@ -130,6 +132,11 @@ Product.init(
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE
+    },
+    isExpired: {
+      allowNull: false,
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   },
   {

@@ -716,6 +716,26 @@
         ]
       }
     },
+    "/api/products/check-expiration" : {
+      "post": {
+        "summary": "Unlist expired products",
+        "description": "Run expiration checking algorithm manually to unlist expired products",
+        "tags": ["Authentication"],
+        "responses": {
+          "200": {
+            "description": "Password reset Instructions sent successfully"
+          },
+          "400": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
     "/api/categories": {
       "post": {
         "summary": "Product categories",

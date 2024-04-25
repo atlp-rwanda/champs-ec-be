@@ -13,8 +13,8 @@ import { cartCheck } from "../validations/cart.validation";
 
 const cartRouter = express.Router();
 
-cartRouter.post("/", authenticate, cartCheck, isUserhaveCart, createCart);
-cartRouter.get("/", authenticate, getCart);
-cartRouter.put("/", authenticate, cartCheck, isUserWhoNothaveCart, updateCart);
+cartRouter.post("/", cartCheck, isUserhaveCart, createCart);
+cartRouter.get("/", getCart);
+cartRouter.put("/", cartCheck, isUserWhoNothaveCart, updateCart);
 
 export default cartRouter;

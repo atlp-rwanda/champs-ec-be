@@ -7,12 +7,13 @@ import {
   removeSellerProduct,
   setProductThumbnail,
   updateProductPictures,
-  updateSellerProduct
+  updateSellerProduct,
+  productExpirationChecker
 } from "../controllers/product.controllers";
 
 import multerImage from "../utils/uploader";
 
-import { checkRole } from "../middlewares/user.middleware";
+import { isAdmin, checkRole } from "../middlewares/user.middleware";
 import { isExistProductCategory } from "../middlewares/productCategory.middlewares";
 import {
   isValidItem,
@@ -101,6 +102,12 @@ productRoutes.delete(
   checkRole(["seller"]),
   isExistSellerProduct,
   removeProductPictures
+);
+productRoutes.post(
+  "/check-expiration",
+  authenticate,
+  isAdmin,
+  productExpirationChecker
 );
 
 export default productRoutes;
