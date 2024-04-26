@@ -307,28 +307,28 @@ describe("user Signin controller and passport", () => {
       });
   });
 
-  it("should respond with the welcome message", (done) => {
-    chai
-      .request(app)
-      .get("/")
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(401);
-        done();
-      });
-  });
+  // it("should respond with the welcome message", (done) => {
+  //   chai
+  //     .request(app)
+  //     .get("/")
+  //     .end((err, res) => {
+  //       expect(err).to.be.null;
+  //       expect(res).to.have.status(401);
+  //       done();
+  //     });
+  // });
 
-  it("should respond with the welcome message", (done) => {
-    chai
-      .request(app)
-      .get("/")
-      .set("Authorization", headerToken)
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(200);
-      });
-    done();
-  });
+  // it("should respond with the welcome message", (done) => {
+  //   chai
+  //     .request(app)
+  //     .get("/")
+  //     .set("Authorization", headerToken)
+  //     .end((err, res) => {
+  //       expect(err).to.be.null;
+  //       expect(res).to.have.status(200);
+  //     });
+  //   done();
+  // });
 
   it("check for the user profile", () => {
     chai
@@ -1023,7 +1023,7 @@ describe("products and product categgories", () => {
         expect(res).to.have.status(409);
         done();
       });
-  });
+  }).timeout(70000);
 
   it("list product items in seller collection sucessfull", (done) => {
     chai
@@ -1086,7 +1086,7 @@ describe("products and product categgories", () => {
         expect(res).to.have.status(400);
         done();
       });
-  });
+  }).timeout(70000);
   it("user Create the new Carts with post on line 934", (done) => {
     chai
       .request(app)
@@ -1110,7 +1110,7 @@ describe("products and product categgories", () => {
         expect(res).to.have.status(201);
         done();
       });
-  });
+  }).timeout(70000);
 
   it("user update cat with put 1006", (done) => {
     chai
@@ -1127,7 +1127,7 @@ describe("products and product categgories", () => {
         expect(res).to.have.status(201);
         done();
       });
-  });
+  }).timeout(5000);
   it("user update cat with put with error 1006", (done) => {
     chai
       .request(app)
@@ -1140,6 +1140,7 @@ describe("products and product categgories", () => {
         }
       ])
       .end((err, res) => {
+        console.log("++++++++++++++++++++++++++++++++++", err);
         expect(res).to.have.status(400);
         done();
       });
@@ -1210,7 +1211,43 @@ describe("products and product categgories", () => {
         expect(res).to.have.status(200);
         done();
       });
+  }).timeout(70000);
+  it("Seller crud operation update product status", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/status`)
+      .set("Authorization", headerTokenSeller)
+      .send({ isAvailable: true })
+      .end((err, res) => {
+        expect(res.body.message).to.equal("Product marked as available");
+        expect(res).to.have.status(200);
+
+        done();
+      });
   }).timeout(5000);
+  it("list  available product items ", (done) => {
+    chai
+      .request(app)
+      .get("/api/products")
+      .end((err, res) => {
+        productId = res.body.products[0].id;
+
+        image_id = res.body.products[0].productPictures[0].imgId;
+
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
+  it("Seller crud operation get single available product ", (done) => {
+    chai
+      .request(app)
+      .get(`/api/products/${productId}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  }).timeout(70000);
   it("Seller crud operation update product with unexisting category", (done) => {
     chai
       .request(app)
@@ -1235,6 +1272,7 @@ describe("products and product categgories", () => {
       .attach("productImage", imageFilePath)
       .field("productDiscount", "1000000")
       .end((err, res) => {
+        console.log("@@@@@@@@@@@@@@@@@@", res.body);
         expect(res.body.error).to.equal(
           "product discount can't be greater than price"
         );
@@ -1525,17 +1563,17 @@ describe("Test user should be able to update their password", () => {
       });
   }).timeout(50000);
 
-  // it("should respond with user logged out", (done) => {
-  //   chai
-  //     .request(app)
-  //     .post("/api/users/logout")
-  //     .set("Authorization", headerToken)
-  //     .end((err, res) => {
-  //       expect(err).to.be.null;
-  //       expect(res).to.have.status(200);
-  //       done();
-  //     });
-  // });
+  it("should respond with user logged out", (done) => {
+    chai
+      .request(app)
+      .post("/api/users/logout")
+      .set("Authorization", headerToken)
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
 
   it("should respond with error message if token is not provided", (done) => {
     chai

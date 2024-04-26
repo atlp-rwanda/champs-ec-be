@@ -19,6 +19,7 @@ import productWishRoutes from "./routes/wish.routes";
 import { checkRole } from "./middlewares/user.middleware";
 import searchRoutes from "./routes/search.routes";
 import { startProductsExpirationCronJob } from "./cronjobs/crontab";
+import NotificationsRoutes from "./routes/notification.routes";
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ const app: express.Application = express();
 // run products expiration cron job
 process.env.DEV_MODE !== "test"
   ? startProductsExpirationCronJob(
-      process.env.PRODUCT_EXPIRATION_CRON_MOCK_TIMER as string
+      process.env.PRODUCT_EXPIRATION_CRON_TIMER as string
     )
   : "";
 
@@ -61,6 +62,7 @@ app.use("/api/search/", searchRoutes);
 app.use("/api/carts/", authenticate, checkRole(["buyer"]), cartRouter);
 
 app.use("/api/products", productRoutes);
+app.use("/api/notifications", NotificationsRoutes);
 app.use("/api/wishes", authenticate, productWishRoutes);
 app.use("/api/categories", authenticate, productCategoryRoutes);
 export default app;

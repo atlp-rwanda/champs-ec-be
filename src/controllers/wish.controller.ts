@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import User from "../models/user";
 import wishServices from "../services/wish.services";
+import Notified from "../services/eventEmit.services";
 
 export const createRemoveWish = async (req: Request, res: Response) => {
   const productId = req.params.product_id;
   const user: User = req.user as User;
   const userId: string = user.dataValues.id as string;
-
+  const userName: string = user.dataValues.firstName as string;
   if (productId != null) {
     const data = {
       productId,
@@ -18,6 +19,7 @@ export const createRemoveWish = async (req: Request, res: Response) => {
       const wish = await wishServices.createWish(data);
 
       if (wish != null) {
+        Notified.emit("productWished", productId, userName);
         res.status(200).send({
           message: "product added to wishlist",
           data: { productId, userId }
@@ -27,6 +29,7 @@ export const createRemoveWish = async (req: Request, res: Response) => {
       }
     } else {
       await wishServices.deleteWish(data);
+      Notified.emit("productUnWished", productId, userName);
       res.status(200).send({ message: "Product removed into wishlist" });
     }
   } else {

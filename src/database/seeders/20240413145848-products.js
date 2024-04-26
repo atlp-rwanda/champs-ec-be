@@ -21,8 +21,7 @@ module.exports = {
           billingAddress: "kigali street KN 250 st",
           profileImage: "test.png",
           createdAt: new Date(),
-          updatedAt: new Date(),
-          isExpired: false
+          updatedAt: new Date()
         }
       ],
       {}
@@ -49,6 +48,7 @@ module.exports = {
           productPrice: "100",
           productCurrency: "BUD",
           productDiscount: "0",
+          isAvailable: false,
           productDescription:
             "test of project implementation product item crud",
           productThumbnail:
@@ -68,6 +68,7 @@ module.exports = {
           productPrice: "300",
           productCurrency: "BUD",
           productDiscount: "0",
+          isAvailable: false,
           productDescription:
             "test of project implementation product item crud",
           productThumbnail:
@@ -75,7 +76,8 @@ module.exports = {
 
           expireDate: "2028-01-10",
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
+          isExpired: false
         },
         {
           id: uuidv4(),
@@ -86,6 +88,7 @@ module.exports = {
           productPrice: "500",
           productCurrency: "BUD",
           productDiscount: "0",
+          isAvailable: false,
           productDescription:
             "test of project implementation product item crud",
           productThumbnail:
@@ -104,6 +107,7 @@ module.exports = {
           productCategory: category[0].id,
           productPrice: "200",
           productCurrency: "BUD",
+          isAvailable: false,
           productDiscount: "0",
           productDescription:
             "test of project implementation product item crud",

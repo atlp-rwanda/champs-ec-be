@@ -43,11 +43,12 @@ export const sequelizeConnection: Sequelize = new Sequelize(db_uri, {
     idle: 10000
   }
 });
+export const sequelizeDbConfig: any = sequelizeConnection.config;
 
 export const dbConnect = () =>
   sequelizeConnection
     .authenticate()
-    .then(() => {
+    .then(async () => {
       console.log("Database connected successfully.", db_uri);
     })
     .catch((error) => {

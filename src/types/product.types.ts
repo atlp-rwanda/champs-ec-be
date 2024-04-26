@@ -9,6 +9,7 @@ export interface ProductAttributes {
   productPrice?: string;
   productCurrency?: string;
   productDiscount: string;
+  isAvailable?: boolean;
   productDescription?: Text;
   productThumbnail?: string;
   productPictures?: any;

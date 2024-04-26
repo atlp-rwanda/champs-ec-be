@@ -8,7 +8,8 @@ import {
   setProductThumbnail,
   updateProductPictures,
   updateSellerProduct,
-  productExpirationChecker
+  productExpirationChecker,
+  updateProductStatus
 } from "../controllers/product.controllers";
 
 import multerImage from "../utils/uploader";
@@ -17,6 +18,7 @@ import { isAdmin, checkRole } from "../middlewares/user.middleware";
 import { isExistProductCategory } from "../middlewares/productCategory.middlewares";
 import {
   isValidItem,
+  isValidStatus,
   isValidUpdate
 } from "../validations/sellerProduct.validation";
 
@@ -28,9 +30,11 @@ import {
   isSingleImageUpload,
   isValidImage
 } from "../middlewares/sellerproduct.middlewares";
-import { authenticate } from "../middlewares/user.auth";
+import { authenticate, isAnonymous } from "../middlewares/user.auth";
+import { checkRoles } from "../middlewares/role.middleware";
 
-const productRoutes = express.Router();
+const productRoutes = express.Router({ mergeParams: true });
+
 productRoutes.post(
   "/",
   authenticate,
@@ -45,17 +49,34 @@ productRoutes.post(
 );
 productRoutes.get(
   "/",
-  authenticate,
-  checkRole(["seller", "admin", "user"]),
+  isAnonymous,
+  checkRoles(["seller", "admin", "buyer"]),
   getAllSellerProducts
 );
+// productRoutes.get(
+//   "/:productId",
+//   authenticate,
+//   checkRole(["seller"]),
 productRoutes.get(
   "/:productId",
-  authenticate,
-  checkRole(["seller"]),
+  isAnonymous,
+  checkRoles(["admin", "seller", "buyer"]),
   isExistSellerProduct,
   getSingleProduct
 );
+productRoutes.get(
+  "/",
+  isAnonymous,
+  checkRoles(["admin", "seller", "buyer"]),
+  getAllSellerProducts
+);
+
+// productRoutes.get(
+//   "/:productId",
+//   authenticate,
+//   isExistSellerProduct,
+//   getSingleProduct
+// );
 productRoutes.patch(
   "/:productId",
   authenticate,
@@ -109,5 +130,14 @@ productRoutes.post(
   isAdmin,
   productExpirationChecker
 );
+productRoutes.patch(
+  "/:productId/status",
+  authenticate,
+  checkRole(["seller"]),
+  isValidStatus,
+  updateProductStatus
+);
 
+// productRoutes.get("/items/:productId",isExistSellerProduct,getAvailableProductById)
+// productRoutes.get('/',[admin,buyer,])
 export default productRoutes;

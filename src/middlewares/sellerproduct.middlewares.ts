@@ -18,14 +18,23 @@ export const isExistSellerProduct = async (
         error: "Invalid product ID  please check and try again"
       });
     }
-    const logedSeller: any = req.user;
-    const userId: string = logedSeller.dataValues.id;
-    const product = await Product.findOne({
-      where: {
-        id: req.params.productId,
-        sellerId: userId
-      }
-    });
+    let product: any;
+    if (req.user !== "anonymous") {
+      const logedSeller: any = req.user;
+      const userId: string = logedSeller.dataValues.id;
+      product = await Product.findOne({
+        where: {
+          id: req.params.productId,
+          sellerId: userId
+        }
+      });
+    } else {
+      product = await Product.findOne({
+        where: {
+          id: req.params.productId
+        }
+      });
+    }
     if (!product) {
       return res
         .status(404)

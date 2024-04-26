@@ -112,3 +112,24 @@ export const sendNotificationInactiveAccount = (
   };
   sendMail(options);
 };
+
+export const senderNotitficationToclient = (
+  mail: string,
+  message: string,
+  subject: string
+) => {
+  const options = {
+    ...mailOptions,
+    to: mail,
+    subject,
+    html: `
+  
+    ${message}
+   
+    <br/><br/>
+    Regards,
+      Champs Bay
+    `
+  };
+  sendMail(options);
+};

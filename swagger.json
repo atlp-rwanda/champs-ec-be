@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8000",
+      "url": "http://localhost:5500",
       "description": "Development server"
     },
     {
@@ -46,6 +46,10 @@
     },
     {
       "name": "Wishes",
+      "description": "API endpoints for creating and managing wishlist"
+    },
+    {
+      "name": "Notifications",
       "description": "API endpoints for creating and managing wishlist"
     }
   ],
@@ -134,8 +138,7 @@
           }
         ]
       }
-    }
-,    
+    },
     "/api/users/signup": {
       "post": {
         "summary": "User Sign Up",
@@ -716,7 +719,7 @@
         ]
       }
     },
-    "/api/products/check-expiration" : {
+    "/api/products/check-expiration": {
       "post": {
         "summary": "Unlist expired products",
         "description": "Run expiration checking algorithm manually to unlist expired products",
@@ -955,9 +958,36 @@
         },
         "security": [{ "Bearer": [] }]
       },
+
       "get": {
         "summary": "Get all product items for a seller",
         "tags": ["Seller Product CRUD"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page number of items to start with",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of items to return per page",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "example": 10
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "All product items for authenticated seller",
@@ -1011,6 +1041,7 @@
         },
         "security": [{ "Bearer": [] }]
       },
+
       "delete": {
         "tags": ["Seller Product CRUD"],
         "summary": "Delete one item in seller collection",
@@ -1078,7 +1109,51 @@
         "security": [{ "Bearer": [] }]
       }
     },
-
+    "/api/products/{productId}/status": {
+      "patch": {
+        "tags": [" Seller Product CRUD"],
+        "summary": "update product status",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "Product id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/status"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "product status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/status"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product item not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
     "/api/products/{productId}/pictures/{imgId}": {
       "delete": {
         "tags": ["Manage single Item pictures"],
@@ -1290,6 +1365,7 @@
         "security": [{ "Bearer": [] }]
       }
     },
+
     "/api/wishes/{productId}": {
       "post": {
         "tags": ["Wishes"],
@@ -1357,6 +1433,51 @@
           "404": {
             "description": "not found"
           }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "summary": "User Notifications",
+        "description": "User Notifications",
+        "tags": ["Notifications"],
+        "responses": {
+          "200": { "description": "User Notifications" },
+          "500": { "description": "internal server error" }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "put": {
+        "summary": "User Notifications",
+        "description": "User Notifications",
+        "tags": ["Notifications"],
+        "responses": {
+          "201": { "description": "all Notifications Readen" },
+          "500": { "description": "internal server error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/notifications/:id": {
+      "put": {
+        "summary": "User Notifications",
+        "parameters": [
+          {
+            "name": "Notification",
+            "required": true,
+            "in": "path",
+            "description": "Product id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "description": "User Notifications",
+        "tags": ["Notifications"],
+        "responses": {
+          "201": { "description": "one Notifications Readen" },
+          "500": { "description": "internal server error" }
         },
         "security": [{ "Bearer": [] }]
       }
@@ -1430,6 +1551,15 @@
           "expireDate": {
             "type": "string",
             "description": "Item expire date is required"
+          }
+        }
+      },
+      "status": {
+        "type": "object",
+        "properties": {
+          "isAvailable": {
+            "type": "boolean",
+            "description": "product status"
           }
         }
       },
