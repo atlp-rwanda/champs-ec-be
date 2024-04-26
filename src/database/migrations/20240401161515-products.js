@@ -1,3 +1,5 @@
+const sequelize = require("sequelize");
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -53,6 +55,11 @@ module.exports = {
       productPictures: {
         type: Sequelize.ARRAY(Sequelize.JSON),
         allowNull: true
+      },
+      isAvailable: {
+        type: sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
       },
       expireDate: {
         type: Sequelize.DATE,

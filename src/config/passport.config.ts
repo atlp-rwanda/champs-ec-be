@@ -17,6 +17,7 @@ const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
         email: payload.email,
         verified: true
       },
+      attributes: { exclude: ["password"] },
       include: [
         {
           model: Role,
@@ -24,6 +25,7 @@ const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
         }
       ]
     });
+
     if (!user) {
       return done(null, false);
     }

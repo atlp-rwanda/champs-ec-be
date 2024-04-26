@@ -1,4 +1,5 @@
 // eslint-disable-next-line import/no-import-module-exports
+// import { v4 as uuidv4 } from "uuid";
 const { v4: uuidv4 } = require("uuid");
 
 module.exports = {
@@ -10,7 +11,7 @@ module.exports = {
           id: uuidv4(),
           firstName: "Emmanuel",
           lastName: "munezero",
-          email: "test10@gmail.com",
+          email: "ema1@gmail.com",
           password: uuidv4(),
           phone: "+250786534332",
           birthDate: new Date(),
@@ -26,7 +27,7 @@ module.exports = {
           id: uuidv4(),
           firstName: "Emmanuel",
           lastName: "munezero",
-          email: "tes2t30@gmail.com",
+          email: "viva35@gmail.com",
           password: uuidv4(),
           phone: "+250786534332",
           birthDate: new Date(),
@@ -42,7 +43,8 @@ module.exports = {
           id: uuidv4(),
           firstName: "Emmanuel",
           lastName: "munezero",
-          email: "test550@gmail.com",
+          email: "test55@gmail.com",
+          // email: "test22@gmail.com",
           password: uuidv4(),
           phone: "+250786534332",
           birthDate: new Date(),
@@ -58,7 +60,7 @@ module.exports = {
           id: uuidv4(),
           firstName: "Emmanuel",
           lastName: "munezero",
-          email: "testwde20@gmail.com",
+          email: "test44@gmail.com",
           password: uuidv4(),
           phone: "+250786534332",
           birthDate: new Date(),

@@ -27,7 +27,7 @@ const app: express.Application = express();
 // run products expiration cron job
 process.env.DEV_MODE !== "test"
   ? startProductsExpirationCronJob(
-      process.env.PRODUCT_EXPIRATION_CRON_MOCK_TIMER as string
+      process.env.PRODUCT_EXPIRATION_CRON_TIMER as string
     )
   : "";
 

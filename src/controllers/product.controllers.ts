@@ -73,22 +73,45 @@ export const createProducts = async (req: Request, res: Response) => {
 
 /* this function will help to lists all product items in seller collection */
 
-export const getAllSellerProducts = async (req: Request, res: Response) => {
+export const getAllSellerProducts = async (req: any, res: Response) => {
   try {
-    const logedUser: User = req.user as User;
-    const userId: string = logedUser.dataValues.id as string;
+    if (req.user !== "anonymous") {
+      const logedUser: any = req.user as User;
+      const userId: string = logedUser.dataValues.id as string;
+      if (logedUser.Role.dataValues.name === "seller") {
+        const products = await Product.findAll({
+          where: {
+            sellerId: userId
+          }
+        });
+        if (products.length < 1) {
+          return res
+            .status(404)
+            .json({ message: "no product found, please add new" });
+        }
 
-    const products = await Product.findAll({
-      where: {
-        sellerId: userId
+        return res.status(200).json({ products });
       }
-    });
-    if (products.length < 1) {
-      return res
-        .status(404)
-        .json({ message: "no product found, please add new" });
+    } else {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      // Calculate the offset based on the page and limit
+      const offset = (page - 1) * limit;
+
+      // Query the database for available products with pagination
+      const { count, rows: products } = await Product.findAndCountAll({
+        where: { isAvailable: true },
+        offset,
+        limit
+      });
+      // Return a response with paginated list and metadata
+      res.status(200).json({
+        totalItems: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        products
+      });
     }
-    return res.status(200).json({ products });
   } catch (error) {
     return res.status(500).json({ error: "Internal server error" });
   }
@@ -98,16 +121,28 @@ export const getAllSellerProducts = async (req: Request, res: Response) => {
 
 export const getSingleProduct = async (req: Request, res: Response) => {
   try {
-    const logedUser: User = req.user as User;
-    const userId: string = logedUser.dataValues.id as string;
-    const product = await Product.findOne({
-      where: {
-        id: req.params.productId,
-        sellerId: userId
-      }
-    });
+    if (req.user !== "anonymous") {
+      const logedUser: any = req.user as User;
+      const userId: string = logedUser.dataValues.id as string;
+      if (logedUser.Role.dataValues.name === "seller") {
+        const product = await Product.findOne({
+          where: {
+            id: req.params.productId,
+            sellerId: userId
+          }
+        });
 
-    return res.status(200).json({ product });
+        return res.status(200).json({ product });
+      }
+    } else {
+      const product = await Product.findOne({
+        where: {
+          id: req.params.productId,
+          isAvailable: true
+        }
+      });
+      res.status(200).json(product);
+    }
   } catch (error) {
     return res.status(500).json({ error: "Internal server error" });
   }
@@ -142,7 +177,6 @@ export const updateSellerProduct = async (req: Request, res: Response) => {
     if (req.body.productCurrency) {
       product.productCurrency = req.body.productCurrency;
     }
-
     if (req.body.productDiscount) {
       const discount: number = parseInt(req.body.productDiscount, 10);
       const price: number = parseInt(product.dataValues.productPrice, 10);
@@ -324,5 +358,36 @@ export const productExpirationChecker = async (
     return res
       .status(500)
       .json({ msg: "Couldn't check all products' expiration dates" });
+  }
+};
+// update product status
+export const updateProductStatus = async (req: Request, res: Response) => {
+  const logedUser: User = req.user as User;
+  const { productId } = req.params;
+  const userId: string = logedUser.dataValues.id as string;
+  const { isAvailable } = req.body;
+
+  try {
+    // Find the product
+    const product = await Product.findOne({
+      where: {
+        id: req.params.productId,
+        sellerId: userId
+      }
+    });
+
+    // Check if product exists
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    await product.update({ isAvailable: req.body.isAvailable });
+
+    // Return success response
+    res.status(200).json({
+      message: `Product marked as ${isAvailable ? "available" : "unavailable"}`
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
   }
 };
