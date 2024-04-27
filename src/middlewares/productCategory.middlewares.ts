@@ -55,7 +55,7 @@ export const isCategoryNameExist = async (
     });
     if (category) {
       return res.status(409).json({
-        message: "This Category alread exists",
+        message: "This Category already exists",
         category
       });
     }

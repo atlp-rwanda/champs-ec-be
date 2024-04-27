@@ -17,14 +17,11 @@ export const createCart = async (req: Request, res: Response) => {
     const cartItems: CartItem[] = req.body;
 
     const productsWithQuantity = await getProductsWithQuantity(cartItems);
-    let sum: number = 0;
-    productsWithQuantity.map((el) => {
-      sum += el.totalPrice;
-    });
+    productsWithQuantity.reduce((sum, prod) => sum + prod.totalPrice, 0);
 
     const news = await mergeDuplicatedProduct(productsWithQuantity);
     if (!news.StockCheck) {
-      return res.status(400).json({
+      return res.status(200).json({
         error: "You sent a quantity that exceeds what we have in stock."
       });
     }
@@ -71,10 +68,8 @@ export const updateCart = async (req: Request, res: Response) => {
     const newuser: User = req.user as User;
     const cartItems: CartItem[] = req.body;
     const productsWithQuantity = await getProductsWithQuantity(cartItems);
-    let sum: number;
-    productsWithQuantity.map((el: { totalPrice: number }) => {
-      sum += el.totalPrice;
-    });
+    // let sum: number;
+    productsWithQuantity.reduce((sum, prod) => sum + prod.totalPrice, 0);
 
     const mergedProduct = await mergeDuplicatedProduct(productsWithQuantity);
     const new_cart: any = await Cart.findOne({
@@ -82,7 +77,7 @@ export const updateCart = async (req: Request, res: Response) => {
     });
 
     if (!mergedProduct.StockCheck) {
-      return res.status(400).json({
+      return res.status(200).json({
         error:
           "you send the quantity which are more than what we have in the stock Please check."
       });
