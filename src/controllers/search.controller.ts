@@ -30,7 +30,15 @@ export const searchProducts = async (req: Request, res: Response) => {
     res.json(products);
   } catch (error) {
     console.error("Error searching products:", error);
-    res.status(500).json({ message: "Internal server error" });
+    let statusCode = 500;
+    let errorMessage = "Internal server error";
+
+    if (error instanceof Error) {
+      statusCode = 400;
+      errorMessage = error.message;
+    }
+
+    res.status(statusCode).json({ error: errorMessage });
   }
 };
 export default searchProducts;

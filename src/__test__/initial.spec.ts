@@ -736,34 +736,13 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("should return 500 with product(seller(category))", (done) => {
+  it("should return 400 with product(seller(category))", (done) => {
     chai
       .request(app)
       .get("/api/search")
       .query({ category: "TEST CAT" })
       .end((err, res) => {
-        expect(res).to.have.status(500);
-        done();
-      });
-  });
-
-  it("should return 200 with product(seller(minPrice))", (done) => {
-    chai
-      .request(app)
-      .get("/api/search")
-      .query({ minPrice: 10 })
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        done();
-      });
-  });
-  it("should return 200 with product(seller(maxPrice))", (done) => {
-    chai
-      .request(app)
-      .get("/api/search")
-      .query({ maxPrice: 100 })
-      .end((err, res) => {
-        expect(res).to.have.status(200);
+        expect(res).to.have.status(400);
         done();
       });
   });
@@ -877,6 +856,27 @@ describe("products and product categgories", () => {
         done();
       });
   }).timeout(70000);
+  it("should return 200 with product(seller(maxPrice))", (done) => {
+    chai
+      .request(app)
+      .get("/api/search")
+      .query({ maxPrice: 100 })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("should return 200 with product(seller(minPrice))", (done) => {
+    chai
+      .request(app)
+      .get("/api/search")
+      .query({ minPrice: 10 })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
   it("create product item in seller collection with minimal images", (done) => {
     chai
       .request(app)
