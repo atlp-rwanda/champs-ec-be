@@ -33,6 +33,14 @@ process.env.DEV_MODE !== "test"
     )
   : "";
 
+// run products expiration cron job
+// eslint-disable-next-line no-unused-expressions
+process.env.DEV_MODE !== "test"
+  ? startProductsExpirationCronJob(
+      process.env.PASSWORD_EXPIRATION_CRON_TIMER as string
+    )
+  : "";
+
 app.use(cors());
 app.use(express.json());
 
