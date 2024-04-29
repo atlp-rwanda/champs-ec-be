@@ -19,7 +19,7 @@ class Product
 
   public stockLevel!: string;
 
-  public productPrice!: string;
+  public productPrice!: number;
 
   public productCurrency!: string;
 
@@ -82,7 +82,7 @@ Product.init(
       }
     },
     productPrice: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DOUBLE,
       allowNull: false,
       unique: true,
       validate: {
