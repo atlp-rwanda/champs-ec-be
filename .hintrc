@@ -3,6 +3,9 @@
     "development"
   ],
   "hints": {
-    "typescript-config/consistent-casing": "off"
+    "typescript-config/consistent-casing": "off",
+    "axe/forms": "off",
+    "axe/language": "off",
+    "meta-viewport": "off"
   }
 }
