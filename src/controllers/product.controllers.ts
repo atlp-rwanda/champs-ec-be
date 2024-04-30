@@ -12,6 +12,7 @@ import {
 
 import User from "../models/user";
 import formatString from "../utils/string.manipulation";
+import Reviews from "../models/reviews";
 
 export const createProducts = async (req: Request, res: Response) => {
   try {
@@ -82,7 +83,14 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
         const products = await Product.findAll({
           where: {
             sellerId: userId
-          }
+          },
+          include: [
+            {
+              model: Reviews,
+              as: "reviews",
+              attributes: ["buyerId", "rating", "feedback"]
+            }
+          ]
         });
         if (products.length < 1) {
           return res
@@ -117,8 +125,6 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
   }
 };
 
-/* this function will help to get information for one product item in seller collection */
-
 export const getSingleProduct = async (req: Request, res: Response) => {
   try {
     if (req.user !== "anonymous") {
@@ -129,7 +135,14 @@ export const getSingleProduct = async (req: Request, res: Response) => {
           where: {
             id: req.params.productId,
             sellerId: userId
-          }
+          },
+          include: [
+            {
+              model: Reviews,
+              as: "reviews",
+              attributes: ["buyerId", "rating", "feedback"]
+            }
+          ]
         });
 
         return res.status(200).json({ product });
@@ -139,7 +152,14 @@ export const getSingleProduct = async (req: Request, res: Response) => {
         where: {
           id: req.params.productId,
           isAvailable: true
-        }
+        },
+        include: [
+          {
+            model: Reviews,
+            as: "reviews",
+            attributes: ["buyerId", "rating", "feedback"]
+          }
+        ]
       });
       res.status(200).json(product);
     }

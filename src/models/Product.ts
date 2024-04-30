@@ -4,6 +4,7 @@ import {
   ProductAttributes,
   ProductCreationAttributes
 } from "../types/product.types";
+import Reviews from "./reviews";
 // eslint-disable-next-line require-jsdoc
 class Product
   extends Model<ProductAttributes, ProductCreationAttributes>
@@ -152,5 +153,5 @@ Product.init(
     tableName: "products"
   }
 );
-
+Product.hasMany(Reviews, { foreignKey: "productId", as: "reviews" });
 export default Product;

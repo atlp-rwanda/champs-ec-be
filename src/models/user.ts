@@ -176,5 +176,4 @@ User.belongsTo(Role, {
   foreignKey: "roleId",
   onDelete: "CASCADE"
 });
-
 export default User;
