@@ -1,5 +1,9 @@
 /** @type {import('sequelize-cli').Migration} */
 
+const currentDate = new Date();
+const userPasswordValidityPeriod = new Date(currentDate);
+userPasswordValidityPeriod.setMonth(currentDate.getMonth() + 3);
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("users", {
@@ -91,6 +95,16 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP")
+      },
+      passwordExpiresAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: userPasswordValidityPeriod
+      },
+      isPasswordExpired: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       }
     });
   },

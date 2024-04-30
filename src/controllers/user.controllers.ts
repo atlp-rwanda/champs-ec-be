@@ -345,11 +345,7 @@ export const updateUserPassword = async (req: Request, res: Response) => {
     return res.status(500).send({ error: "Internal server error" });
   }
 };
-export const blacklistToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const blacklistToken = async (req: Request, res: Response) => {
   const tokenHeader = req.headers.authorization?.split(" ")[1];
   if (!tokenHeader) {
     return res
@@ -393,4 +389,30 @@ export const changeAccountStatus = async (req: any, res: Response) => {
       if (err) return res.status(200).json({ error: "user ID not exist" });
     });
 };
+
+export const passwordExpirationChecker = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user: any = await User.findOne({
+      where: {
+        email: req.body.email
+      }
+    });
+    const expiryDate = new Date(user.dataValues.passwordExpiresAt as Date);
+    if (expiryDate.getTime() <= new Date().getTime()) {
+      return res
+        .status(200)
+        .json({ msg: "Your password has expired please update your password" });
+    }
+    next();
+  } catch (err) {
+    return res
+      .status(400)
+      .json({ msg: "failed to run checking passwords expiration!" });
+  }
+};
+
 export default blacklistToken;

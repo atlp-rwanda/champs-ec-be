@@ -23,8 +23,8 @@
   "license": "ISC",
   "dependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
-    "axios": "^1.6.8",
     "@types/multer": "^1.4.11",
+    "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "chai": "^4.4.1",
@@ -66,6 +66,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/body-parser": "^1.19.5",
     "@types/chai": "^4.3.14",
     "@types/chai-http": "^4.2.0",
     "@types/cors": "^2.8.17",
