@@ -1154,7 +1154,44 @@
         "security": [{ "Bearer": [] }]
       }
     },
-    "/api/products/{productId}/pictures/{imgId}": {
+
+
+"/api/products/{productId}/reviews": {
+  "post": {
+    "tags": ["Reviews"],
+    "summary": "Buyer should give a review",
+    "security": [{"Bearer": []}],
+    "parameters": [
+      {
+        "name": "productId",
+        "in": "path",
+        "description": "Product Id",
+        "schema": { "type": "string" }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "rating": { "type": "number" },
+              "feedback": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "201": { "description": "Review sent" },
+      "401": { "description": "Unauthenticated" },
+      "404": { "description": "Product id is invalid" },
+      "500": { "description": "Internal Server Error" }
+    }
+  }
+},
+   "/api/products/{productId}/pictures/{imgId}": {
       "delete": {
         "tags": ["Manage single Item pictures"],
         "summary": "Delete one picture for specific  item ",
@@ -1184,6 +1221,7 @@
           "404": { "description": "the product image not found" },
           "500": { "description": "Internal Server Error" }
         },
+
         "security": [{ "Bearer": [] }]
       },
 

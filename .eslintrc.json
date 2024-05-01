@@ -19,8 +19,9 @@
     "mocha": true
   },
   "rules": {
-    "no_console": 0,
+    
     "one-var": 0,
+    "no_console": 0,
     "camelcase": ["error", { "properties": "always", "allow": ["_"] }],
     "@typescript-eslint/no-explicit-any": 0,
     "one-var-declaration-per-line": 0,

@@ -4,7 +4,7 @@ import Notification from "../models/Notifications";
 
 export const GetUserNotification = async (req: Request, res: Response) => {
   try {
-    const user: User = req.user as user;
+    const user: User = req.user as User;
     const AllUserNotification = await Notification.findAll({
       where: {
         reciepent_id: user.dataValues.id
@@ -29,6 +29,10 @@ export const ReadOneNotification = async (req: Request, res: Response) => {
     const notification: Notification = (await Notification.findOne({
       where: { id: notificationId }
     })) as Notification;
+
+    if (!notification) {
+      return res.status(400).json({ error: "this norification is not exist" });
+    }
     const updatenotification = {
       reciepent_id: notification.dataValues.reciepent_id,
       message: notification.dataValues.message,
@@ -53,6 +57,11 @@ export const ReadAllNotification = async (req: Request, res: Response) => {
     const allUserNotifications = await Notification.findAll({
       where: { reciepent_id: user.dataValues.id }
     });
+    if (!allUserNotifications) {
+      return res
+        .status(200)
+        .json({ message: "This user not have any notification" });
+    }
 
     allUserNotifications.map(async (el) => {
       const notification: Notification = (await Notification.findOne({

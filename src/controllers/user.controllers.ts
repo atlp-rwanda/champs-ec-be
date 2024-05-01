@@ -126,7 +126,6 @@ export const userLogin = async (req: Request, res: Response) => {
     const user: any = await User.findOne({
       where: {
         email,
-        verified: true,
         isActive: true
       }
     });
@@ -389,4 +388,30 @@ export const changeAccountStatus = async (req: any, res: Response) => {
       if (err) return res.status(200).json({ error: "user ID not exist" });
     });
 };
+
+export const passwordExpirationChecker = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user: any = await User.findOne({
+      where: {
+        email: req.body.email
+      }
+    });
+    const expiryDate = new Date(user.dataValues.passwordExpiresAt as Date);
+    if (expiryDate.getTime() <= new Date().getTime()) {
+      return res
+        .status(200)
+        .json({ msg: "Your password has expired please update your password" });
+    }
+    next();
+  } catch (err) {
+    return res
+      .status(400)
+      .json({ msg: "failed to run checking passwords expiration!" });
+  }
+};
+
 export default blacklistToken;

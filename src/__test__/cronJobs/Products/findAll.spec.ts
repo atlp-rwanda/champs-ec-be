@@ -7,8 +7,8 @@ import Product from "../../../models/Product";
 describe("findAllProducts", () => {
   it("should return an array of products", async () => {
     const mockProducts: Product[] = [
-      { id: "1", productName: "Product 1", productPrice: "100" } as Product,
-      { id: "2", productName: "Product 2", productPrice: "200" } as Product
+      { id: "1", productName: "Product 1", productPrice: 100 } as Product,
+      { id: "2", productName: "Product 2", productPrice: 200 } as Product
     ];
     const findAllStub = sinon.stub(Product, "findAll").resolves(mockProducts);
     const result = await findAllProducts();

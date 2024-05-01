@@ -13,6 +13,7 @@ import {
 import User from "../models/user";
 import formatString from "../utils/string.manipulation";
 import Notified from "../services/eventEmit.services";
+import Reviews from "../models/reviews";
 
 export const createProducts = async (req: Request, res: Response) => {
   try {
@@ -64,7 +65,6 @@ export const createProducts = async (req: Request, res: Response) => {
       productPictures: urls,
       expireDate
     });
-    Notified.emit("productCreated", product);
     res
       .status(201)
       .json({ message: "Product item is successful created", product });
@@ -84,7 +84,14 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
         const products = await Product.findAll({
           where: {
             sellerId: userId
-          }
+          },
+          include: [
+            {
+              model: Reviews,
+              as: "reviews",
+              attributes: ["buyerId", "rating", "feedback"]
+            }
+          ]
         });
         if (products.length < 1) {
           return res
@@ -119,8 +126,6 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
   }
 };
 
-/* this function will help to get information for one product item in seller collection */
-
 export const getSingleProduct = async (req: Request, res: Response) => {
   try {
     if (req.user !== "anonymous") {
@@ -131,7 +136,14 @@ export const getSingleProduct = async (req: Request, res: Response) => {
           where: {
             id: req.params.productId,
             sellerId: userId
-          }
+          },
+          include: [
+            {
+              model: Reviews,
+              as: "reviews",
+              attributes: ["buyerId", "rating", "feedback"]
+            }
+          ]
         });
 
         return res.status(200).json({ product });
@@ -141,7 +153,14 @@ export const getSingleProduct = async (req: Request, res: Response) => {
         where: {
           id: req.params.productId,
           isAvailable: true
-        }
+        },
+        include: [
+          {
+            model: Reviews,
+            as: "reviews",
+            attributes: ["buyerId", "rating", "feedback"]
+          }
+        ]
       });
       res.status(200).json(product);
     }
@@ -247,7 +266,6 @@ export const removeSellerProduct = async (req: Request, res: Response) => {
       sellerId: userId
     }
   });
-  Notified.emit("productDeleted", product, productName);
   return res.status(203).json({ message: "one product is removed" });
 };
 
@@ -353,11 +371,7 @@ export const setProductThumbnail = async (req: Request, res: Response) => {
 
 // trigger check products expiration from API request
 
-export const productExpirationChecker = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const productExpirationChecker = async (req: Request, res: Response) => {
   try {
     await checkExpiredProducts();
     return res
@@ -379,7 +393,7 @@ export const updateProductStatus = async (req: Request, res: Response) => {
 
   try {
     // Find the product
-    const product = await Product.findOne({
+    const product: any = await Product.findOne({
       where: {
         id: req.params.productId,
         sellerId: userId
@@ -393,6 +407,9 @@ export const updateProductStatus = async (req: Request, res: Response) => {
 
     await product.update({ isAvailable: req.body.isAvailable });
 
+    if (isAvailable) {
+      Notified.on("productAvailable", product);
+    }
     // Return success response
     res.status(200).json({
       message: `Product marked as ${isAvailable ? "available" : "unavailable"}`

@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-keys */
 /** @type {import('sequelize-cli').Migration} */
 const { v4: uuidv4 } = require("uuid");
 const { DataTypes } = require("sequelize");
@@ -24,6 +25,7 @@ module.exports = {
       }
     });
   },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("blacklisted_tokens");
   }
