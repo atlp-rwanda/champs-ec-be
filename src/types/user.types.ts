@@ -20,6 +20,8 @@ export interface UserAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   googleId?: string;
+  passwordExpiresAt?: Date;
+  isPasswordExpired?: boolean;
 }
 
 export interface PayloadAttributes {

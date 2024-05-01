@@ -3,6 +3,10 @@ import { sequelizeConnection } from "../config/db.config";
 import { UserAttributes, UserCreationAttributes } from "../types/user.types";
 import Role from "./Role";
 
+const currentDate = new Date();
+const userPasswordValidityPeriod = new Date(currentDate);
+userPasswordValidityPeriod.setMonth(currentDate.getMonth() + 3);
+
 class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
@@ -46,6 +50,10 @@ class User
   declare createdAt: Date;
 
   declare updatedAt: Date;
+
+  declare passwordExpiresAt: Date;
+
+  declare isPasswordExpired: boolean;
 }
 
 User.init(
@@ -146,6 +154,16 @@ User.init(
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE
+    },
+    passwordExpiresAt: {
+      allowNull: true,
+      type: DataTypes.DATE,
+      defaultValue: userPasswordValidityPeriod
+    },
+    isPasswordExpired: {
+      allowNull: true,
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   },
   {
@@ -158,5 +176,4 @@ User.belongsTo(Role, {
   foreignKey: "roleId",
   onDelete: "CASCADE"
 });
-
 export default User;

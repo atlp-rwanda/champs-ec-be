@@ -51,3 +51,12 @@ export const checkExpiredProducts = async (): Promise<void> => {
   checkProduct(products.length - 1);
   console.log("SUCCESS: ALL PRODUCTS EXPIRATION DATES HAVE BEEN CHECKED");
 };
+
+export const findAllUsers = async (): Promise<User[] | object[]> => {
+  try {
+    const users = await User.findAll();
+    return users;
+  } catch (err) {
+    throw new Error("Couldn't Perform task at the moment");
+  }
+};

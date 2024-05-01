@@ -11,6 +11,7 @@ import roleRoutes from "./routes/role.routes";
 import passport from "./config/passport.config";
 import { authenticate } from "./middlewares/user.auth";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+import chatRouters from "./routes/chats.routes";
 import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";
 import productCategoryRoutes from "./routes/productCategory.routes";
@@ -26,9 +27,18 @@ dotenv.config();
 const app: express.Application = express();
 
 // run products expiration cron job
+// eslint-disable-next-line no-unused-expressions
 process.env.DEV_MODE !== "test"
   ? startProductsExpirationCronJob(
       process.env.PRODUCT_EXPIRATION_CRON_TIMER as string
+    )
+  : "";
+
+// run products expiration cron job
+// eslint-disable-next-line no-unused-expressions
+process.env.DEV_MODE !== "test"
+  ? startProductsExpirationCronJob(
+      process.env.PASSWORD_EXPIRATION_CRON_TIMER as string
     )
   : "";
 
@@ -53,7 +63,8 @@ app.use(
     extended: true
   })
 );
-
+app.use("/api/users", chatRouters);
+app.use("/api/users/", authRoutes);
 app.get("/", authenticate, Home);
 app.use("/api/users", userRoutes);
 app.use("/api/roles", authenticate, checkRole(["admin"]), roleRoutes);

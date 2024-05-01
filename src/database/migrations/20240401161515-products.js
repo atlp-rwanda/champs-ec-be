@@ -33,7 +33,7 @@ module.exports = {
         allowNull: false
       },
       productPrice: {
-        type: Sequelize.STRING,
+        type: Sequelize.DOUBLE,
         allowNull: false
       },
       productCurrency: {
@@ -94,7 +94,6 @@ module.exports = {
     FOR EACH ROW EXECUTE FUNCTION public.products_notify_trigger();
     `);
   },
-
   async down(queryInterface) {
     await queryInterface.sequelize.query(`
     DROP TRIGGER IF EXISTS product_update_trigger ON public.products;

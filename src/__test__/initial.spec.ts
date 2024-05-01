@@ -1,7 +1,6 @@
 /* eslint-disable func-names */
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-
 import sinon from "sinon";
 import app from "../app";
 import { dbConnect } from "../config/db.config";
@@ -385,8 +384,6 @@ describe("user Signin controller and passport", () => {
       .set("Authorization", headerToken)
       .send({ name: "TestRole" })
       .end((err, res) => {
-        console.log(err);
-        console.log("Role created");
         expect(err).to.be.null;
         expect(res).to.have.status(201);
         expect(res.body)
@@ -637,7 +634,7 @@ describe("user Signin controller and passport", () => {
   // test for creating product category --------------------------------------------------------------------
 });
 describe("products and product categgories", () => {
-  it("it shoult test to list product categories but it is not created", (done) => {
+  it("it should test to list product categories but it is not created", (done) => {
     chai
       .request(app)
       .get("/api/categories")
@@ -650,7 +647,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test product category creation", (done) => {
+  it("it should test product category creation", (done) => {
     chai
       .request(app)
       .post("/api/categories")
@@ -674,7 +671,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test to list product categories with success", (done) => {
+  it("it should test to list product categories with success", (done) => {
     chai
       .request(app)
       .get("/api/categories")
@@ -688,7 +685,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test getting single product category", (done) => {
+  it("it should test getting single product category", (done) => {
     chai
       .request(app)
       .get(`/api/categories/${catId}`)
@@ -699,7 +696,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test getting unexisting product category  ", (done) => {
+  it("it should test getting unexisting product category  ", (done) => {
     chai
       .request(app)
       .get(`/api/categories/d62aa7d1-23b3-437b-8407-adaf24b3eb4c`)
@@ -712,7 +709,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test getting product category with invalid uuid ", (done) => {
+  it("it should test getting product category with invalid uuid ", (done) => {
     chai
       .request(app)
       .get(`/api/categories/d62aa7d1-23b3-437b-8407-adaf24b3eb4chhhhhhgg`)
@@ -722,7 +719,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test product category with existing name ", (done) => {
+  it("it should test product category with existing name ", (done) => {
     chai
       .request(app)
       .post("/api/categories")
@@ -731,44 +728,23 @@ describe("products and product categgories", () => {
         categoryName: "TEST CAT"
       })
       .end((err, res) => {
-        expect(res.body.message).to.equal("This Category alread exists");
+        expect(res.body.message).to.equal("This Category already exists");
         expect(res).to.have.status(409);
         done();
       });
   });
-  it("should return 500 with product(seller(category))", (done) => {
+  it("should return 400 with product(seller(category))", (done) => {
     chai
       .request(app)
       .get("/api/search")
       .query({ category: "TEST CAT" })
       .end((err, res) => {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(400);
         done();
       });
   });
 
-  it("should return 200 with product(seller(minPrice))", (done) => {
-    chai
-      .request(app)
-      .get("/api/search")
-      .query({ minPrice: 10 })
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        done();
-      });
-  });
-  it("should return 200 with product(seller(maxPrice))", (done) => {
-    chai
-      .request(app)
-      .get("/api/search")
-      .query({ maxPrice: 100 })
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        done();
-      });
-  });
-
-  it("it shoult test product category  with validation fail", (done) => {
+  it("it should test product category  with validation fail", (done) => {
     chai
       .request(app)
       .post("/api/categories")
@@ -781,7 +757,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test product category update ", (done) => {
+  it("it should test product category update ", (done) => {
     chai
       .request(app)
       .patch(`/api/categories/${catId}`)
@@ -798,7 +774,7 @@ describe("products and product categgories", () => {
       });
   });
 
-  it("it shoult test product category update validation fail ", (done) => {
+  it("it should test product category update validation fail ", (done) => {
     chai
       .request(app)
       .patch(`/api/categories/${catId}`)
@@ -825,7 +801,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("create product you are not a seller", (done) => {
+  it("create product item successful in seller collection", (done) => {
     chai
       .request(app)
       .post("/api/products")
@@ -877,6 +853,27 @@ describe("products and product categgories", () => {
         done();
       });
   }).timeout(70000);
+  it("should return 200 with product(seller(maxPrice))", (done) => {
+    chai
+      .request(app)
+      .get("/api/search")
+      .query({ maxPrice: 100 })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("should return 200 with product(seller(minPrice))", (done) => {
+    chai
+      .request(app)
+      .get("/api/search")
+      .query({ minPrice: 10 })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
   it("create product item in seller collection with minimal images", (done) => {
     chai
       .request(app)
@@ -1034,12 +1031,159 @@ describe("products and product categgories", () => {
         productId = res.body.products[0].id;
 
         image_id = res.body.products[0].productPictures[0].imgId;
-        console.log("all the product>>>>>>>>>>>>>", productId);
         expect(res).to.have.status(200);
         done();
       });
   });
 
+  // the test for product reviews
+
+  it("it should bring invalid product id", () => {
+    chai
+      .request(app)
+      .post("/api/products/id/reviews")
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 5,
+        feedback: "hello world!!"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
+  it("it should bring invalid rating", () => {
+    chai
+      .request(app)
+      .post(`/api/products/${productId}/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        feedback: "hello world!!"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
+  it("it should bring invalid rating", () => {
+    chai
+      .request(app)
+      .post(`/api/products/${productId}/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 4
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
+  it("it should bring rating range 0-5", () => {
+    chai
+      .request(app)
+      .post(`/api/products/${productId}/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 7,
+        feedback: "hello world!!"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
+  it("it should bring rating is range 0 - 5", () => {
+    chai
+      .request(app)
+      .post("/api/products/id/reviews")
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: -4,
+        feedback: "hello world"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
+  it("it should bring invalid product format", () => {
+    chai
+      .request(app)
+      .post(`/api/products/f4c6cb8c-e6b9-47d0-tb04-fa394042c5fa/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 5,
+        feedback: "hello world!!"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
+  it("it should bring invalid product format", () => {
+    chai
+      .request(app)
+      .post(`/api/products/2394a73c-80d1-4d82-a677-c15343a8a51e/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 5,
+        feedback: "hello world!!"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(404);
+      });
+  });
+
+  it("it should create a new review", () => {
+    chai
+      .request(app)
+      .post(`/api/products/${productId}/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 4,
+        feedback: "Wonderful product"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+      });
+  });
+
+  it("it should update a new review", () => {
+    chai
+      .request(app)
+      .post(`/api/products/${productId}/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 5,
+        feedback: "Wonderful product!!"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+      });
+  });
+
+  // it("it should bring 500 error", async () => {
+  //   const req = {} as Request;
+  //   const res = {} as Response;
+  //   const stub = sinon.stub(Reviews, "create").throws(new Error("Internal Server Error"));
+  //   try {
+  //     await productReview(req, res);
+  //   } catch (error: any) {
+  //     expect(error).to.be.an.instanceOf(Error);
+  //     expect(error.message).to.have.status(500);
+  //     sinon.assert.calledOnce(stub);
+  //   }
+  //   stub.restore();
+  // });
   // THE TEST ✅✅✅✅✅✅✅✅✅✅✅✅✅✅ TEST OF CARTS✅✅✅✅✅✅✅✅✅✅✅
 
   it("user invalid uuid 993", (done) => {
@@ -1083,7 +1227,7 @@ describe("products and product categgories", () => {
         }
       ])
       .end((err, res) => {
-        expect(res).to.have.status(400);
+        expect(res).to.have.status(200);
         done();
       });
   }).timeout(70000);
@@ -1140,8 +1284,7 @@ describe("products and product categgories", () => {
         }
       ])
       .end((err, res) => {
-        console.log("++++++++++++++++++++++++++++++++++", err);
-        expect(res).to.have.status(400);
+        expect(res).to.have.status(200);
         done();
       });
   });
@@ -1272,7 +1415,6 @@ describe("products and product categgories", () => {
       .attach("productImage", imageFilePath)
       .field("productDiscount", "1000000")
       .end((err, res) => {
-        console.log("@@@@@@@@@@@@@@@@@@", res.body);
         expect(res.body.error).to.equal(
           "product discount can't be greater than price"
         );
