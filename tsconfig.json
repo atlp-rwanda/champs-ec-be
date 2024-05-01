@@ -10,7 +10,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "ts-node": { "esm": true,"experimentalSpecifierResolution": "node"},
+  "ts-node": { "esm": true, "experimentalSpecifierResolution": "node" },
   "include": ["src/**/*.ts", "src/**/*"],
   "exclude": ["node_modules"]
 }

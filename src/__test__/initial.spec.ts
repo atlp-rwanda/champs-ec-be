@@ -634,7 +634,7 @@ describe("user Signin controller and passport", () => {
   // test for creating product category --------------------------------------------------------------------
 });
 describe("products and product categgories", () => {
-  it("it shoult test to list product categories but it is not created", (done) => {
+  it("it should test to list product categories but it is not created", (done) => {
     chai
       .request(app)
       .get("/api/categories")
@@ -647,7 +647,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test product category creation", (done) => {
+  it("it should test product category creation", (done) => {
     chai
       .request(app)
       .post("/api/categories")
@@ -671,7 +671,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test to list product categories with success", (done) => {
+  it("it should test to list product categories with success", (done) => {
     chai
       .request(app)
       .get("/api/categories")
@@ -685,7 +685,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test getting single product category", (done) => {
+  it("it should test getting single product category", (done) => {
     chai
       .request(app)
       .get(`/api/categories/${catId}`)
@@ -696,7 +696,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test getting unexisting product category  ", (done) => {
+  it("it should test getting unexisting product category  ", (done) => {
     chai
       .request(app)
       .get(`/api/categories/d62aa7d1-23b3-437b-8407-adaf24b3eb4c`)
@@ -709,7 +709,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test getting product category with invalid uuid ", (done) => {
+  it("it should test getting product category with invalid uuid ", (done) => {
     chai
       .request(app)
       .get(`/api/categories/d62aa7d1-23b3-437b-8407-adaf24b3eb4chhhhhhgg`)
@@ -719,7 +719,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test product category with existing name ", (done) => {
+  it("it should test product category with existing name ", (done) => {
     chai
       .request(app)
       .post("/api/categories")
@@ -728,7 +728,7 @@ describe("products and product categgories", () => {
         categoryName: "TEST CAT"
       })
       .end((err, res) => {
-        expect(res.body.message).to.equal("This Category alread exists");
+        expect(res.body.message).to.equal("This Category already exists");
         expect(res).to.have.status(409);
         done();
       });
@@ -744,7 +744,7 @@ describe("products and product categgories", () => {
       });
   });
 
-  it("it shoult test product category  with validation fail", (done) => {
+  it("it should test product category  with validation fail", (done) => {
     chai
       .request(app)
       .post("/api/categories")
@@ -757,7 +757,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("it shoult test product category update ", (done) => {
+  it("it should test product category update ", (done) => {
     chai
       .request(app)
       .patch(`/api/categories/${catId}`)
@@ -774,7 +774,7 @@ describe("products and product categgories", () => {
       });
   });
 
-  it("it shoult test product category update validation fail ", (done) => {
+  it("it should test product category update validation fail ", (done) => {
     chai
       .request(app)
       .patch(`/api/categories/${catId}`)
@@ -822,6 +822,7 @@ describe("products and product categgories", () => {
       )
       .field("expireDate", "2025-12-12")
       .end((err, res) => {
+        expect(res.body.error).to.equal("Unauthorized, for this user type");
         expect(res).to.have.status(403);
         done();
       });
@@ -1226,7 +1227,7 @@ describe("products and product categgories", () => {
         }
       ])
       .end((err, res) => {
-        expect(res).to.have.status(400);
+        expect(res).to.have.status(200);
         done();
       });
   }).timeout(70000);
@@ -1283,7 +1284,7 @@ describe("products and product categgories", () => {
         }
       ])
       .end((err, res) => {
-        expect(res).to.have.status(400);
+        expect(res).to.have.status(200);
         done();
       });
   });

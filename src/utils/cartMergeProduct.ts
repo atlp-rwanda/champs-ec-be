@@ -61,9 +61,9 @@ export const getProductsWithQuantity = async (cartItems: CartItem[]) => {
       const product: any = await findProduct(cartItem);
       if (!product) {
         const error: Error | any = new Error(
-          `The product with index:${index + 1}and id: ${cartItem.productId} does not exist on the market. Please change it to an existing product.`
+          `The product of id: ${cartItem.productId} does not exist on the market. Please change it to an existing product.`
         );
-        error.status = 400;
+        error.status = 200;
         error.productNumber = index + 1;
         throw error;
       }
