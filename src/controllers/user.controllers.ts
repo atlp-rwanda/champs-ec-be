@@ -141,7 +141,6 @@ export const userLogin = async (req: Request, res: Response) => {
 
     await isCheckSeller(user, req, res);
   } catch (err) {
-    console.log("ERROR", err);
     res
       .status(500)
       .json({ error: "There is an error in login please try again" });

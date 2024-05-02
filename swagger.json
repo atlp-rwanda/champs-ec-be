@@ -47,6 +47,10 @@
     {
       "name": "Wishes",
       "description": "API endpoints for creating and managing wishlist"
+    },
+    {
+      "name": "Wishes",
+      "description": "API endpoints for creating and managing wishlist"
     }
   ],
   "paths": {
@@ -954,7 +958,7 @@
         },
         "security": [{ "Bearer": [] }]
       },
-      
+
       "get": {
         "summary": "Get all product items for a seller",
         "tags": ["Seller Product CRUD"],
@@ -1001,7 +1005,6 @@
         },
         "security": [{ "Bearer": [] }]
       }
-      
     },
     "/api/products/{productId}": {
       "get": {
@@ -1038,7 +1041,7 @@
         },
         "security": [{ "Bearer": [] }]
       },
-  
+
       "delete": {
         "tags": ["Seller Product CRUD"],
         "summary": "Delete one item in seller collection",
@@ -1105,37 +1108,23 @@
         },
         "security": [{ "Bearer": [] }]
       }
-  
-  
-  }
-  ,
-  "/api/products/{productId}/status":{
-    "patch": {
-      "tags": [" Seller Product CRUD"],
-      "summary": "update product status",
-      "parameters": [
-        {
-          "name": "productId",
-          "required": true,
-          "in": "path",
-          "description": "Product id",
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
-      "requestBody": {
-        "content": {
-          "application/json": {
+    },
+    "/api/products/{productId}/status": {
+      "patch": {
+        "tags": [" Seller Product CRUD"],
+        "summary": "update product status",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "Product id",
             "schema": {
-              "$ref": "#/components/schemas/status"
+              "type": "string"
             }
           }
-        }
-      },
-      "responses": {
-        "200": {
-          "description": "product status updated successfully",
+        ],
+        "requestBody": {
           "content": {
             "application/json": {
               "schema": {
@@ -1144,54 +1133,63 @@
             }
           }
         },
-        "404": {
-          "description": "Product item not found"
+        "responses": {
+          "200": {
+            "description": "product status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/status"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product item not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
-        "500": {
-          "description": "Internal Server Error"
-        }
-      },
-      "security": [{ "Bearer": [] }]
-    }
-  }
-,
-
-"/api/products/{productId}/reviews": {
-  "post": {
-    "tags": ["Reviews"],
-    "summary": "Buyer should give a review",
-    "security": [{"Bearer": []}],
-    "parameters": [
-      {
-        "name": "productId",
-        "in": "path",
-        "description": "Product Id",
-        "schema": { "type": "string" }
+        "security": [{ "Bearer": [] }]
       }
-    ],
-    "requestBody": {
-      "required": true,
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "rating": { "type": "number" },
-              "feedback": { "type": "string" }
+    },
+    "/api/products/{productId}/reviews": {
+      "post": {
+        "tags": ["Reviews"],
+        "summary": "Buyer should give a review",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product Id",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rating": { "type": "number" },
+                  "feedback": { "type": "string" }
+                }
+              }
             }
           }
+        },
+        "responses": {
+          "201": { "description": "Review sent" },
+          "401": { "description": "Unauthenticated" },
+          "404": { "description": "Product id is invalid" },
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
-    "responses": {
-      "201": { "description": "Review sent" },
-      "401": { "description": "Unauthenticated" },
-      "404": { "description": "Product id is invalid" },
-      "500": { "description": "Internal Server Error" }
-    }
-  }
-},
-   "/api/products/{productId}/pictures/{imgId}": {
+    "/api/products/{productId}/pictures/{imgId}": {
       "delete": {
         "tags": ["Manage single Item pictures"],
         "summary": "Delete one picture for specific  item ",
@@ -1402,22 +1400,25 @@
         "security": [{ "Bearer": [] }]
       }
     },
-    "/api/wishes/{productId}": {
+    "/api/wishes/": {
       "post": {
         "tags": ["Wishes"],
         "summary": "Add/remove product to wish",
         "description": "A buyer add and remove product in wish, adding/remove product into wishlist",
-        "parameters": [
-          {
-            "name": "productId",
-            "in": "path",
-            "description": "ID of the product",
-            "required": true,
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productId": { "type": "string" }
+                },
+                "required": ["productId"]
+              }
             }
-          }
-        ],
+          },
+          "required": true
+        },
         "responses": {
           "201": { "description": "product saved into wishes successfully" }
         },
@@ -1425,32 +1426,8 @@
       },
       "get": {
         "tags": ["Wishes"],
-        "summary": "Get product wishes.",
-        "description": "A seller or admin can see wishes on product",
-        "parameters": [
-          {
-            "name": "productId",
-            "in": "path",
-            "description": "ID of the product",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Product wishes"
-          }
-        },
-        "security": [{ "Bearer": [] }]
-      }
-    },
-    "/api/wishes/": {
-      "get": {
-        "tags": ["Wishes"],
-        "summary": "Get wishlist",
-        "description": "A buyer can see products in wish, exploring or visiting wishlist",
+        "summary": "Get product wishes",
+        "description": "A buyer can see products in wish, exploring or visiting wishlist, and seller can see how his products are being wished",
         "responses": {
           "200": {
             "description": "Buyer Wishes/wishlist"
@@ -1473,9 +1450,6 @@
         "security": [{ "Bearer": [] }]
       }
     }
-  
- 
-  
   },
   "components": {
     "schemas": {
@@ -1548,15 +1522,14 @@
           }
         }
       },
-      "status":{
-        "type":"object",
-        "properties":{
+      "status": {
+        "type": "object",
+        "properties": {
           "isAvailable": {
             "type": "boolean",
             "description": "product status"
           }
         }
-
       },
       "AddProductCategory": {
         "type": "object",

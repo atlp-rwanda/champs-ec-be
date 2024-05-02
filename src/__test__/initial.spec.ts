@@ -1526,12 +1526,12 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  // start test wishlists =======================================================
+  // Start Wish list Tests ===========================
   it("should get empty product wishes", (done) => {
     chai
       .request(app)
-      .get(`/api/wishes/${productId}`)
-      .set("Authorization", headerTokenSeller)
+      .get(`/api/wishes/`)
+      .set("Authorization", buyerTKN)
       .end((err, res) => {
         expect(res).to.have.status(200);
         done();
@@ -1541,19 +1541,9 @@ describe("products and product categgories", () => {
   it("should create add product to wishes", (done) => {
     chai
       .request(app)
-      .post(`/api/wishes/${productId}`)
-      .set("Authorization", headerTokenSeller)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        done();
-      });
-  });
-
-  it("should get product wishes", (done) => {
-    chai
-      .request(app)
-      .get(`/api/wishes/${productId}`)
-      .set("Authorization", headerTokenSeller)
+      .post(`/api/wishes/`)
+      .send({ productId })
+      .set("Authorization", buyerTKN)
       .end((err, res) => {
         expect(res).to.have.status(200);
         done();
@@ -1564,16 +1554,17 @@ describe("products and product categgories", () => {
     chai
       .request(app)
       .get(`/api/wishes/`)
-      .set("Authorization", headerTokenSeller)
+      .set("Authorization", buyerTKN)
       .end((err, res) => {
         expect(res).to.have.status(200);
         done();
       });
   });
-  it("should flush user wishlist", (done) => {
+
+  it("should get seller products wishlist", (done) => {
     chai
       .request(app)
-      .get(`/api/wishes/${productId}`)
+      .get(`/api/wishes/`)
       .set("Authorization", headerTokenSeller)
       .end((err, res) => {
         expect(res).to.have.status(200);
@@ -1581,27 +1572,53 @@ describe("products and product categgories", () => {
       });
   });
 
-  it("should create add product 2 to wishes", (done) => {
+  it("should fail invalid product to wishes", (done) => {
     chai
       .request(app)
-      .post(`/api/wishes/${productId}`)
-      .set("Authorization", headerTokenSeller)
+      .post(`/api/wishes/`)
+      .send({ productId: "979da368-6974-46fc-98d4-dbaf3ebb4dda" })
+      .set("Authorization", buyerTKN)
+      .end((err, res) => {
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
+
+  it("should remove product to wishes", (done) => {
+    chai
+      .request(app)
+      .post(`/api/wishes/`)
+      .send({ productId })
+      .set("Authorization", buyerTKN)
       .end((err, res) => {
         expect(res).to.have.status(200);
         done();
       });
   });
 
-  it("should create remove product 2 to wishes", (done) => {
+  it("add product to wishes again product to wishes", (done) => {
     chai
       .request(app)
-      .post(`/api/wishes/${productId}`)
-      .set("Authorization", headerTokenSeller)
+      .post(`/api/wishes/`)
+      .send({ productId })
+      .set("Authorization", buyerTKN)
       .end((err, res) => {
         expect(res).to.have.status(200);
         done();
       });
   });
+
+  it("should flush product wishes", (done) => {
+    chai
+      .request(app)
+      .delete(`/api/wishes/`)
+      .set("Authorization", buyerTKN)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
   // end test wishlists  ========================================================
   it("Seller crud operation want to delete product ", (done) => {
     chai
