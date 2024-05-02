@@ -117,4 +117,6 @@ Notified.on("productAvailable", async (product) => {
 
 // waiting fo the data comming from Emmanuel
 Notified.on("orderUpdated", async (order) => {});
+// todo waiting for the data coming from Emmanuel
+
 export default Notified;
