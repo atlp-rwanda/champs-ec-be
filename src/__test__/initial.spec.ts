@@ -12,6 +12,7 @@ import ProductCategory from "../models/product_category";
 import { tokenVerify } from "../utils/token.generator";
 import { DataInfo } from "../controllers/otpauth.controllers";
 import Cart from "../models/Cart";
+import Order from "../models/Order";
 
 const imageFilePath = "./src/__test__/image/JobIcon.png";
 
@@ -20,7 +21,7 @@ const bigSizePicture = "./src/__test__/image/svgrepo.svg";
 
 let productId: string;
 let image_id: string;
-
+let orderid: string;
 // eslint-disable-next-line import/no-mutable-exports
 let headerTokenSeller: string;
 let verifyTkn: string;
@@ -28,6 +29,7 @@ let catId: string;
 let headerToken: string;
 let buyerTKN: string;
 let userId1: string;
+let userId2: string;
 chai.use(chaiHttp);
 // eslint-disable-next-line func-names
 before(async function () {
@@ -113,6 +115,8 @@ before(async function () {
         roleId: "8736b050-1117-4614-a599-005dd76ff332"
       });
 
+      // const product= await Product.findAll({});
+
       return [user1, user2, user3, user4, user5, user6];
     } catch (error) {
       return error;
@@ -123,6 +127,7 @@ before(async function () {
 
   const users: any = await createUsers();
   userId1 = users[1].dataValues.id;
+  userId2 = users[5].dataValues.id;
 });
 
 describe("test a user signup endpoint", () => {
@@ -306,28 +311,28 @@ describe("user Signin controller and passport", () => {
       });
   });
 
-  // it("should respond with the welcome message", (done) => {
-  //   chai
-  //     .request(app)
-  //     .get("/")
-  //     .end((err, res) => {
-  //       expect(err).to.be.null;
-  //       expect(res).to.have.status(401);
-  //       done();
-  //     });
-  // });
+  it("should respond with the welcome message", (done) => {
+    chai
+      .request(app)
+      .get("/")
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(401);
+        done();
+      });
+  });
 
-  // it("should respond with the welcome message", (done) => {
-  //   chai
-  //     .request(app)
-  //     .get("/")
-  //     .set("Authorization", headerToken)
-  //     .end((err, res) => {
-  //       expect(err).to.be.null;
-  //       expect(res).to.have.status(200);
-  //     });
-  //   done();
-  // });
+  it("should respond with the welcome message", (done) => {
+    chai
+      .request(app)
+      .get("/")
+      .set("Authorization", headerToken)
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+      });
+    done();
+  });
 
   it("check for the user profile", () => {
     chai
@@ -773,7 +778,19 @@ describe("products and product categgories", () => {
         done();
       });
   });
-
+  it("it should test product category  with validation fail on Update", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/categories/${catId}`)
+      .set("Authorization", headerToken)
+      .send({
+        categoryName: "TEST CAT@@@"
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
   it("it should test product category update validation fail ", (done) => {
     chai
       .request(app)
@@ -801,6 +818,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
+  /*
   it("create product item successful in seller collection", (done) => {
     chai
       .request(app)
@@ -827,6 +845,7 @@ describe("products and product categgories", () => {
         done();
       });
   }).timeout(70000);
+*/
   it("create product item successful in seller collection", (done) => {
     chai
       .request(app)
@@ -1197,6 +1216,7 @@ describe("products and product categgories", () => {
         done();
       });
   });
+
   it("user get carts if you don't have it", (done) => {
     chai
       .request(app)
@@ -1207,7 +1227,20 @@ describe("products and product categgories", () => {
         done();
       });
   });
+  // client oredrs test start here ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
   it("user Create the new Carts with more quantity than exist on line 934", (done) => {
+    const orders = {
+      buyerId: userId2,
+      productId,
+      totalAmount: 10000,
+      deliveryDate: new Date(),
+      quantity: 3,
+      isPaid: false,
+      paymentDate: new Date()
+    };
+    Order.create(orders);
+
     chai
       .request(app)
       .post(`/api/carts`)
@@ -1231,6 +1264,151 @@ describe("products and product categgories", () => {
         done();
       });
   }).timeout(70000);
+  // order test start here ------------------------------------
+  it("stub fake create order test ", (done) => {
+    const roleStub = sinon
+      .stub(Order, "create")
+      .throws(new Error("Order is successful creates"));
+    const orders = {
+      buyerId: userId2,
+      productId,
+      totalAmount: 10000,
+      deliveryDate: new Date(),
+      quantity: 3,
+      isPaid: false,
+      paymentDate: new Date()
+    };
+    chai
+      .request(app)
+      .get(`/api/payments/success?user=${userId2}`)
+      .set("Authorization", buyerTKN)
+      .send(orders)
+      .end((err, res) => {
+        roleStub.restore();
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
+
+  it("get order values as seller", (done) => {
+    chai
+      .request(app)
+      .get(`/api/orders`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        orderid = res.body.orders[0].id;
+        expect(res).to.have.status(200);
+        done();
+      });
+  }).timeout(70000);
+
+  it("get single order values ", (done) => {
+    chai
+      .request(app)
+      .get(`/api/orders/${orderid}`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  }).timeout(70000);
+
+  it("update single order values ", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/orders/${orderid}`)
+      .set("Authorization", headerTokenSeller)
+      .send({ status: "Delivered" })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  }).timeout(70000);
+
+  it("update single order values with validation fail", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/orders/${orderid}`)
+      .set("Authorization", headerTokenSeller)
+      .send({ status: "Deliveredyyy" })
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  }).timeout(70000);
+  it("update single order values with invalid Id ", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/orders/${orderid}12334`)
+      .set("Authorization", headerTokenSeller)
+      .send({ status: "Delivered" })
+      .end((err, res) => {
+        expect(res).to.have.status(403);
+        done();
+      });
+  }).timeout(70000);
+  it("update unexisting single order values with static value", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/orders/11a57e40-9a28-4cc0-9431-30f3238ee0fb`)
+      .set("Authorization", headerTokenSeller)
+      .send({ status: "Delivered" })
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        done();
+      });
+  }).timeout(70000);
+  it("as buyer get single order values ", (done) => {
+    chai
+      .request(app)
+      .get(`/api/orders/${orderid}`)
+      .set("Authorization", buyerTKN)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  }).timeout(70000);
+  it("as  a buyer get all orders ", (done) => {
+    chai
+      .request(app)
+      .get(`/api/orders`)
+      .set("Authorization", buyerTKN)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  }).timeout(70000);
+
+  it("stub throw internal error for getting all orders ", (done) => {
+    const roleStub = sinon
+      .stub(Order, "findAll")
+      .throws(new Error("Order is successful creates"));
+    chai
+      .request(app)
+      .get(`/api/orders`)
+      .set("Authorization", buyerTKN)
+      .end((err, res) => {
+        roleStub.restore();
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
+  it("stub throw internal error for getting single orders ", (done) => {
+    const roleStub = sinon
+      .stub(Order, "findOne")
+      .throws(new Error("Order is successful creates"));
+    chai
+      .request(app)
+      .get(`/api/orders/${userId2}`)
+      .set("Authorization", buyerTKN)
+      .end((err, res) => {
+        roleStub.restore();
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
+  // test end here---------------
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   it("user Create the new Carts with post on line 934", (done) => {
     chai
       .request(app)
@@ -1299,6 +1477,42 @@ describe("products and product categgories", () => {
         done();
       });
   });
+  it("stub throw internal error for user cart ", (done) => {
+    const roleStub = sinon
+      .stub(Cart, "findAll")
+      .throws(new Error("User is successful creates"));
+    chai
+      .request(app)
+      .get(`/api/carts`)
+      .set("Authorization", buyerTKN)
+      .end((err, res) => {
+        roleStub.restore();
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
+  it("user send payments request to stripe when no cart created", (done) => {
+    chai
+      .request(app)
+      .post(`/api/payments`)
+      .set("Authorization", headerToken)
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(404);
+        done();
+      });
+  }).timeout(150000);
+  it("user send payments request to stripe", (done) => {
+    chai
+      .request(app)
+      .post(`/api/payments`)
+      .set("Authorization", buyerTKN)
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+        done();
+      });
+  }).timeout(150000);
 
   // END  THE TEST ✅✅✅✅✅✅✅✅✅✅✅✅✅✅ TEST OF CARTS✅✅✅✅✅✅✅✅✅✅✅
 
@@ -1381,7 +1595,19 @@ describe("products and product categgories", () => {
         done();
       });
   });
-
+  it("stub throw internal error for getting all products ", (done) => {
+    const roleStub = sinon
+      .stub(Product, "findAll")
+      .throws(new Error("User is successful creates"));
+    chai
+      .request(app)
+      .get(`/api/products`)
+      .end((err, res) => {
+        roleStub.restore();
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
   it("Seller crud operation get single available product ", (done) => {
     chai
       .request(app)
@@ -1391,6 +1617,19 @@ describe("products and product categgories", () => {
         done();
       });
   }).timeout(70000);
+  it("stub throw internal error for getting single product ", (done) => {
+    const roleStub = sinon
+      .stub(Product, "findOne")
+      .throws(new Error("User is successful creates"));
+    chai
+      .request(app)
+      .get(`/api/products/${productId}`)
+      .end((err, res) => {
+        roleStub.restore();
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
   it("Seller crud operation update product with unexisting category", (done) => {
     chai
       .request(app)
@@ -1620,6 +1859,7 @@ describe("products and product categgories", () => {
   });
 
   // end test wishlists  ========================================================
+
   it("Seller crud operation want to delete product ", (done) => {
     chai
       .request(app)

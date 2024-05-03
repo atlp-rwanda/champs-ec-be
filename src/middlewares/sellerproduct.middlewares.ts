@@ -19,8 +19,8 @@ export const isExistSellerProduct = async (
       });
     }
     let product: any;
-    if (req.user !== "anonymous") {
-      const logedSeller: any = req.user;
+    const logedSeller: any = req.user;
+    if (logedSeller.Role && logedSeller.Role.dataValues.name === "seller") {
       const userId: string = logedSeller.dataValues.id;
       product = await Product.findOne({
         where: {
@@ -42,7 +42,7 @@ export const isExistSellerProduct = async (
     }
     next();
   } catch (error) {
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ errors: "Internal server error" });
   }
 };
 

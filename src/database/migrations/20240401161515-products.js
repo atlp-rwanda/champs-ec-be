@@ -28,7 +28,7 @@ module.exports = {
         allowNull: false
       },
       stockLevel: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       productPrice: {
