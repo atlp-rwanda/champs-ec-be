@@ -18,7 +18,7 @@ class Product
 
   public productName!: string;
 
-  public stockLevel!: string;
+  public stockLevel!: number | undefined;
 
   public productPrice!: number;
 
@@ -76,11 +76,7 @@ Product.init(
     },
     stockLevel: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: true,
-      validate: {
-        notEmpty: true
-      }
+      allowNull: false
     },
     productPrice: {
       type: DataTypes.DOUBLE,

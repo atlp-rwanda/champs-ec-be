@@ -76,9 +76,11 @@ export const createProducts = async (req: Request, res: Response) => {
 
 export const getAllSellerProducts = async (req: any, res: Response) => {
   try {
-    if (req.user !== "anonymous") {
-      const logedUser: any = req.user as User;
+    const logedUser: any = req.user as User;
+
+    if (logedUser.Role && logedUser.Role.dataValues.name === "seller") {
       const userId: string = logedUser.dataValues.id as string;
+
       if (logedUser.Role.dataValues.name === "seller") {
         const products = await Product.findAll({
           where: {
@@ -127,8 +129,9 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
 
 export const getSingleProduct = async (req: Request, res: Response) => {
   try {
-    if (req.user !== "anonymous") {
-      const logedUser: any = req.user as User;
+    const logedUser: any = req.user as User;
+
+    if (logedUser.Role && logedUser.Role.dataValues.name === "seller") {
       const userId: string = logedUser.dataValues.id as string;
       if (logedUser.Role.dataValues.name === "seller") {
         const product = await Product.findOne({

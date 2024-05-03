@@ -61,6 +61,7 @@
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "strip-ansi": "^7.1.0",
+    "stripe": "^15.4.0",
     "supertest": "^6.3.4",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",

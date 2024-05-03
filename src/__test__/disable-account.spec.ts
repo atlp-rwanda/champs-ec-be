@@ -2,8 +2,10 @@ import { describe, it } from "mocha";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { config } from "dotenv";
-import { error } from "console";
+
+import sinon from "sinon";
 import app from "../app";
+import User from "../models/user";
 
 config();
 chai.use(chaiHttp);
@@ -80,7 +82,20 @@ describe("Admin disable and activating user account", () => {
         done();
       });
   });
-
+  it("stub throw internal error for getting all users ", (done) => {
+    const roleStub = sinon
+      .stub(User, "findAll")
+      .throws(new Error("User is successful creates"));
+    chai
+      .request(app)
+      .get(`/api/users`)
+      .set("Authorization", adminToken)
+      .end((err, res) => {
+        roleStub.restore();
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
   it("should get a single user", (done) => {
     chai
       .request(app)
@@ -89,6 +104,20 @@ describe("Admin disable and activating user account", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("stub throw internal error for getting single users ", (done) => {
+    const roleStub = sinon
+      .stub(User, "findOne")
+      .throws(new Error("User is successful creates"));
+    chai
+      .request(app)
+      .get(`/api/users/623332af-f30e-409f-b560-d88186c94dc0`)
+      .set("Authorization", adminToken)
+      .end((err, res) => {
+        roleStub.restore();
+        expect(res).to.have.status(500);
         done();
       });
   });
@@ -146,6 +175,33 @@ describe("Admin disable and activating user account", () => {
       .end((err, res) => {
         expect(err).to.be.null;
         expect(res).to.have.status(200);
+        done();
+      });
+  }).timeout(5000);
+  it("Email sent successfully", (done) => {
+    chai
+      .request(app)
+      .post("/api/users/login")
+      .send({
+        email: "userbuyer@gmail.com",
+        password: "Another@123"
+      })
+      .end((err, res) => {
+        adminToken = res.body.token;
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("admin reactivate user account ", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/users/${userId}/status`)
+      .set("Authorization", adminToken)
+      .send({ status: "activate" })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(403);
         done();
       });
   }).timeout(5000);

@@ -5,7 +5,7 @@ export interface ProductAttributes {
   sellerId?: string;
   productCategory?: string;
   productName?: string;
-  stockLevel?: string;
+  stockLevel?: number;
   productPrice?: number;
   productCurrency?: string;
   productDiscount: string;

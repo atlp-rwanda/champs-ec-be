@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8000",
+      "url": "http://localhost:5500",
       "description": "Development server"
     },
     {
@@ -1446,6 +1446,106 @@
           "404": {
             "description": "not found"
           }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+
+    "/api/payments": {
+      "post": {
+        "summary": "Cart checkouts",
+        "description": "Sent Payment request to stripe api",
+        "tags": ["Payments"],
+        "responses": {
+          "200": {
+            "description": "stripe payment redirection link"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/orders": {
+      "get": {
+        "summary": "Get All Orders",
+        "description": "Get a list of sent orders",
+        "tags": ["Orders"],
+        "responses": {
+          "200": {
+            "description": "List of all orders"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/orders/{orderId}": {
+      "get": {
+        "summary": "a buyer or seller get single order",
+        "description": "get a single order information",
+        "tags": ["Orders"],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "order Id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "order information"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "patch": {
+        "summary": "Update order status",
+        "description": "A seller should able to update order status  to his/her products",
+        "tags": ["Orders"],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "order Id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string" }
+                },
+                "required": ["status"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": { "description": "Oder status successful updated" },
+          "401": { "description": "Invalid credentials" },
+          "404": { "description": "order not found" },
+          "500": { "description": "internal server error" }
         },
         "security": [{ "Bearer": [] }]
       }

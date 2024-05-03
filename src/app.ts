@@ -20,6 +20,8 @@ import productWishRoutes from "./routes/wish.routes";
 import { checkRole } from "./middlewares/user.middleware";
 import searchRoutes from "./routes/search.routes";
 import { startProductsExpirationCronJob } from "./cronjobs/crontab";
+import orderRoutes from "./routes/orders.routes";
+import paymentRoutes from "./routes/payment.routes";
 
 dotenv.config();
 
@@ -70,7 +72,8 @@ app.use("/api/roles", authenticate, checkRole(["admin"]), roleRoutes);
 app.use("/api/users/", authRoutes);
 app.use("/api/search/", searchRoutes);
 app.use("/api/carts/", authenticate, checkRole(["buyer"]), cartRouter);
-
+app.use("/api/orders/", orderRoutes);
+app.use("/api/payments", paymentRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/wishes", authenticate, productWishRoutes);
 app.use("/api/categories", authenticate, productCategoryRoutes);
