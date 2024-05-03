@@ -1284,6 +1284,66 @@ describe("products and product categgories", () => {
         done();
       });
   });
+
+  // order status
+  it("update single order status ", (done) => {
+    chai
+      .request(app)
+      .post(`/api/orders/${orderid}/status`)
+      .set("Authorization", headerTokenSeller)
+      .send({ status: "Delivered" })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  }).timeout(70000);
+
+  it("update order not found", (done) => {
+    chai
+      .request(app)
+      .post(`/api/orders/301cb6d1-7299-4a45-8717-7d2c9faf788e/status`)
+      .set("Authorization", headerTokenSeller)
+      .send({ status: "Delivered" })
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        done();
+      });
+  }).timeout(70000);
+
+  it("update order invalid status", (done) => {
+    chai
+      .request(app)
+      .post(`/api/orders/${orderid}/status`)
+      .set("Authorization", headerTokenSeller)
+      .send({ status: "Deliveredx" })
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  }).timeout(70000);
+
+  it("Get order status ", (done) => {
+    chai
+      .request(app)
+      .get(`/api/orders/${orderid}/status`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  }).timeout(70000);
+
+  it("should not Get order status ", (done) => {
+    chai
+      .request(app)
+      .get(`/api/orders/301cb6d1-7299-4a45-8717-7d2c9faf788e/status`)
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        done();
+      });
+  }).timeout(70000);
+
   // test end here---------------
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

@@ -1511,8 +1511,37 @@
             "Bearer": []
           }
         ]
+      }
+    },
+
+    "/api/orders/{orderId}/status": {
+      "get": {
+        "summary": "A buyer track order status",
+        "description": "get a single order status information",
+        "tags": ["Orders"],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "order Id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "order status information"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       },
-      "patch": {
+      "post": {
         "summary": "Update order status",
         "description": "A seller should able to update order status  to his/her products",
         "tags": ["Orders"],

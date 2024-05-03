@@ -102,7 +102,59 @@ export const updateOrder = async (req: Request, res: Response) => {
       if (err) {
         return res
           .status(500)
-          .json({ error: "Error occured in updating order status", err });
+          .json({ error: "Error occurred in updating order status", err });
       }
     });
 };
+
+// start order status
+
+export const getOrderStatus = async (req: Request, res: Response) => {
+  const { orderId } = req.params;
+  const order = await Order.findByPk(orderId);
+  if (order != null) {
+    const data = {
+      status: order.dataValues.deliveryStatus,
+      deliveryDate: order.dataValues.deliveryDate
+    };
+    res.status(200).send({
+      message: "Order found",
+      data
+    });
+  } else {
+    res.status(404).send({ message: "Order not found" });
+  }
+};
+
+export const updateOrderStatus = async (req: Request, res: Response) => {
+  const { status } = req.body;
+  const { orderId } = req.params;
+  const validOrderStatus = ["Pending", "Shipped", "Delivered"];
+
+  if (!validOrderStatus.includes(status)) {
+    return res.status(400).send({
+      error: "Please provide valid order status"
+    });
+  }
+
+  const order = await Order.findByPk(orderId);
+
+  if (!order) {
+    return res.status(404).json({ message: "Order not found" });
+  }
+
+  const newOrder = await order.update({
+    deliveryStatus: status
+  });
+
+  const data = {
+    status: newOrder.dataValues.deliveryStatus,
+    deliveryDate: newOrder.dataValues.deliveryDate
+  };
+
+  res.status(200).send({
+    message: "Order status updated",
+    data
+  });
+};
+// end order status
