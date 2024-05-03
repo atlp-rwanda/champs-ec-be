@@ -16,6 +16,15 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
         return res.status(401).json({ error: "you are not loggged in" });
       }
       if (error) {
+        if (
+          error.message.includes(
+            'WHERE parameter "email" has invalid "undefined" value'
+          )
+        ) {
+          return res
+            .status(401)
+            .json({ error: "Email was sent, First verify with 2FA" });
+        }
         return res.status(500).json({ error: error.message });
       }
 

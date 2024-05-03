@@ -8,6 +8,10 @@ import { passwordCompare, passwordEncrypt } from "../utils/encrypt";
 import { DataInfo } from "../controllers/otpauth.controllers";
 import { sendMail, transporter } from "../utils/mailer";
 import { tokenVerify } from "../utils/token.generator";
+import {
+  validateNumberParam,
+  validateStringParam
+} from "../utils/string.manipulation";
 
 config();
 chai.use(chaiHttp);
@@ -32,6 +36,18 @@ describe("Two factor authentication with Email", () => {
         done();
       });
   }).timeout(5000);
+
+  it("should not allow OTP token to access other endpoints", (done) => {
+    chai
+      .request(app)
+      .get("/api/users/profile")
+      .set("Authorization", `Bearer ${otpToken}`)
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(401);
+        done();
+      });
+  });
   it("should input OTP", (done) => {
     chai
       .request(app)
@@ -131,5 +147,17 @@ describe("Bcrypt compare", () => {
     const hashedPassword = await passwordEncrypt("hello");
     const result = await passwordCompare(hashedPassword, "hello");
     expect(result).to.be.true;
+  });
+});
+
+describe("string Manupilation", () => {
+  it("string must be a string", async () => {
+    const result = () => validateStringParam(44);
+    expect(result).to.throw(Error, "Parameter must be a string");
+  });
+
+  it("it must be a number", async () => {
+    const result = () => validateNumberParam("hello");
+    expect(result).to.throw(Error, "Parameter must be a number");
   });
 });
