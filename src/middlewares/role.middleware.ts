@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import Role from "../models/Role";
 import { roleSchema } from "../validations/role.validation";
@@ -63,21 +64,24 @@ export const isRoleNameExist = async (
 };
 
 export const checkRoles =
-  (roles: string[]) =>
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      if (req.user) {
-        const { user }: any = req;
-        const role = await Role.findByPk(user.dataValues.roleId);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-        if (!role) {
-          return res.status(404).json({ error: "Role not found" });
+
+    (roles: string[]) =>
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        if (req.user) {
+          const { user }: any = req;
+          const role = await Role.findByPk(user.dataValues.roleId);
+
+          if (!role) {
+            return res.status(404).json({ error: "Role not found" });
+          }
+        } else {
+          req.user = "anonymous";
         }
-      } else {
-        req.user = "anonymous";
+        next();
+      } catch (error) {
+        return res.status(500).json({ error: "Internal server error" });
       }
-      next();
-    } catch (error) {
-      return res.status(500).json({ error: "Internal server error" });
-    }
-  };
+    };

@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5500",
+      "url": "http://localhost:9000",
       "description": "Development server"
     },
     {
@@ -1006,6 +1006,116 @@
         "security": [{ "Bearer": [] }]
       }
     },
+
+    
+    
+      "/api/stats": {
+        "get": {
+          "summary": "Get all statistics within a given timeframe",
+          "tags": [
+            "Statistics"
+          ],
+          "security": [
+            {
+              "Bearer": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "start",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "date",
+                "example": "2023-02-06"
+              },
+              "description": "Start date for the statistics timeframe"
+            },
+            {
+              "name": "end",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "date",
+                "example": "2027-07-14"
+              },
+              "description": "End date for the statistics timeframe"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "productsStats": {
+                            "type": "integer",
+                            "example": 0,
+                            "description": "Number of products statistics"
+                          },
+                          "expiredProducts": {
+                            "type": "integer",
+                            "example": 0,
+                            "description": "Number of expired products"
+                          },
+                          "wishesStats": {
+                            "type": "integer",
+                            "example": 0,
+                            "description": "Number of wishes statistics"
+                          },
+                          "availableProducts": {
+                            "type": "integer",
+                            "example": 0,
+                            "description": "Number of available products"
+                          },
+                          "stockLevelStats": {
+                            "type": "integer",
+                            "example": 0,
+                            "description": "Stock level statistics"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "error"
+                      },
+                      "error": {
+                        "type": "string",
+                        "example": "Internal server error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+     
+    
     "/api/products/{productId}": {
       "get": {
         "tags": ["Seller Product CRUD"],

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-shadow */
 import { z } from "zod";
 import { NextFunction, Request, Response } from "express";
 

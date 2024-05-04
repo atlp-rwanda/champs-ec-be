@@ -10,6 +10,7 @@ import userRoutes from "./routes/user.routes";
 import roleRoutes from "./routes/role.routes";
 import passport from "./config/passport.config";
 import { authenticate } from "./middlewares/user.auth";
+import { validateStats } from "./validations/stats.validations";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import chatRouters from "./routes/chats.routes";
 import authRoutes from "./routes/auth.routes";
@@ -19,6 +20,7 @@ import cartRouter from "./routes/cart.routes";
 import productWishRoutes from "./routes/wish.routes";
 import { checkRole } from "./middlewares/user.middleware";
 import searchRoutes from "./routes/search.routes";
+import statsRoutes from "./routes/stats.routes";
 import { startProductsExpirationCronJob } from "./cronjobs/crontab";
 import orderRoutes from "./routes/orders.routes";
 import paymentRoutes from "./routes/payment.routes";
@@ -66,10 +68,16 @@ app.use(
 );
 app.use("/api/users", chatRouters);
 app.use("/api/users/", authRoutes);
+app.use(
+  "/api/stats",
+  authenticate,
+  checkRole(["seller"]),
+  validateStats,
+  statsRoutes
+);
 app.get("/", authenticate, Home);
 app.use("/api/users", userRoutes);
 app.use("/api/roles", authenticate, checkRole(["admin"]), roleRoutes);
-app.use("/api/users/", authRoutes);
 app.use("/api/search/", searchRoutes);
 app.use("/api/carts/", authenticate, checkRole(["buyer"]), cartRouter);
 app.use("/api/orders/", orderRoutes);
