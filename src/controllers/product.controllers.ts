@@ -111,6 +111,13 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
       // Query the database for available products with pagination
       const { count, rows: products } = await Product.findAndCountAll({
         where: { isAvailable: true },
+        include: [
+          {
+            model: Reviews,
+            as: "reviews",
+            attributes: ["buyerId", "rating", "feedback"]
+          }
+        ],
         offset,
         limit
       });

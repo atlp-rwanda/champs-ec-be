@@ -28,6 +28,7 @@ let verifyTkn: string;
 let catId: string;
 let headerToken: string;
 let buyerTKN: string;
+let buyerTKN2: string;
 let userId1: string;
 let userId2: string;
 chai.use(chaiHttp);
@@ -115,9 +116,17 @@ before(async function () {
         roleId: "8736b050-1117-4614-a599-005dd76ff332"
       });
 
+      const user7 = await User.create({
+        firstName: "Another3",
+        lastName: "User1",
+        password: await passwordEncrypt("Another@123"),
+        email: "userbuyer1@gmail.com",
+        verified: true,
+        roleId: "8736b050-1117-4614-a599-005dd76ff332"
+      });
       // const product= await Product.findAll({});
 
-      return [user1, user2, user3, user4, user5, user6];
+      return [user1, user2, user3, user4, user5, user6, user7];
     } catch (error) {
       return error;
     }
@@ -210,6 +219,22 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
+  it("Login end point test buyer 2", (done) => {
+    chai
+      .request(app)
+      .post("/api/users/login")
+      .send({
+        password: "Another@123",
+        email: "userbuyer1@gmail.com"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        buyerTKN2 = res.body.token;
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+
   it("Login as a buyer and get a token", (done) => {
     chai
       .request(app)
@@ -1055,154 +1080,6 @@ describe("products and product categgories", () => {
       });
   });
 
-  // the test for product reviews
-
-  it("it should bring invalid product id", () => {
-    chai
-      .request(app)
-      .post("/api/products/id/reviews")
-      .set("Authorization", buyerTKN)
-      .send({
-        rating: 5,
-        feedback: "hello world!!"
-      })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(400);
-      });
-  });
-
-  it("it should bring invalid rating", () => {
-    chai
-      .request(app)
-      .post(`/api/products/${productId}/reviews`)
-      .set("Authorization", buyerTKN)
-      .send({
-        feedback: "hello world!!"
-      })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(400);
-      });
-  });
-
-  it("it should bring invalid rating", () => {
-    chai
-      .request(app)
-      .post(`/api/products/${productId}/reviews`)
-      .set("Authorization", buyerTKN)
-      .send({
-        rating: 4
-      })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(400);
-      });
-  });
-
-  it("it should bring rating range 0-5", () => {
-    chai
-      .request(app)
-      .post(`/api/products/${productId}/reviews`)
-      .set("Authorization", buyerTKN)
-      .send({
-        rating: 7,
-        feedback: "hello world!!"
-      })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(400);
-      });
-  });
-
-  it("it should bring rating is range 0 - 5", () => {
-    chai
-      .request(app)
-      .post("/api/products/id/reviews")
-      .set("Authorization", buyerTKN)
-      .send({
-        rating: -4,
-        feedback: "hello world"
-      })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(400);
-      });
-  });
-
-  it("it should bring invalid product format", () => {
-    chai
-      .request(app)
-      .post(`/api/products/f4c6cb8c-e6b9-47d0-tb04-fa394042c5fa/reviews`)
-      .set("Authorization", buyerTKN)
-      .send({
-        rating: 5,
-        feedback: "hello world!!"
-      })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(400);
-      });
-  });
-
-  it("it should bring invalid product format", () => {
-    chai
-      .request(app)
-      .post(`/api/products/2394a73c-80d1-4d82-a677-c15343a8a51e/reviews`)
-      .set("Authorization", buyerTKN)
-      .send({
-        rating: 5,
-        feedback: "hello world!!"
-      })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(404);
-      });
-  });
-
-  it("it should create a new review", () => {
-    chai
-      .request(app)
-      .post(`/api/products/${productId}/reviews`)
-      .set("Authorization", buyerTKN)
-      .send({
-        rating: 4,
-        feedback: "Wonderful product"
-      })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(200);
-      });
-  });
-
-  it("it should update a new review", () => {
-    chai
-      .request(app)
-      .post(`/api/products/${productId}/reviews`)
-      .set("Authorization", buyerTKN)
-      .send({
-        rating: 5,
-        feedback: "Wonderful product!!"
-      })
-      .end((err, res) => {
-        expect(err).to.be.null;
-        expect(res).to.have.status(200);
-      });
-  });
-
-  // it("it should bring 500 error", async () => {
-  //   const req = {} as Request;
-  //   const res = {} as Response;
-  //   const stub = sinon.stub(Reviews, "create").throws(new Error("Internal Server Error"));
-  //   try {
-  //     await productReview(req, res);
-  //   } catch (error: any) {
-  //     expect(error).to.be.an.instanceOf(Error);
-  //     expect(error.message).to.have.status(500);
-  //     sinon.assert.calledOnce(stub);
-  //   }
-  //   stub.restore();
-  // });
   // THE TEST ✅✅✅✅✅✅✅✅✅✅✅✅✅✅ TEST OF CARTS✅✅✅✅✅✅✅✅✅✅✅
 
   it("user invalid uuid 993", (done) => {
@@ -1409,6 +1286,159 @@ describe("products and product categgories", () => {
   });
   // test end here---------------
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  // the test for product reviews
+
+  it("it should bring invalid product id", () => {
+    chai
+      .request(app)
+      .post("/api/products/id/reviews")
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 5,
+        feedback: "hello world!!"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
+  it("it should bring invalid rating", () => {
+    chai
+      .request(app)
+      .post(`/api/products/${productId}/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        feedback: "hello world!!"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
+  it("it should bring invalid rating", () => {
+    chai
+      .request(app)
+      .post(`/api/products/${productId}/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 4
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
+  it("it should bring rating range 0-5", () => {
+    chai
+      .request(app)
+      .post(`/api/products/${productId}/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 7,
+        feedback: "hello world!!"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
+  it("it should bring rating is range 0 - 5", () => {
+    chai
+      .request(app)
+      .post("/api/products/id/reviews")
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: -4,
+        feedback: "hello world"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
+  it("it should bring invalid product format", () => {
+    chai
+      .request(app)
+      .post(`/api/products/f4c6cb8c-e6b9-47d0-tb04-fa394042c5fa/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 5,
+        feedback: "hello world!!"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(400);
+      });
+  });
+
+  it("it should bring invalid product format", () => {
+    chai
+      .request(app)
+      .post(`/api/products/2394a73c-80d1-4d82-a677-c15343a8a51e/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 5,
+        feedback: "hello world!!"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(404);
+      });
+  });
+
+  it("it should create a new review", () => {
+    chai
+      .request(app)
+      .post(`/api/products/${productId}/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 4,
+        feedback: "Wonderful product"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+      });
+  });
+
+  it("it shouldnot create a new review when you havent purchased the product", () => {
+    chai
+      .request(app)
+      .post(`/api/products/${productId}/reviews`)
+      .set("Authorization", buyerTKN2)
+      .send({
+        rating: 4,
+        feedback: "Wonderful product"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(401);
+      });
+  });
+
+  it("it should update a new review", () => {
+    chai
+      .request(app)
+      .post(`/api/products/${productId}/reviews`)
+      .set("Authorization", buyerTKN)
+      .send({
+        rating: 5,
+        feedback: "Wonderful product!!"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+      });
+  });
+
+  // ******* review test end here ***************
+
   it("user Create the new Carts with post on line 934", (done) => {
     chai
       .request(app)

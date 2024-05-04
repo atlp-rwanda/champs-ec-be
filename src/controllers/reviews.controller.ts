@@ -9,11 +9,6 @@ export const productReview = async (req: Request, res: Response) => {
     const user = req.user as UserData;
     const { productId } = req.params;
     const { feedback, rating } = req.body;
-    const product = await Product.findByPk(productId);
-
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
 
     const reviewed = (await Reviews.findOne({
       where: {
