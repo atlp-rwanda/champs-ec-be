@@ -5,6 +5,9 @@ import {
   ProductCreationAttributes
 } from "../types/product.types";
 import Reviews from "./reviews";
+import User from "./user";
+import Order from "./Order";
+
 // eslint-disable-next-line require-jsdoc
 class Product
   extends Model<ProductAttributes, ProductCreationAttributes>
@@ -15,6 +18,8 @@ class Product
   public sellerId!: string;
 
   public productCategory!: string;
+
+  public categoryName!: string;
 
   public productName!: string;
 
@@ -162,5 +167,10 @@ Product.init(
     tableName: "products"
   }
 );
+
 Product.hasMany(Reviews, { foreignKey: "productId", as: "reviews" });
+Product.belongsTo(User, {
+  foreignKey: "sellerId",
+  as: "seller" // You can use this alias when querying
+});
 export default Product;

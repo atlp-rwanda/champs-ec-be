@@ -4,6 +4,7 @@ import {
   ProductCategoryAttributes,
   ProductCategoryCreationAttributes
 } from "../types/product_category.types";
+import Product from "./Product";
 
 class ProductCategory
   extends Model<ProductCategoryAttributes, ProductCategoryCreationAttributes>
@@ -40,5 +41,9 @@ ProductCategory.init(
     tableName: "product_categories"
   }
 );
+Product.belongsTo(ProductCategory, {
+  foreignKey: "productCategory",
+  as: "relatedproducts" // You can use this alias when querying
+});
 
 export default ProductCategory;

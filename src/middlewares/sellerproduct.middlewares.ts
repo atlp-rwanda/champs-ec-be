@@ -28,13 +28,13 @@ export const isExistSellerProduct = async (
           sellerId: userId
         }
       });
-    } else {
-      product = await Product.findOne({
-        where: {
-          id: req.params.productId
-        }
-      });
     }
+    product = await Product.findOne({
+      where: {
+        id: req.params.productId
+      }
+    });
+
     if (!product) {
       return res
         .status(404)

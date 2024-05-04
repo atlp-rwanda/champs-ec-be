@@ -14,8 +14,8 @@ const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {
     const user = await User.findOne({
       where: {
-        email: payload.email,
-        verified: true
+        email: payload.email
+        //  verified: true
       },
       attributes: { exclude: ["password"] },
       include: [
