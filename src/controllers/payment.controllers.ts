@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-plusplus */
 import dotenv from "dotenv";
 import { Request, Response } from "express";

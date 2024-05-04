@@ -1,10 +1,19 @@
+/* eslint-disable no-shadow */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable array-callback-return */
+/* eslint-disable eqeqeq */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Request, Response } from "express";
+import { Op } from "sequelize";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import User from "../models/user";
-import wishServices from "../services/wish.services";
+import Wish from "../models/Wish";
+// eslint-disable-next-line import/no-unresolved, @typescript-eslint/no-unused-vars
 import Product from "../models/Product";
+import wishServices from "../services/wish.services";
 import { isValidUUID } from "../utils/uuid";
 import Role from "../models/Role";
-import Wish from "../models/Wish";
 
 export const createRemoveWish = async (req: Request, res: Response) => {
   try {
@@ -102,5 +111,38 @@ export const flushUserWishes = async (req: Request, res: Response) => {
   if (userId != null) {
     const wishes = await wishServices.flushWishes(userId);
     res.status(200).send({ message: "Product wishes flushed" });
+  }
+};
+
+// wishes  statistics
+dayjs.extend(utc);
+export const getWishesStatistics = async (req: Request) => {
+  const { end } = req.query as any;
+  const { start } = req.query as any;
+  const startDate = dayjs(start).startOf("day").utc().toDate();
+  const endDate = dayjs(end).endOf("day").utc().toDate();
+  try {
+    const user: User = req.user as User;
+    const sellerId: string = user.dataValues.id as string;
+    const products = await Product.findAll({
+      where: {
+        sellerId,
+        createdAt: {
+          [Op.between]: [startDate, endDate]
+        }
+      }
+    });
+    const productIds = products.map((product) => product.id);
+    const wishStatistics = await Wish.findAll({
+      where: {
+        productId: {
+          [Op.in]: productIds
+        }
+      }
+    });
+    return wishStatistics.length;
+  } catch (error) {
+    console.error("Error fetching wishes:", error);
+    throw error;
   }
 };

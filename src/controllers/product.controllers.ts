@@ -1,5 +1,14 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable object-shorthand */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable radix */
 /* eslint-disable no-await-in-loop */
 import { Request, Response, NextFunction } from "express";
+import sequelize, { Op } from "sequelize";
+
+import dayjs from "dayjs";
+
+import utc from "dayjs/plugin/utc";
 import { checkExpiredProducts } from "../utils/finders";
 
 import { isImageExist } from "../utils/product.image.check";
@@ -67,8 +76,11 @@ export const createProducts = async (req: Request, res: Response) => {
     res
       .status(201)
       .json({ message: "Product item is successful created", product });
-  } catch (error) {
-    return res.status(500).json({ errors: "Internal server error", error });
+  } catch (error: any) {
+    return res.status(500).json({
+      errors: "Internal server error",
+      error: error.message
+    });
   }
 };
 
@@ -420,4 +432,123 @@ export const updateProductStatus = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
+};
+
+// products stats
+dayjs.extend(utc);
+export const getProductsStatsbySeller = async (req: Request) => {
+  const logedUser: User = req.user as User;
+  const sellerId: string = logedUser.dataValues.id as string;
+
+  const { end } = req.query as any;
+  const { start } = req.query as any;
+  const startDate = dayjs(start).startOf("day").utc().toDate();
+  try {
+    const endDate = dayjs(end).endOf("day").utc().toDate();
+    const products = await Product.findAll({
+      where: {
+        sellerId: sellerId,
+        createdAt: {
+          [Op.between]: [startDate, endDate]
+        }
+      }
+    });
+    return products.length;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+};
+// expired products status
+export const expiredProductsStats = async (req: Request) => {
+  const logedUser: User = req.user as User;
+  const sellerId: string = logedUser.dataValues.id as string;
+  const { end } = req.query as any;
+  const { start } = req.query as any;
+  const startDate = dayjs(start).startOf("day").utc().toDate();
+  const endDate = dayjs(end).endOf("day").utc().toDate();
+  try {
+    const products = await Product.findAll({
+      where: {
+        sellerId: sellerId,
+        createdAt: {
+          [Op.between]: [startDate, endDate]
+        },
+        isExpired: true
+      }
+    });
+    return products.length;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+};
+export const availableProductsStats = async (req: Request) => {
+  const loggedUser = req.user as User;
+  const sellerId = loggedUser.dataValues.id as string;
+  const { end } = req.query as any;
+  const { start } = req.query as any;
+  const startDate = dayjs(start).startOf("day").utc().toDate();
+  const endDate = dayjs(end).endOf("day").utc().toDate();
+  try {
+    const products = await Product.findAll({
+      where: {
+        sellerId: sellerId,
+        createdAt: {
+          [Op.between]: [startDate, endDate]
+        },
+        isAvailable: true
+      }
+    });
+    return products.length;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+};
+const getStockLevelForDate = async (
+  date: Date,
+  sellerId: string
+): Promise<number> => {
+  try {
+    const products = await Product.findAll({
+      where: {
+        sellerId: sellerId,
+        createdAt: {
+          [Op.lte]: date
+        }
+      }
+    });
+    const productsObj = products.map((product) => product.toJSON());
+    let totalStock = 0;
+    for (let i = 0; i < productsObj.length; i++) {
+      const product = productsObj[i];
+      if (product.stockLevel) {
+        const stockQuantity = parseFloat(
+          String(product.stockLevel).split(" ")[0]
+        );
+        totalStock += stockQuantity;
+      }
+    }
+    return totalStock;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+};
+
+export const getStockStats = async (req: Request) => {
+  const loggedUser = req.user as User;
+  const sellerId = loggedUser.dataValues.id as string;
+  const { end } = req.query as any;
+  const { start } = req.query as any;
+  const startDate = dayjs(start).startOf("day").utc().toDate();
+  const endDate = dayjs(end).endOf("day").utc().toDate();
+  const startStockLevel = await getStockLevelForDate(startDate, sellerId);
+  const endStockLevel = await getStockLevelForDate(endDate, sellerId);
+  const stockChange: number = endStockLevel - startStockLevel;
+  if (stockChange > 0) {
+    return parseInt(`+${stockChange}`);
+  }
+  return parseInt(`-${stockChange}`);
 };
