@@ -51,6 +51,6 @@ export const dbConnect = () =>
       console.log("Database connected successfully.", db_uri);
     })
     .catch((error) => {
-      console.error("Unable to connect to the database:", error);
+      console.log("Unable to connect to the database:");
       process.exit(1);
     });

@@ -22,6 +22,7 @@ import {
 import User from "../models/user";
 import formatString from "../utils/string.manipulation";
 import Reviews from "../models/reviews";
+import NodeEvents from "../services/eventEmit.services";
 
 export const createProducts = async (req: Request, res: Response) => {
   try {
@@ -396,7 +397,7 @@ export const productExpirationChecker = async (
       .status(200)
       .json({ msg: "Expired products unlisted successfully." });
   } catch (err) {
-    console.error("FAILURE: COULD NOT PERFORM TASK AT THE MOMENT", err);
+    console.error("FAILURE: COULD NOT PERFORM TASK AT THE MOMENT");
     return res
       .status(500)
       .json({ msg: "Couldn't check all products' expiration dates" });
@@ -424,7 +425,9 @@ export const updateProductStatus = async (req: Request, res: Response) => {
     }
 
     await product.update({ isAvailable: req.body.isAvailable });
-
+    if (isAvailable) {
+      NodeEvents.emit("productAvailable", product);
+    }
     // Return success response
     res.status(200).json({
       message: `Product marked as ${isAvailable ? "available" : "unavailable"}`

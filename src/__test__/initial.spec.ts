@@ -13,6 +13,7 @@ import { tokenVerify } from "../utils/token.generator";
 import { DataInfo } from "../controllers/otpauth.controllers";
 import Cart from "../models/Cart";
 import Order from "../models/Order";
+import Notification from "../models/Notifications";
 
 const imageFilePath = "./src/__test__/image/JobIcon.png";
 
@@ -31,6 +32,7 @@ let buyerTKN: string;
 let buyerTKN2: string;
 let userId1: string;
 let userId2: string;
+let userId7: string;
 chai.use(chaiHttp);
 // eslint-disable-next-line func-names
 before(async function () {
@@ -124,9 +126,18 @@ before(async function () {
         verified: true,
         roleId: "8736b050-1117-4614-a599-005dd76ff332"
       });
-      // const product= await Product.findAll({});
+      const user8 = await User.create({
+        id: "e01e6965-d534-48e4-8a41-e4d500796998",
+        firstName: "Ernest",
+        lastName: "Tchami",
+        password: await passwordEncrypt("Test@12345"),
+        verified: true,
+        email: "Test@gmail.com",
+        roleId: "8736b050-1117-4614-a599-005dd76ff331"
+      });
+      // const product = await Product.findAll({});
 
-      return [user1, user2, user3, user4, user5, user6, user7];
+      return [user1, user2, user3, user4, user5, user6, user7, user8];
     } catch (error) {
       return error;
     }
@@ -137,6 +148,23 @@ before(async function () {
   const users: any = await createUsers();
   userId1 = users[1].dataValues.id;
   userId2 = users[5].dataValues.id;
+  userId7 = users[7].dataValues.id;
+  await Notification.create({
+    id: "8736b050-1117-4614-a599-005dd76ff331",
+    reciepent_id: userId7,
+    message: "in this message is for the testing ",
+    read: false,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  });
+  await Notification.create({
+    id: "8736b050-1117-4614-a599-005dd76ff332",
+    reciepent_id: userId7,
+    message: "in this message is for the testing ",
+    read: false,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  });
 });
 
 describe("test a user signup endpoint", () => {
@@ -203,6 +231,7 @@ describe("test a user signup endpoint", () => {
       });
   });
 });
+
 describe("user Signin controller and passport", () => {
   it("Login end point test", (done) => {
     chai
@@ -219,6 +248,76 @@ describe("user Signin controller and passport", () => {
         done();
       });
   });
+  // ✅✅✅✅✅✅✅✅✅✅✅✅✅✅  Notification ✅✅✅✅✅✅✅✅✅✅
+  let tokenNotification: string;
+  it("Login for notification test", (done) => {
+    chai
+      .request(app)
+      .post("/api/users/login")
+      .send({
+        password: "Test@12345",
+        email: "Test@gmail.com"
+      })
+      .end((err, res) => {
+        expect(err).to.be.null;
+        tokenNotification = res.body.token;
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("get the all notifications for seller", (done) => {
+    chai
+      .request(app)
+      .get(`/api/notifications`)
+      .set("Authorization", tokenNotification)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("get the all notifications for user who don't have it ", (done) => {
+    chai
+      .request(app)
+      .get(`/api/notifications`)
+      .set("Authorization", tokenNotification)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("Mark one notification as readen", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/notifications/8736b050-1117-4614-a599-005dd76ff331`)
+      .set("Authorization", tokenNotification)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        done();
+      });
+  });
+  it("Mark one notification as readen for id not exist", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/notifications/8726b050-1117-4614-a599-005dd76ff331`)
+      .set("Authorization", tokenNotification)
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it("Mark all notification as readen", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/notifications`)
+      .set("Authorization", headerToken)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        done();
+      });
+  });
+
+  // ✅✅✅✅✅✅✅✅✅✅✅✅✅✅ End of  Notification ✅✅✅✅✅✅✅
   it("Login end point test buyer 2", (done) => {
     chai
       .request(app)

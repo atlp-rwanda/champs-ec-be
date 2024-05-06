@@ -14,7 +14,7 @@ const initChat = () => {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
       return decodedToken;
     } catch (error) {
-      console.error("Error decoding token:", error);
+      console.error("Error decoding token:");
       return null;
     }
   }

@@ -22,3 +22,5 @@ const socketPort = process.env.SOCKET_PORT || 3001;
 httpServer.listen(socketPort, () => {
   console.log(`Socket.IO server is running on port ${socketPort}`);
 });
+
+export default io;

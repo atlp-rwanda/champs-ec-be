@@ -78,7 +78,7 @@ export const getCategoryIdByName = async (
     }
     return null; // Category not found
   } catch (error) {
-    console.error("Error fetching category ID:", error);
+    console.error("Error fetching category ID:");
     return null;
   }
 };

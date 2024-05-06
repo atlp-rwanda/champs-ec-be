@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import Product from "../models/Product";
 import Order from "../models/Order";
+// import { OrderUpdated } from "../services/eventEmit.services";
+import User from "../models/user";
+import NodeEvents from "../services/eventEmit.services";
 
 export const getAllOrders = async (req: Request, res: Response) => {
   try {
@@ -83,6 +86,8 @@ export const getSingleOrder = async (req: Request, res: Response) => {
 export const updateOrder = async (req: Request, res: Response) => {
   const { orderId } = req.params;
   const { status } = req.body;
+  const seller: User = req.user as User;
+
   await Order.update(
     {
       deliveryStatus: status
@@ -92,6 +97,7 @@ export const updateOrder = async (req: Request, res: Response) => {
     .then((result) => {
       const order: Array<Order> = result[1];
       if (order.length > 0) {
+        NodeEvents.emit("OrderUpdated", status, order, seller);
         return res
           .status(200)
           .json({ message: "Order status updated successful", order });

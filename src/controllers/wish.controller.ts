@@ -14,6 +14,7 @@ import Product from "../models/Product";
 import wishServices from "../services/wish.services";
 import { isValidUUID } from "../utils/uuid";
 import Role from "../models/Role";
+import NodeEvents from "../services/eventEmit.services";
 
 export const createRemoveWish = async (req: Request, res: Response) => {
   try {
@@ -26,6 +27,7 @@ export const createRemoveWish = async (req: Request, res: Response) => {
       const exWish = await wishServices.getSingleWish(data);
       if (exWish == null) {
         await wishServices.createWish(data);
+        NodeEvents.emit("productWished", productId, user.dataValues.firstName);
         res.status(200).send({
           message: "product added to wishlist",
           data

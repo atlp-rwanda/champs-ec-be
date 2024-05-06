@@ -18,6 +18,7 @@ import {
   IPRODUCTINCART
 } from "../types/order.types";
 import Cart from "../models/Cart";
+import NodeEvents from "../services/eventEmit.services";
 
 dotenv.config();
 
@@ -105,7 +106,7 @@ export const checkoutSuccess = async (req: Request, res: Response) => {
       await handleProductStockChanges(cartProduct);
 
       await Cart.destroy({ where: { userId } });
-
+      NodeEvents.emit("newOrder", order, userId);
       return res
         .status(200)
         .json({ message: "Order is successful creates", order });
