@@ -2,8 +2,10 @@ import express from "express";
 
 import {
   getAllOrders,
+  getOrderStatus,
   getSingleOrder,
-  updateOrder
+  updateOrder,
+  updateOrderStatus
 } from "../controllers/orderControllers";
 import {
   isValidOrderId,
@@ -19,7 +21,16 @@ orderRoutes.get(
   checkRole(["buyer", "seller"]),
   getAllOrders
 );
-// orderRoutes.post("/", authenticate, createOrders);
+orderRoutes
+  .route("/:orderId/status")
+  .get(
+    authenticate,
+    checkRole(["buyer", "seller"]),
+    isValidOrderId,
+    getOrderStatus
+  )
+  .post(authenticate, checkRole(["seller"]), isValidOrderId, updateOrderStatus);
+
 orderRoutes.get("/:orderId", authenticate, isValidOrderId, getSingleOrder);
 orderRoutes.patch(
   "/:orderId",
