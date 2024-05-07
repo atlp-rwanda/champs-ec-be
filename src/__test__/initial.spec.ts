@@ -1031,6 +1031,7 @@ describe("products and product categgories", () => {
         done();
       });
   }).timeout(70000);
+  // Inside your test
   it("should return 200 with product(seller(maxPrice))", (done) => {
     chai
       .request(app)
@@ -1200,6 +1201,19 @@ describe("products and product categgories", () => {
       });
   }).timeout(70000);
 
+  it("list product items in seller collection sucessfull", (done) => {
+    chai
+      .request(app)
+      .get("/api/products")
+      .set("Authorization", headerTokenSeller)
+      .end((err, res) => {
+        productId = res.body.products[0].id;
+
+        image_id = res.body.products[0].productPictures[0].imgId;
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
   it("list product items in seller collection sucessfull", (done) => {
     chai
       .request(app)
@@ -1848,6 +1862,102 @@ describe("products and product categgories", () => {
         done();
       });
   });
+  //* *********feature a product  */
+  it("list product items in seller collection sucessfull", (done) => {
+    chai
+      .request(app)
+      .get("/api/products")
+      .end((err, res) => {
+        productId = res.body.products[0].id;
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+  it("should fail to feature a product to internal error", (done) => {
+    chai;
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/feature`)
+      .set("Authorization", headerToken)
+      .send({ featureEndDate: "fhjgfthf" })
+      .end((err, res) => {
+        expect(res).to.have.status(500);
+        done();
+      });
+  });
+
+  it("should fail to feature a product", (done) => {
+    chai;
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/feature`)
+      .set("Authorization", headerToken)
+      .send({ featureEndDate: "" })
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+
+  it("should feature a product successfully", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/feature`)
+      .set("Authorization", headerToken)
+      .send({ featureEndDate: "10/10/2024" })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.equal("Product featured successfully");
+        done();
+      });
+  });
+  it("should  fail to feature a product due to past feature end date ", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/feature`)
+      .set("Authorization", headerToken)
+      .send({ featureEndDate: "01/01/2024" })
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+  it("should  fail to feature a product due to date greater than expiration date ", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/feature`)
+      .set("Authorization", headerToken)
+      .send({ featureEndDate: "12/12/2050" })
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+  it("should unfeature a product successfully", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/feature`)
+      .set("Authorization", headerToken)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.equal("Product unfeatured successfully");
+        done();
+      });
+  });
+  it("should  fail to feature a product due to unexisting productId ", (done) => {
+    const nonExistentProductId = "98996493-303d-447b-af80-66cf9984087a";
+    chai
+      .request(app)
+      .patch(`/api/products/${nonExistentProductId}/feature`)
+      .set("Authorization", headerToken)
+      .send({ featureEndDate: "10/10/2024" })
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        done();
+      });
+  });
+
+  //* **********end of feature a product  */
   it("stub throw internal error for getting all products ", (done) => {
     const roleStub = sinon
       .stub(Product, "findAll")

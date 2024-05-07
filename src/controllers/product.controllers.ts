@@ -77,18 +77,18 @@ export const createProducts = async (req: Request, res: Response) => {
     });
   }
 };
-
-/* this function will help to lists all product items in seller collection */
-
 export const getAllSellerProducts = async (req: any, res: Response) => {
   try {
-    const logedUser: any = req.user as User;
-    if (logedUser.Role && logedUser.Role.dataValues.name === "seller") {
-      const userId: string = logedUser.dataValues.id as string;
-      if (logedUser.Role.dataValues.name === "seller") {
-        const products = await Product.findAll({
+    const loggedUser: any = req.user as User;
+    console.log(loggedUser);
+    if (loggedUser.Role && loggedUser.Role.dataValues.name === "seller") {
+      const userId: string = loggedUser.dataValues.id as string;
+
+      if (loggedUser.Role.dataValues.name === "seller") {
+        const featuredProducts = await Product.findAll({
           where: {
-            sellerId: userId
+            sellerId: userId,
+            isFeatured: true
           },
           include: [
             {
@@ -98,6 +98,27 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
             }
           ]
         });
+        const nonFeaturedProducts = await Product.findAll({
+          where: {
+            sellerId: userId,
+            isFeatured: false
+          },
+          include: [
+            {
+              model: Reviews,
+              as: "reviews",
+              attributes: ["buyerId", "rating", "feedback"]
+            }
+          ]
+        });
+        const products = [...featuredProducts, ...nonFeaturedProducts];
+        products.sort((a, b) => {
+          if (a.isFeatured && !b.isFeatured) return -1;
+          if (!a.isFeatured && b.isFeatured) return 1;
+
+          return 0;
+        });
+
         if (products.length < 1) {
           return res
             .status(404)
@@ -121,7 +142,8 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
           }
         ],
         offset,
-        limit
+        limit,
+        order: [["isFeatured", "DESC"]]
       });
       // Return a response with paginated list and metadata
       res.status(200).json({
@@ -265,8 +287,8 @@ export const removeSellerProduct = async (req: Request, res: Response) => {
 /* this function will help to replace one picture of product item with an other from the collection and keep the list order */
 
 export const updateProductPictures = async (req: Request, res: Response) => {
-  const logedUser: User = req.user as User;
-  const userId: string = logedUser.dataValues.id as string;
+  const loggedUser: User = req.user as User;
+  const userId: string = loggedUser.dataValues.id as string;
   const product: Product = (await Product.findOne({
     where: {
       id: req.params.productId,
@@ -303,8 +325,8 @@ export const updateProductPictures = async (req: Request, res: Response) => {
 /* this function will help to delete one picture of product item from the collection */
 
 export const removeProductPictures = async (req: Request, res: Response) => {
-  const logedUser: User = req.user as User;
-  const userId: string = logedUser.dataValues.id as string;
+  const loggedUser: User = req.user as User;
+  const userId: string = loggedUser.dataValues.id as string;
   const product: Product | null = await Product.findOne({
     where: {
       id: req.params.productId,
@@ -329,8 +351,8 @@ export const removeProductPictures = async (req: Request, res: Response) => {
 };
 
 export const setProductThumbnail = async (req: Request, res: Response) => {
-  const logedUser: User = req.user as User;
-  const userId: string = logedUser.dataValues.id as string;
+  const loggedUser: User = req.user as User;
+  const userId: string = loggedUser.dataValues.id as string;
   const product: Product | null = (await Product.findOne({
     where: {
       id: req.params.productId,
@@ -373,9 +395,9 @@ export const productExpirationChecker = async (
 
 // update product status
 export const updateProductStatus = async (req: Request, res: Response) => {
-  const logedUser: User = req.user as User;
+  const loggedUser: User = req.user as User;
   const { productId } = req.params;
-  const userId: string = logedUser.dataValues.id as string;
+  const userId: string = loggedUser.dataValues.id as string;
   const { isAvailable } = req.body;
   try {
     // Find the product
@@ -522,4 +544,55 @@ export const getStockStats = async (req: Request) => {
     return parseInt(`+${stockChange}`);
   }
   return parseInt(`-${stockChange}`);
+};
+
+export const toggleProductFeature = async (req: Request, res: Response) => {
+  try {
+    await checkExpiredProducts();
+
+    const { productId } = req.params;
+    const { featureEndDate } = req.body;
+
+    const product = await Product.findByPk(productId);
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    if (featureEndDate) {
+      const currentDate = new Date();
+      const expiryDate = product.dataValues.expireDate ?? new Date();
+      const featureEnd = new Date(featureEndDate);
+
+      if (featureEnd < currentDate) {
+        return res.status(400).json({
+          error: "Expired products cannot be featured"
+        });
+      }
+
+      if (featureEnd > expiryDate) {
+        return res.status(400).json({
+          error: "Feature end date cannot be greater than expiration date"
+        });
+      }
+    }
+
+    if (product.dataValues.isFeatured) {
+      await product.update({ isFeatured: false });
+      return res.status(200).json({
+        message: "Product unfeatured successfully"
+      });
+    }
+    if (!featureEndDate) {
+      return res.status(400).json({ error: "Feature end date is required" });
+    }
+    await product.update({ isFeatured: true, featureEndDate });
+    return res.status(200).json({
+      message: "Product featured successfully",
+      featureEndDate
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };

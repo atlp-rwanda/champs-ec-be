@@ -9,7 +9,8 @@ import {
   updateProductPictures,
   updateSellerProduct,
   productExpirationChecker,
-  updateProductStatus
+  updateProductStatus,
+  toggleProductFeature
 } from "../controllers/product.controllers";
 
 import multerImage from "../utils/uploader";
@@ -141,6 +142,13 @@ productRoutes.post(
   checkRole(["buyer"]),
   isReviewProduct,
   productReview
+);
+productRoutes.patch(
+  "/:productId/feature",
+  authenticate,
+  checkRoles(["admin"]),
+  isExistSellerProduct,
+  toggleProductFeature
 );
 
 export default productRoutes;

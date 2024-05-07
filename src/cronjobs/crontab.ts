@@ -8,8 +8,10 @@ import NodeEvents from "../services/eventEmit.services";
 export const startProductsExpirationCronJob = (targetDate: string): void => {
   cron.schedule(targetDate, async () => {
     try {
-      await checkExpiredProducts();
-      console.log("Expired products unlisted successfully.");
+      await checkExpiredProducts(); // axios request goes here
+      console.log(
+        "Expired products unlisted successfully and unfeature the expired product."
+      );
     } catch (error) {
       console.error("Error: unlisting expired products:", error);
     }

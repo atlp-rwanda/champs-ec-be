@@ -95,7 +95,7 @@ module.exports = {
           productThumbnail:
             "https://res.cloudinary.com/dbbv6uvfu/image/upload/v1712563210/ilezp3vjo7gcirzofy2t.jpg",
 
-          expireDate: "2028-01-10",
+          expireDate: "2024-01-10",
           createdAt: new Date(),
           updatedAt: new Date()
         },
