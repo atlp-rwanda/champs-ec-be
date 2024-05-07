@@ -41,6 +41,10 @@ class Product
   public updatedAt!: Date;
 
   public isExpired!: boolean;
+
+  public isFeatured!: boolean;
+
+  public featureEndDate!: Date | undefined;
 }
 
 Product.init(
@@ -127,6 +131,15 @@ Product.init(
     },
     expireDate: {
       type: DataTypes.STRING,
+      allowNull: true
+    },
+    isFeatured: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    featureEndDate: {
+      type: DataTypes.DATE,
       allowNull: true
     },
     createdAt: {

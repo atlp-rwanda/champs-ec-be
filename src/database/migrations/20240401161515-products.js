@@ -65,6 +65,15 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: null
       },
+      isFeatured: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      featureEndDate: {
+        type: Sequelize.DATE,
+        allowNull: true
+      },
 
       createdAt: {
         allowNull: false,

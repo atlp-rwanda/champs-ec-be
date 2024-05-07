@@ -45,6 +45,9 @@ export const checkExpiredProducts = async (): Promise<void> => {
     const expiryDate = new Date(currentItem.dataValues.expireDate as Date);
     if (expiryDate <= new Date()) {
       await currentItem.update({ isExpired: true });
+      if (new Date() > expiryDate && currentItem.dataValues.isFeatured) {
+        await currentItem.update({ isFeatured: false });
+      }
     }
     checkProduct(index - 1);
   };

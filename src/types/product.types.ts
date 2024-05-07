@@ -17,6 +17,8 @@ export interface ProductAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   isExpired?: boolean;
+  isFeatured?: boolean;
+  featureEndDate?: Date;
 }
 
 export interface ProductCreationAttributes

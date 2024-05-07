@@ -53,6 +53,10 @@
       "description": "API endpoints for creating and managing wishlist"
     },
     {
+      "name": "Feature Product",
+      "description": "API endpoints for feature/unfeature a product "
+    },
+    {
       "name": "Notifications",
       "description": "API endpoints for creating and managing wishlist"
     }
@@ -723,6 +727,62 @@
         ]
       }
     },
+    "/api/products/{productId}/feature": {
+      "patch": {
+        "summary": "Feature Product",
+        "description": "Feature a product to make it appear prominently on the platform.",
+        "tags": ["Feature Product"],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "ID of the product to feature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "featureEndDate": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Date when the product feature will end"
+                  }
+                },
+                "required": ["featureEndDate"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Product featured successfully"
+          },
+          "400": {
+            "description": "Bad request. Possible reasons: Product is already featured, feature end date is in the past, or feature end date is greater than expiration date."
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+,    
     "/api/products/check-expiration": {
       "post": {
         "summary": "Unlist expired products",
