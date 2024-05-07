@@ -138,7 +138,8 @@
       "src/__test__/",
       "src/config/db.config.ts",
       "src/config/google.config.ts",
-      "src/services"
+      "src/services",
+      "src/socket.notification.ts"
     ]
   }
 }

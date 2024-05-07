@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-
 import Cart from "../models/Cart";
 import {
   mergeDuplicatedProduct,
@@ -15,17 +14,14 @@ export const createCart = async (req: Request, res: Response) => {
   try {
     const newuser: User = req.user as User;
     const cartItems: CartItem[] = req.body;
-
     const productsWithQuantity = await getProductsWithQuantity(cartItems);
     productsWithQuantity.reduce((sum, prod) => sum + prod.totalPrice, 0);
-
     const news = await mergeDuplicatedProduct(productsWithQuantity);
     if (!news.StockCheck) {
-      return res.status(200).json({
+      return res.status(413).json({
         error: "You sent a quantity that exceeds what we have in stock."
       });
     }
-
     const cart = await Cart.create({
       userId: newuser.id,
       product: news.product,
@@ -49,7 +45,6 @@ export const getCart = async (req: Request, res: Response) => {
         userId: newuser.id
       }
     });
-
     if (!cart) {
       return res.status(400).json({
         error: "You don't have cart please add product to have a cart"
@@ -68,14 +63,11 @@ export const updateCart = async (req: Request, res: Response) => {
     const newuser: User = req.user as User;
     const cartItems: CartItem[] = req.body;
     const productsWithQuantity = await getProductsWithQuantity(cartItems);
-    // let sum: number;
     productsWithQuantity.reduce((sum, prod) => sum + prod.totalPrice, 0);
-
     const mergedProduct = await mergeDuplicatedProduct(productsWithQuantity);
     const new_cart: any = await Cart.findOne({
       where: { userId: newuser.id }
     });
-
     if (!mergedProduct.StockCheck) {
       return res.status(200).json({
         error:
@@ -89,7 +81,7 @@ export const updateCart = async (req: Request, res: Response) => {
     });
     res.status(201).json(new_cart);
   } catch (error: Error | any) {
-    res.status(400).json({
+    res.status(500).json({
       status: error.status,
       message: "the request fail",
       error: error.message

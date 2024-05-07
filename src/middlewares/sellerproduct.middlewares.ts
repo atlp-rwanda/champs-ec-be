@@ -124,6 +124,7 @@ export const isValidImage = async (
     next();
   }
 };
+
 export const imageNumbers = async (
   req: Request,
   res: Response,

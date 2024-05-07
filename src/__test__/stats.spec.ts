@@ -82,9 +82,9 @@ describe("Statics Test", function () {
 
         expect(res).to.have.status(200);
         validJwt = res.body.token;
-        console.log("Valid JWT:", validJwt);
+        // console.log("Valid JWT:", validJwt);
       } catch (error) {
-        console.error("Error in OTP validation:", error);
+        // console.error("Error in OTP validation:", error);
       }
     });
   });

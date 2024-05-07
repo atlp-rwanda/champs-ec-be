@@ -21,13 +21,18 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
             'WHERE parameter "email" has invalid "undefined" value'
           )
         ) {
-          return res
-            .status(401)
-            .json({ error: "Email was sent, First verify with 2FA" });
+          return res.status(401).json({
+            error:
+              "This token is used for 2fa verification only, please verify 2fa to gain access"
+          });
         }
         return res.status(500).json({ error: error.message });
       }
-
+      if (user.isActive === false) {
+        return res
+          .status(401)
+          .json({ message: `${user.dataValues.reasonForDeactivation}` });
+      }
       const blacklistedToken = await BlacklistedToken.findOne({
         where: { token: tokenHeader }
       });

@@ -20,8 +20,11 @@ const userSchema = z
     email: z.string().email("Email field must be a valid email"),
     password: z
       .string()
-      .min(8, "password should be atleast 8 characters length")
-      .regex(passwordStrength, "Password should be alphanumeric ")
+      .min(8, "password should be atleast 8 characters")
+      .regex(
+        passwordStrength,
+        "Password should be contain a capital letter, a number and a symbol "
+      )
   })
   .strict();
 

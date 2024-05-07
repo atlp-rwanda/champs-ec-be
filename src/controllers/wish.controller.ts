@@ -22,6 +22,9 @@ export const createRemoveWish = async (req: Request, res: Response) => {
     const isValid: boolean = isValidUUID(productId);
     const user: User = req.user as User;
     const userId: string = user.dataValues.id as string;
+    if (!isValid) {
+      return res.status(400).json({ message: "Invalid product Id" });
+    }
     if (isValid && productId != null) {
       const data = { productId, userId };
       const exWish = await wishServices.getSingleWish(data);
