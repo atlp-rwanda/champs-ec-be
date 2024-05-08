@@ -7,6 +7,7 @@ import { Request, Response, NextFunction } from "express";
 import sequelize, { Op } from "sequelize";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+
 import { checkExpiredProducts } from "../utils/finders";
 import { isImageExist } from "../utils/product.image.check";
 import Product from "../models/Product";
@@ -20,6 +21,8 @@ import formatString from "../utils/string.manipulation";
 import Reviews from "../models/reviews";
 import NodeEvents from "../services/eventEmit.services";
 import { isValidUUID } from "../utils/uuid";
+import ProductCategory from "../models/product_category";
+import Order from "../models/Order";
 
 export const createProducts = async (req: Request, res: Response) => {
   try {
@@ -80,7 +83,10 @@ export const createProducts = async (req: Request, res: Response) => {
 export const getAllSellerProducts = async (req: any, res: Response) => {
   try {
     const loggedUser: any = req.user as User;
-    console.log(loggedUser);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    // Calculate the offset based on the page and limit
+    const offset = (page - 1) * limit;
     if (loggedUser.Role && loggedUser.Role.dataValues.name === "seller") {
       const userId: string = loggedUser.dataValues.id as string;
 
@@ -127,10 +133,6 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
         return res.status(200).json({ products });
       }
     } else {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
-      // Calculate the offset based on the page and limit
-      const offset = (page - 1) * limit;
       // Query the database for available products with pagination
       const { count, rows: products } = await Product.findAndCountAll({
         where: { isAvailable: true, isExpired: false },
@@ -179,23 +181,62 @@ export const getSingleProduct = async (req: Request, res: Response) => {
         });
         return res.status(200).json({ product });
       }
-    } else {
-      const product = await Product.findOne({
-        where: {
-          id: req.params.productId,
-          isAvailable: true,
-          isExpired: false
-        },
-        include: [
-          {
-            model: Reviews,
-            as: "reviews",
-            attributes: ["buyerId", "rating", "feedback"]
-          }
-        ]
-      });
-      res.status(200).json(product);
     }
+
+    const product = await Product.findOne({
+      where: {
+        id: req.params.productId,
+        isAvailable: true
+      },
+
+      include: [
+        {
+          model: User,
+          as: "seller",
+          attributes: [
+            "firstName",
+            "lastName",
+            "profileImage",
+            "email",
+            "phone"
+          ]
+        },
+        {
+          model: Reviews,
+          as: "reviews",
+          attributes: ["buyerId", "rating", "feedback"]
+        }
+      ]
+    });
+
+    // Find related products in the same category
+    const relatedProducts = await Product.findAll({
+      where: {
+        isAvailable: true,
+        productCategory: product?.dataValues.productCategory,
+        id: { [Op.ne]: req.params.productId } // Exclude the current product from the list
+      },
+      limit: 4,
+      include: [
+        {
+          model: User,
+          as: "seller",
+          attributes: [
+            "firstName",
+            "lastName",
+            "profileImage",
+            "email",
+            "phone"
+          ]
+        },
+        {
+          model: Reviews,
+          as: "reviews",
+          attributes: ["buyerId", "rating", "feedback"]
+        }
+      ]
+    });
+    return res.status(200).json({ product, relatedProducts });
   } catch (error) {
     return res.status(500).json({ error: "Internal server error" });
   }
@@ -566,7 +607,7 @@ export const toggleProductFeature = async (req: Request, res: Response) => {
 
       if (featureEnd < currentDate) {
         return res.status(400).json({
-          error: "Expired products cannot be featured"
+          error: "Feature end date cannot be less than current date  "
         });
       }
 
