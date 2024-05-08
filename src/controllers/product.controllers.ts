@@ -20,6 +20,7 @@ import formatString from "../utils/string.manipulation";
 import Reviews from "../models/reviews";
 import NodeEvents from "../services/eventEmit.services";
 import { isValidUUID } from "../utils/uuid";
+import { isValidDate } from "../utils/date";
 
 export const createProducts = async (req: Request, res: Response) => {
   try {
@@ -560,13 +561,18 @@ export const toggleProductFeature = async (req: Request, res: Response) => {
     }
 
     if (featureEndDate) {
+      if (!isValidDate(featureEndDate)) {
+        return res.status(400).json({
+          error: "Invalid feature end date format"
+        });
+      }
       const currentDate = new Date();
       const expiryDate = product.dataValues.expireDate ?? new Date();
       const featureEnd = new Date(featureEndDate);
 
       if (featureEnd < currentDate) {
         return res.status(400).json({
-          error: "Expired products cannot be featured"
+          error: "Feature end date cannot be less than current date"
         });
       }
 
