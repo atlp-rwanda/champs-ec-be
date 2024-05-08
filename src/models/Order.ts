@@ -45,7 +45,11 @@ Order.init(
     },
     productId: {
       type: DataTypes.UUID,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: Product,
+        key: "id"
+      }
     },
     quantity: {
       type: DataTypes.INTEGER,
@@ -90,7 +94,6 @@ Order.init(
     tableName: "orders"
   }
 );
-
 Order.belongsTo(Product, {
   foreignKey: "productId"
 });

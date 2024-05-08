@@ -6,8 +6,9 @@
     "description": "API documentation for the Marketplace project, a comprehensive marketplace platform connecting buyers and sellers. Each seller manages their stall, stock, pricing, and discounts. Users can browse various stalls, add items to their cart, manage purchases, and rate vendors. Admins oversee user roles, stock, and platform operations. Key features include user management, shopping cart, checkout, rating system, and vendor stock management. The platform includes user, vendor, admin dashboards, contact form, login/signup, with optional features like subscriptions, email notifications, chatbot, and delivery. Built with Node, Express, Postgres, and React."
   },
   "servers": [
-    {
-      "url": "http://localhost:5500",
+    {     
+      "url": "http://localhost:8000",
+
       "description": "Development server"
     },
     {
