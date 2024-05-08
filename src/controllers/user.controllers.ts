@@ -20,6 +20,7 @@ import { findUserByEmail } from "../utils/finders";
 import { matchPasswords } from "../utils/matchPasswords";
 import BlacklistedToken from "../models/Blacklist";
 import { ResponseOutPut, userStatusData } from "../helper/handleUserStatusData";
+import { isValidUUID } from "../utils/uuid";
 
 config();
 interface JToken extends jwt.Jwt {
@@ -73,13 +74,16 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
 export const getSingleUser = async (req: Request, res: Response) => {
   try {
+    const { userId } = req.params;
+    if (!isValidUUID(userId)) {
+      return res.status(400).json({ message: "Invalid user Id" });
+    }
     const user: User | null = await User.findOne({
       where: {
-        id: req.params.userId
+        id: userId
       },
       attributes: { exclude: ["password"] }
     });
-
     if (!user) {
       return res.status(404).json({
         error: "User with this ID not exists"
@@ -130,11 +134,16 @@ export const userLogin = async (req: Request, res: Response) => {
       }
     });
 
+    if (user.dataValues.verified !== true) {
+      return res
+        .status(401)
+        .json({ message: "Verify you email to gain access" });
+    }
+
     const verifyPassword = await bcrypt.compare(
       req.body.password,
       user?.dataValues?.password
     );
-
     if (!verifyPassword) {
       return res.status(403).json({ error: "Incorrect password" });
     }

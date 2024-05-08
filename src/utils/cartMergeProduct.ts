@@ -55,6 +55,7 @@ export const mergeDuplicatedProduct = async (products: any[]) => {
   );
   return { product: mergedProducts, totalPrice, StockCheck };
 };
+
 export const getProductsWithQuantity = async (cartItems: CartItem[]) => {
   const productsWithQuantity = await Promise.all(
     cartItems.map(async (cartItem: CartItem, index) => {
@@ -63,7 +64,7 @@ export const getProductsWithQuantity = async (cartItems: CartItem[]) => {
         const error: Error | any = new Error(
           `The product of id: ${cartItem.productId} does not exist on the market. Please change it to an existing product.`
         );
-        error.status = 200;
+        error.status = 404;
         error.productNumber = index + 1;
         throw error;
       }

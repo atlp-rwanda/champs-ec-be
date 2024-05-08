@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:9000",
+      "url": "http://localhost:8000",
       "description": "Development server"
     },
     {
@@ -1010,10 +1010,7 @@
         "security": [{ "Bearer": [] }]
       }
     },
-
-    
-    
-      "/api/stats": {
+    "/api/stats": {
         "get": {
           "summary": "Get all statistics within a given timeframe",
           "tags": [
@@ -1118,8 +1115,6 @@
           }
         }
       },
-     
-    
     "/api/products/{productId}": {
       "get": {
         "tags": ["Seller Product CRUD"],
@@ -1179,7 +1174,7 @@
         "security": [{ "Bearer": [] }]
       },
 
-      "patch": {
+      "put": {
         "tags": ["Seller Product CRUD"],
         "summary": "update product",
         "parameters": [
@@ -1197,10 +1192,56 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/SellerProduct"
+                "type": "object",
+                "properties": {
+                  "productCategory": {
+                    "type": "string"
+                  },
+                  "productName": {
+                    "type": "string"
+                  },
+                  "stockLevel": {
+                    "type": "string"
+                  },
+                  "productPrice": {
+                    "type": "string"
+                  },
+                  "productDiscount": {
+                    "type": "string"
+                  },
+                  "productCurrency": {
+                    "type": "string"
+                  },
+                  "productImage": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  },
+                  "productDescription": {
+                    "type": "string"
+                  },
+                  "expireDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "productCategory",
+                  "productName",
+                  "productPrice",
+                  "productCurrency",
+                  "productDiscount",
+                  "productDescription",
+                  "productImage",
+                  "stockLevel",
+                  "expireDate"
+                ]
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
@@ -1222,10 +1263,10 @@
         },
         "security": [{ "Bearer": [] }]
       }
-    },
+    },   
     "/api/products/{productId}/status": {
       "patch": {
-        "tags": [" Seller Product CRUD"],
+        "tags": ["Seller Product CRUD"],
         "summary": "update product status",
         "parameters": [
           {
@@ -1303,135 +1344,7 @@
         }
       }
     },
-    "/api/products/{productId}/pictures/{imgId}": {
-      "delete": {
-        "tags": ["Manage single Item pictures"],
-        "summary": "Delete one picture for specific  item ",
-        "parameters": [
-          {
-            "name": "productId",
-            "required": true,
-            "in": "path",
-            "description": "Product id",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "imgId",
-            "required": true,
-            "in": "path",
-            "description": "Image id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-
-        "responses": {
-          "203": { "description": "the product image  deleted" },
-          "404": { "description": "the product image not found" },
-          "500": { "description": "Internal Server Error" }
-        },
-        "security": [{ "Bearer": [] }]
-      },
-
-      "patch": {
-        "tags": ["Manage single Item pictures"],
-        "summary": "Replace a single picture for a specific item",
-        "parameters": [
-          {
-            "name": "productId",
-            "required": true,
-            "in": "path",
-            "description": "Product id",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "imgId",
-            "required": true,
-            "in": "path",
-            "description": "Image id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "required": "true",
-                "properties": {
-                  "productImage": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "product Item updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SellerProduct"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Product item not found or selected image not exist"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [{ "Bearer": [] }]
-      }
-    },
-    "/api/products/{productId}/profile/{imgId}": {
-      "patch": {
-        "tags": ["Item thumbnail"],
-        "summary": "set thumbnail for product item  ",
-        "parameters": [
-          {
-            "name": "productId",
-            "required": true,
-            "in": "path",
-            "description": "Product id",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "imgId",
-            "required": true,
-            "in": "path",
-            "description": "Image id",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-
-        "responses": {
-          "200": { "description": "Thumbnail for product item updated" },
-          "404": {
-            "description": "product item not found or selected image not exist"
-          },
-          "500": { "description": "Internal Server Error" }
-        },
-        "security": [{ "Bearer": [] }]
-      }
-    },
-    "/api/carts": {
+   "/api/carts": {
       "post": {
         "tags": ["Carts"],
         "summary": "get the cart for the single user",
@@ -1704,7 +1617,7 @@
         },
         "security": [{ "Bearer": [] }]
       },
-      "put": {
+      "patch": {
         "summary": "User Notifications",
         "description": "User Notifications",
         "tags": ["Notifications"],
@@ -1715,12 +1628,12 @@
         "security": [{ "Bearer": [] }]
       }
     },
-    "/api/notifications/:id": {
-      "put": {
+    "/api/notifications/{id}": {
+      "patch": {
         "summary": "User Notifications",
         "parameters": [
           {
-            "name": "Notification",
+            "name": "id",
             "required": true,
             "in": "path",
             "description": "Product id",

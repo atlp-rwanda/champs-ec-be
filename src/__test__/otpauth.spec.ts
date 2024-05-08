@@ -151,12 +151,22 @@ describe("Bcrypt compare", () => {
 });
 
 describe("string Manupilation", () => {
-  it("string must be a string", async () => {
+  it("string must be a string fail", async () => {
     const result = () => validateStringParam(44);
     expect(result).to.throw(Error, "Parameter must be a string");
   });
+  it("should be a number", async () => {
+    const value = 44;
+    const result = validateNumberParam(value);
+    expect(result).to.equal(value);
+  });
+  it("should be a string", async () => {
+    const value = "test";
+    const result = validateStringParam(value);
+    expect(result).to.equal(value);
+  });
 
-  it("it must be a number", async () => {
+  it("it must be a number false", async () => {
     const result = () => validateNumberParam("hello");
     expect(result).to.throw(Error, "Parameter must be a number");
   });

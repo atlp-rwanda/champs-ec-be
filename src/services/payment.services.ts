@@ -7,7 +7,6 @@ export const userCartInfo = async (userId: string) => {
     where: { userId }
   })) as Cart;
   const cartProduct = cart.dataValues.product;
-
   return cartProduct;
 };
 
@@ -21,28 +20,24 @@ export const getAllProductInCatrt = async (ProductID: Array<string>) => {
   return arr;
 };
 
-export const productInCart = async (
-  cartProduct: IPRODUCTINCART[]
-): Promise<Array<INTUSERPRODUCT>> => {
-  const ProductID: Array<string> = [];
-
+export const productInCart = async (cartProduct: IPRODUCTINCART[]) => {
   const userProduct: Array<INTUSERPRODUCT> = [];
-
-  cartProduct.forEach((element: { product: string; quantity: number }) => {
-    ProductID.push(element.product);
-    const productQuantity: any = {
-      quantity: 0
+  const promises = cartProduct.map(async (element) => {
+    const product: any = (await Product.findOne({
+      where: { id: element.product }
+    })) as Product;
+    const productQuantity: INTUSERPRODUCT = {
+      quantity: 0,
+      name: "",
+      image: "",
+      unit_amount: 0
     };
     productQuantity.quantity = element.quantity;
+    productQuantity.name = product.dataValues.productName as string;
+    productQuantity.unit_amount = Number(product.dataValues.productPrice);
     userProduct.push(productQuantity);
   });
-
-  const products = await getAllProductInCatrt(ProductID);
-
-  for (let i: number = 0; i < products.length; i++) {
-    userProduct[i].name = products[i].dataValues.productName as string;
-    userProduct[i].unit_amount = Number(products[i].dataValues.productPrice);
-  }
+  await Promise.all(promises);
   return userProduct;
 };
 
@@ -53,7 +48,6 @@ export const orderItems = (
   const deliverDate = new Date();
   const orders: Array<IORDER> = [];
   deliverDate.setDate(deliverDate.getDate() + 2);
-
   cartProduct.forEach(
     (element: { product: string; quantity: number; totalPrice: number }) => {
       let listOrders: IORDER = {
@@ -74,7 +68,6 @@ export const orderItems = (
         isPaid: true,
         paymentDate: new Date()
       };
-
       orders.push(listOrders);
     }
   );
@@ -88,7 +81,6 @@ export const handleProductStockChanges = async (
     const product: any = (await Product.findOne({
       where: { id: element.product }
     })) as Product;
-
     await Product.update(
       { stockLevel: product.dataValues.stockLevel - element.quantity },
       { where: { id: element.product } }

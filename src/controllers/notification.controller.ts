@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/user";
 import Notification from "../models/Notifications";
+import { isValidUUID } from "../utils/uuid";
 
 export const GetUserNotification = async (req: Request, res: Response) => {
   try {
@@ -26,12 +27,19 @@ export const GetUserNotification = async (req: Request, res: Response) => {
 export const ReadOneNotification = async (req: Request, res: Response) => {
   try {
     const notificationId = req.params.id;
+    const { id } = req.params;
+    // console.log("fadsfadsfadfadf", notificationId)
+    if (!isValidUUID(notificationId)) {
+      return res
+        .status(400)
+        .json({ message: "Notification Id should be a UUID" });
+    }
     const notification: Notification = (await Notification.findOne({
       where: { id: notificationId }
     })) as Notification;
-
+    console.log(notification);
     if (!notification) {
-      return res.status(400).json({ error: "this norification is not exist" });
+      return res.status(400).json({ error: "this notification is not exist" });
     }
     const updatenotification = {
       reciepent_id: notification.dataValues.reciepent_id,
@@ -48,9 +56,11 @@ export const ReadOneNotification = async (req: Request, res: Response) => {
       .status(201)
       .json({ status: "success", message: "notification updated successful" });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ Error: "Internal server Error" });
   }
 };
+
 export const ReadAllNotification = async (req: Request, res: Response) => {
   const user: User = req.user as User;
 

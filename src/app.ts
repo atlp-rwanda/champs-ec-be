@@ -51,7 +51,7 @@ process.env.DEV_MODE !== "test"
 
 // run products expiration cron job for un validate the product
 // eslint-disable-next-line no-unused-expressions
-process.env.DEV_MODE !== "test" ? handleUnavailable("*/30 * * * * *") : "";
+process.env.DEV_MODE !== "test" ? handleUnavailable("0 12 * * *") : "";
 
 app.use(cors());
 app.use(express.json());

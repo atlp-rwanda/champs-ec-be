@@ -71,13 +71,14 @@ productRoutes.get(
   getAllSellerProducts
 );
 
-productRoutes.patch(
+productRoutes.put(
   "/:productId",
   authenticate,
   checkRole(["seller"]),
-  multerImage.single("productImage"),
+  multerImage.array("productImage", 8),
   isValidImage,
   isValidUpdate,
+  imageNumbers,
   isExistProductCategoryOnUpdate,
   isProductNameExist,
   isExistSellerProduct,

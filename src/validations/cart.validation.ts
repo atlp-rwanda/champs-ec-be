@@ -2,7 +2,9 @@ import { z } from "zod";
 import { Request, Response, NextFunction } from "express";
 
 export const CartItemSchema = z.object({
-  productId: z.string({ required_error: "productId is required" }),
+  productId: z
+    .string({ required_error: "productId is required" })
+    .uuid({ message: "Product id must be a UUID" }),
   Quantity: z.number({ required_error: "Quantity is required" }).positive()
 });
 
