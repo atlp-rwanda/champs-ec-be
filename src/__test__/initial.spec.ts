@@ -1873,19 +1873,6 @@ describe("products and product categgories", () => {
         done();
       });
   });
-  it("should fail to feature a product to internal error", (done) => {
-    chai;
-    chai
-      .request(app)
-      .patch(`/api/products/${productId}/feature`)
-      .set("Authorization", headerToken)
-      .send({ featureEndDate: "fhjgfthf" })
-      .end((err, res) => {
-        expect(res).to.have.status(500);
-        done();
-      });
-  });
-
   it("should fail to feature a product", (done) => {
     chai;
     chai
@@ -1893,6 +1880,17 @@ describe("products and product categgories", () => {
       .patch(`/api/products/${productId}/feature`)
       .set("Authorization", headerToken)
       .send({ featureEndDate: "" })
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+  it("fail to  feature a product due to invalid feature end date format", (done) => {
+    chai
+      .request(app)
+      .patch(`/api/products/${productId}/feature`)
+      .set("Authorization", headerToken)
+      .send({ featureEndDate: "prince" })
       .end((err, res) => {
         expect(res).to.have.status(400);
         done();

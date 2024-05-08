@@ -17,8 +17,9 @@ export const searchProducts = async (req: Request, res: Response) => {
     if (role === "seller") {
       const loggedUser: User = req.user as User;
       userId = loggedUser.id;
+    } else if (role === "buyer" || role === "admin") {
+      userId = "";
     }
-    console.log(userId);
   } else {
     userId = "";
   }
