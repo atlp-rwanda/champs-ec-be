@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 import nodemailer from "nodemailer";
+// import io from "../socket.notification";
 
 config();
 
@@ -26,9 +27,8 @@ const mailOptions = {
 export const sendMail = async (options: any) => {
   try {
     const info = await transporter.sendMail(options);
-    console.log("Email sent: ", info.response);
   } catch (error) {
-    console.error("Error sending email: ", error);
+    console.log("error in sending email");
   }
 };
 
@@ -101,6 +101,27 @@ export const sendNotificationInactiveAccount = (
     ...mailOptions,
     to: mail,
     subject: "User account status notification",
+    html: `
+  
+    ${message}
+   
+    <br/><br/>
+    Regards,
+      Champs Bay
+    `
+  };
+  sendMail(options);
+};
+
+export const senderNotitficationToclient = (
+  mail: string,
+  message: string,
+  subject: string
+) => {
+  const options = {
+    ...mailOptions,
+    to: mail,
+    subject,
     html: `
   
     ${message}

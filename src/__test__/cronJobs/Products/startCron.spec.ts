@@ -42,36 +42,42 @@ describe("startProductsExpirationCronJob", () => {
   });
 });
 
-// describe('checkExpiredProducts', () => {
-//   it('should update expired products', async () => {
+// describe("checkExpiredProducts", () => {
+//   it("should update expired products", async () => {
 //     const products = [
-//       { expireDate: new Date('2022-01-01'), update: sinon.stub().resolves() },
-//       { expireDate: new Date('2025-01-01'), update: sinon.stub().resolves() },
+//       { expireDate: new Date("2022-01-01"), update: sinon.stub().resolves() },
+//       { expireDate: new Date("2025-01-01"), update: sinon.stub().resolves() }
 //     ];
 
 //     const findAllProductsStub = sinon.stub().resolves(products);
-//     const consoleLogStub = sinon.stub(console, 'log');
+//     const consoleLogStub = sinon.stub(console, "log");
 
-//     await checkExpiredProducts();
+//     // await checkExpiredProducts();
 
-//     //expect(findAllProductsStub.calledOnce).to.be.true;
-//     //expect(products[0].update.calledOnceWithExactly({ isExpired: true })).to.be.true;
-//     expect(products[1].update.called).to.be.false; // Second product should not be updated
-//     expect(consoleLogStub.calledOnceWith(sinon.match("SUCCESS: ALL PRODUCTS EXPIRATION DATES HAVE BEEN CHECKED"))).to.be.true;
+//     expect(findAllProductsStub.calledOnce).to.be.true;
+//     expect(products[0].update.calledOnceWithExactly({ isExpired: true })).to.be
+//       .true;
+//     // expect(products[1].update.called).to.be.false; // Second product should not be updated
+//     expect(
+//       consoleLogStub.calledOnceWith(
+//         sinon.match("SUCCESS: ALL PRODUCTS EXPIRATION DATES HAVE BEEN CHECKED")
+//       )
+//     ).to.be.true;
 
 //     // Restore the stub
-//     findAllProductsStub.resetHistory();
-//     consoleLogStub.restore();
+//     //     findAllProductsStub.resetHistory();
+//     //     consoleLogStub.restore();
 //   });
 
-//   it('should handle empty products array', async () => {
+//   it("should handle empty products array", async () => {
 //     const findAllProductsStub = sinon.stub().resolves([]);
-//     const consoleErrorStub = sinon.stub(console, 'error');
+//     const consoleErrorStub = sinon.stub(console, "error");
 
-//     await checkExpiredProducts();
+//     // await checkExpiredProducts();
 
-//     expect(findAllProductsStub.called).to.be.true;
-//     expect(consoleErrorStub.calledOnceWith(sinon.match("No Products found"))).to.be.true;
+//     // expect(findAllProductsStub.called).to.be.true;
+//     expect(consoleErrorStub.calledOnceWith(sinon.match("No Products found"))).to
+//       .be.true;
 
 //     // Restore the stub
 //     findAllProductsStub.resetHistory();

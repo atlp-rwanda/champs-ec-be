@@ -53,7 +53,7 @@ export const buildWhereClause = async (
     if (category !== null) {
       const isValidId: boolean = isValidUUID(category);
       if (!isValidId) {
-        throw new Error("Invalid user Id, please try again");
+        throw new Error("Invalid user Id, please try again again");
       }
       whereClause.productCategory = category;
     } else {

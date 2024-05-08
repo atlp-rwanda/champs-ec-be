@@ -1,6 +1,8 @@
 import cron from "node-cron";
 import { checkExpiredProducts } from "../utils/finders";
 import { checkExpiredPasswords } from "../utils/checkExpiredPassword";
+import Product from "../models/Product";
+import NodeEvents from "../services/eventEmit.services";
 
 // Cron job to check product expiry and unlist expired products
 export const startProductsExpirationCronJob = (targetDate: string): void => {
@@ -23,6 +25,21 @@ export const startPasswordExpirationCronJob = (targetDate: string): void => {
     } catch (error) {
       console.error("Error: flaging expired passwords : ", error);
       throw new Error("Error starting cronjob");
+    }
+  });
+};
+
+// / CRON JOB TO NOTIFY THE SELLER CRIENTS WHO WISHED THE PRODUCT
+
+export const handleUnavailable = (targetDate: string): void => {
+  cron.schedule(targetDate, async () => {
+    const productend = await Product.findOne({
+      where: { stockLevel: 0 }
+    });
+
+    if (productend) {
+      NodeEvents.emit("productUnavailable", productend);
+      console.log("product Un available ------------------------");
     }
   });
 };

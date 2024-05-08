@@ -21,9 +21,13 @@ import productWishRoutes from "./routes/wish.routes";
 import { checkRole } from "./middlewares/user.middleware";
 import searchRoutes from "./routes/search.routes";
 import statsRoutes from "./routes/stats.routes";
-import { startProductsExpirationCronJob } from "./cronjobs/crontab";
+import {
+  handleUnavailable,
+  startProductsExpirationCronJob
+} from "./cronjobs/crontab";
 import orderRoutes from "./routes/orders.routes";
 import paymentRoutes from "./routes/payment.routes";
+import NotificationsRoutes from "./routes/notification.routes";
 
 dotenv.config();
 
@@ -45,9 +49,12 @@ process.env.DEV_MODE !== "test"
     )
   : "";
 
+// run products expiration cron job for un validate the product
+// eslint-disable-next-line no-unused-expressions
+process.env.DEV_MODE !== "test" ? handleUnavailable("*/30 * * * * *") : "";
+
 app.use(cors());
 app.use(express.json());
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET as string,
@@ -66,6 +73,7 @@ app.use(
     extended: true
   })
 );
+
 app.use("/api/users", chatRouters);
 app.use("/api/users/", authRoutes);
 app.use(
@@ -83,6 +91,7 @@ app.use("/api/carts/", authenticate, checkRole(["buyer"]), cartRouter);
 app.use("/api/orders/", orderRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/notifications", NotificationsRoutes);
 app.use("/api/wishes", authenticate, productWishRoutes);
 app.use("/api/categories", authenticate, productCategoryRoutes);
 export default app;

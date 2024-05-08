@@ -21,31 +21,31 @@ class User
 
   declare password: string;
 
-  public phone!: string;
+  declare phone: string;
 
-  public birthDate!: Date;
+  declare birthDate: Date;
 
-  public preferredLanguage!: string;
+  declare preferredLanguage: string;
 
-  public whereYouLive!: string;
+  declare whereYouLive: string;
 
-  public preferredCurrency!: string;
+  declare preferredCurrency: string;
 
-  public profileImage!: string;
+  declare profileImage: string;
 
-  public billingAddress!: string;
+  declare billingAddress: string;
 
-  public verified!: boolean;
+  declare verified: boolean;
 
-  public roleId!: string;
+  declare roleId: string;
 
   declare photoURL: string;
 
   declare googleId: string;
 
-  public isActive!: boolean;
+  declare isActive: boolean;
 
-  public reasonForDeactivation!: string;
+  declare reasonForDeactivation: string;
 
   declare createdAt: Date;
 

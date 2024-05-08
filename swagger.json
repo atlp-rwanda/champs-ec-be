@@ -51,6 +51,10 @@
     {
       "name": "Wishes",
       "description": "API endpoints for creating and managing wishlist"
+    },
+    {
+      "name": "Notifications",
+      "description": "API endpoints for creating and managing wishlist"
     }
   ],
   "paths": {
@@ -1684,6 +1688,51 @@
           "200": { "description": "Oder status successful updated" },
           "401": { "description": "Invalid credentials" },
           "404": { "description": "order not found" },
+          "500": { "description": "internal server error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "summary": "User Notifications",
+        "description": "User Notifications",
+        "tags": ["Notifications"],
+        "responses": {
+          "200": { "description": "User Notifications" },
+          "500": { "description": "internal server error" }
+        },
+        "security": [{ "Bearer": [] }]
+      },
+      "put": {
+        "summary": "User Notifications",
+        "description": "User Notifications",
+        "tags": ["Notifications"],
+        "responses": {
+          "201": { "description": "all Notifications Readen" },
+          "500": { "description": "internal server error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/notifications/:id": {
+      "put": {
+        "summary": "User Notifications",
+        "parameters": [
+          {
+            "name": "Notification",
+            "required": true,
+            "in": "path",
+            "description": "Product id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "description": "User Notifications",
+        "tags": ["Notifications"],
+        "responses": {
+          "201": { "description": "one Notifications Readen" },
           "500": { "description": "internal server error" }
         },
         "security": [{ "Bearer": [] }]
