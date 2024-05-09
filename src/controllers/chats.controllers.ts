@@ -7,6 +7,10 @@ export const chatApplication = (req: Request, res: Response) => {
   const filePath = join(__dirname, "../../public/index.html");
   res.sendFile(filePath);
 };
+export const Notification = (req: Request, res: Response) => {
+  const filePath = join(__dirname, "../../public/notification.html");
+  res.sendFile(filePath);
+};
 
 export const MessageSent = async (req: Request, res: Response) => {
   try {

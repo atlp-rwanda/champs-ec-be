@@ -93,8 +93,8 @@ module.exports = {
         },
         {
           id: uuidv4(),
-          firstName: "Emmanuel",
-          lastName: "munezero",
+          firstName: "Jack",
+          lastName: "Doe",
           email: "test4@gmail.com",
           password:
             "$2b$12$Alp9r553SHLbOWXbtJfl.O40EAzAZQEfvspOXLX1Xoo08ZKCTnF4i",

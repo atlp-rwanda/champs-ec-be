@@ -16,23 +16,20 @@ class ChatsController {
     io.on("connection", async (socket: Socket) => {
       console.log("A user connected");
       const token = socket.handshake.auth.token;
-      console.log(`token: ${token}`);
       const decoded: any = tokenDecode(token);
+      if (!decoded || !decoded.id) {
+        console.error("Invalid or missing user ID in token");
+        socket.disconnect();
+        return;
+      }
       const userId = decoded.id;
       const email = decoded.email;
-      console.log("User ID:", userId, "Email:", email);
-
       const messages = await ChatsController.getAllMessages();
-      // console.log("Sending all messages to the client:", messages);
       socket.emit("all messages", messages);
-
       socket.on("chat message", async (msg, callback) => {
-        console.log("Received chat message:", msg);
         const { senderId, message } = msg;
         try {
           const newMessage = await Message.create({ senderId, message });
-          console.log("New message created in the database:", newMessage);
-
           if (newMessage.dataValues.id) {
             const messageWithSender = await Message.findOne({
               where: { id: newMessage.dataValues.id },
@@ -44,18 +41,15 @@ class ChatsController {
                 }
               ]
             });
-            console.log("New message created:", messageWithSender);
             io.emit("chat message", messageWithSender);
             callback({ status: "ok", newMessage: messageWithSender });
           } else {
-            console.error("Error creating message: id property not set");
             callback({
               status: "error",
               error: "Error creating message: id property not set"
             });
           }
         } catch (error: any) {
-          console.error("Error creating message:", error.message);
           callback({ status: "error", error: error.message });
         }
       });
@@ -63,12 +57,10 @@ class ChatsController {
         ChatsController.typingUsers[userId] = true;
         socket.emit("typing", Object.keys(ChatsController.typingUsers));
       });
-
       socket.on("stop typing", () => {
         delete ChatsController.typingUsers[userId];
         socket.emit("stop typing", Object.keys(ChatsController.typingUsers));
       });
-
       socket.on("disconnect", () => {
         console.log("A user disconnected");
         delete ChatsController.typingUsers[userId];
