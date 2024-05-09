@@ -3,6 +3,7 @@ import app from "./app";
 import { dbConnect } from "./config/db.config";
 import setPort from "./utils/setport";
 import { socketserverstart } from "./socket.notification";
+import { socketServer } from "./socketServer";
 
 config();
 const port: string = process.env.PORT as string;
@@ -10,5 +11,6 @@ const port: string = process.env.PORT as string;
 setPort(port);
 dbConnect();
 socketserverstart();
+socketServer();
 
 export default app;

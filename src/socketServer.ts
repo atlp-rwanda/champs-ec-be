@@ -7,20 +7,23 @@ import ChatsController from "./chats";
 
 config();
 
-const httpServer = http.createServer();
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST", "DELETE"]
-  }
-});
+export function socketServer() {
+  const httpServer = http.createServer();
+  const io = new Server(httpServer, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"]
+    }
+  });
 
-ChatsController.initIO(io);
+  ChatsController.initIO(io);
 
-const socketPort = process.env.SOCKET_PORT || 3001;
+  const socketPort = process.env.SOCKET_PORT || 3001;
+  httpServer.listen(socketPort, () => {
+    console.log(`Socket.IO server is running on port ${socketPort}`);
+  });
 
-httpServer.listen(socketPort, () => {
-  console.log(`Socket.IO server is running on port ${socketPort}`);
-});
+  return io;
+}
 
-export default io;
+export default socketServer;
