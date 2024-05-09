@@ -122,7 +122,7 @@
 
 const initChat = () => {
   const token = localStorage.getItem("token");
-  const socket = io("https://champs-ec-be.onrender.com", { auth: { token } });
+  const socket = io(`https://champs-ec-be.onrender.com:3001`, { auth: { token } });
   const chatMessagesContainer = document.querySelector(".chat-messages");
   const chatInput = document.getElementById("chat-input");
   const sendBtn = document.getElementById("send-btn");
