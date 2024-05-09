@@ -20,6 +20,11 @@ import {
 import Cart from "../models/Cart";
 import NodeEvents from "../services/eventEmit.services";
 
+interface cartInfo {
+  dataValues: {
+    totalPrice: number;
+  };
+}
 dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -45,6 +50,14 @@ export const createCustomer = async (req: Request, res: Response) => {
       return res.status(200).json({
         message:
           "you cannot pay an empty cart, please add some product into your cart"
+      });
+    }
+    const cart = (await Cart.findOne({
+      where: { userId }
+    })) as cartInfo;
+    if (cart?.dataValues?.totalPrice < 600) {
+      return res.status(200).json({
+        message: "The mininum payment able to process is 600Rwf"
       });
     }
     const userProduct = await productInCart(cartProduct);

@@ -1,29 +1,174 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="./images/favicon-32x32.png"
-    />
-    <link rel="stylesheet" href="./style.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
-    <title>Notifications page</title>
-  </head>
-  <body>
-    <div class="container">
-      <header>
-        <div class="notif_box">
-          <h2 class="title">Notifications</h2>
-          <span id="notifes"></span>
-        </div>
-        <p id="mark_all">Mark all as read</p>
-      </header>
-      <main class="agashya">
-        <!-- <div class="notif_card unread">
+
+<head>
+  <style>
+    /* notification :warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:*/
+    @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;800&display=swap");
+
+    :root {
+      --Red: hsl(1, 90%, 64%);
+      --Blue: hsl(219, 85%, 26%);
+      --White: hsl(0, 0%, 100%);
+      --Very-light-grayish-blue: hsl(210, 60%, 98%);
+      --Light-grayish-blue-1: hsl(211, 68%, 94%);
+      --Light-grayish-blue-2: hsl(205, 33%, 90%);
+      --Grayish-blue: hsl(219, 14%, 63%);
+      --Dark-grayish-blue: hsl(219, 12%, 42%);
+      --Very-dark-blue: hsl(224, 21%, 14%);
+    }
+
+    * {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      background-color: var(--Very-light-grayish-blue);
+    }
+
+    .container {
+      margin: 2rem;
+      width: 700px;
+      background-color: var(--White);
+      padding: 1.5rem 1rem;
+      border-radius: 0.5rem;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .notif_box {
+      display: flex;
+      align-items: center;
+    }
+
+    #notifes {
+      background-color: var(--Blue);
+      margin-left: 0.5rem;
+      width: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 30px;
+      color: var(--White);
+      font-weight: 800;
+      border-radius: 0.5rem;
+    }
+
+    #mark_all {
+      cursor: pointer;
+    }
+
+    #mark_all:hover {
+      color: var(--Blue);
+    }
+
+    p {
+      color: var(--Dark-grayish-blue);
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .notif_card {
+      display: flex;
+      align-items: center;
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+
+    img {
+      width: 50px;
+    }
+
+    .description {
+      margin-left: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    strong {
+      color: var(--Very-dark-blue);
+      cursor: pointer;
+    }
+
+    strong:hover {
+      color: var(--Blue);
+    }
+
+    .unread {
+      background-color: var(--Light-grayish-blue-1) !important;
+    }
+
+    .unread p:first-of-type::after {
+      content: " ";
+      background-color: var(--Red);
+      width: 10px;
+      height: 10px;
+      display: inline-block;
+      border-radius: 50%;
+    }
+
+    .message_card {
+      display: flex;
+      align-items: center;
+    }
+
+    .message {
+      padding: 1rem;
+      border: 1px solid var(--Light-grayish-blue-2);
+      border-radius: 0.3rem;
+      cursor: pointer;
+      margin: 0 0 0 5rem;
+    }
+
+    .message:hover {
+      background-color: var(--Light-grayish-blue-1);
+    }
+
+    .chess_img {
+      margin-left: auto;
+    }
+
+    @media screen and (max-width: 550px) {
+      .container {
+        margin: 0;
+      }
+    }
+  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png" />
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+  <title>Notifications page</title>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="notif_box">
+        <h2 class="title">Notifications</h2>
+        <span id="notifes"></span>
+      </div>
+      <p id="mark_all">Mark all as read</p>
+    </header>
+    <main class="agashya">
+      <!-- <div class="notif_card unread">
           <div class="description">
             <p class="user_activity">
               <strong>Mark Webber</strong> reacted to your recent post
@@ -49,9 +194,84 @@
             <p class="time">1 day ago</p>
           </div>
         </div> -->
-      </main>
+    </main>
+  </div>
+  <!-- <script src="notification.js"></script> -->
+  <script>
+    const unreadMessages = document.querySelectorAll(".unread");
+    const main = document.querySelector(".agashya");
+    const unread = document.getElementById("notifes");
+    const markAll = document.getElementById("mark_all");
+    unread.innerText = unreadMessages.length;
+    const userId = localStorage.getItem("userId");
+    unreadMessages.forEach((message) => {
+      message.addEventListener("click", () => {
+        message.classList.toggle("unread");
+        const newUnreadMessages = document.querySelectorAll(".unread");
+        unread.innerText = newUnreadMessages.length;
+      });
+    });
+    markAll.addEventListener("click", () => {
+      unreadMessages.forEach((message) => message.classList.toggle("unread"));
+      const newUnreadMessages = document.querySelectorAll(".unread");
+      unread.innerText = newUnreadMessages.length;
+    });
+    const token = localStorage.getItem("token");
+    function decodeToken(token) {
+      const [header, payload, signature] = token.split(".");
+      const decodedPayload = atob(payload); // Decode the payload from base64
+      const parsedPayload = JSON.parse(decodedPayload); // Parse the decoded payload into a JavaScript object
+      return parsedPayload;
+    }
+    const decodedtokenone = decodeToken(token);
+    const socket = io("https://champs-ec-be.onrender.com/notification");
+    const userID = decodedtokenone.id;
+    console.log(userID);
+    socket.on("connect", () => {
+      socket.emit("joinRoom", userID);
+      console.log("client connected successful");
+    });
+    const notification = [];
+    function calculateTimeDifference(eventTime) {
+      const now = new Date();
+      const eventTimestamp = new Date(eventTime);
+      const difference = Math.floor((now - eventTimestamp) / (1000 * 60)); // Convert milliseconds to minutes
+      return difference;
+    }
+    socket.on("productWished", (data) => {
+      notification.push(data);
+      main.innerHTML = "";
+      notification.forEach((el) => {
+        const template = `<div class="notif_card unread">
+    <div class="description">
+      <div class="user_activity">
+        <strong>${el.subject}</strong>${el.messages}
+      </div>
+      <p class="time">${calculateTimeDifference(Date.now())} minutes ago</p>
     </div>
+  </div>`;
+        main.insertAdjacentHTML("afterbegin", template);
+      });
+      unread.innerText = notification.length;
+    });
+    socket.on("productUnavailable", (data) => {
+      notification.push(data);
+      main.innerHTML = "";
+      notification.forEach((el) => {
+        const template = `<div class="notif_card unread">
+    <div class="description">
+      <div class="user_activity">
+        <strong>${el.subject}</strong>${el.messages}
+      </div>
+      <p class="time">${calculateTimeDifference(Date.now())} minutes ago</p>
+    </div>
+  </div>`;
+        main.insertAdjacentHTML("afterbegin", template);
+        // console.log("Product wished:", data);
+      });
+      unread.innerText = notification.length;
+    });
+  </script>
+</body>
 
-    <script src="notification.js"></script>
-  </body>
 </html>

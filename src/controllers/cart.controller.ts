@@ -46,7 +46,7 @@ export const getCart = async (req: Request, res: Response) => {
       }
     });
     if (!cart) {
-      return res.status(400).json({
+      return res.status(200).json({
         error: "You don't have cart please add product to have a cart"
       });
     }

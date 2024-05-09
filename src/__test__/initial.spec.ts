@@ -1275,7 +1275,7 @@ describe("products and product categgories", () => {
       .get(`/api/carts`)
       .set("Authorization", buyerTKN)
       .end((err, res) => {
-        expect(res).to.have.status(400);
+        expect(res).to.have.status(200);
         done();
       });
   });

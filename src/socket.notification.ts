@@ -1,30 +1,24 @@
-import { createServer } from "http";
-import { Server as SocketIOServer } from "socket.io";
+import { Server as SocketIOServer, Namespace } from "socket.io";
+import ChatsController from "./chats";
 
-// Create an HTTP server
-let httpServer;
-
-// eslint-disable-next-line import/no-mutable-exports
 let io: SocketIOServer;
+let Notification: Namespace;
+let chats: any;
 
-export const socketserverstart = () => {
-  httpServer = createServer();
-
-  // Create a socket.io instance and attach it to the HTTP server
-  io = new SocketIOServer(httpServer, {
+export const socketserverstart = (server: any) => {
+  io = new SocketIOServer(server, {
     cors: {
       origin: "*"
     }
   });
-  io.on("connection", (socket) => {
+  Notification = io.of("/notification");
+  chats = io.of("/chats");
+  ChatsController.initIO(chats);
+  Notification.on("connection", (socket) => {
     console.log("connected socket io");
     socket.on("joinRoom", (userId: string) => {
       socket.join(userId);
     });
-  });
-  const port = 3000;
-  httpServer.listen(port, () => {
-    console.log(`Socket.IO server is running on port ${port}`);
   });
 };
 
@@ -35,12 +29,11 @@ export const SocketTrigger = (
   subject: string
 ) => {
   console.log(userid, "user loged in");
-  io.to(userid).emit("productUnavailable", {
+  Notification.to(userid).emit("productUnavailable", {
     email,
     messages,
     subject
   });
 };
 // SOCKET CONNECTION
-
 // Start listening on port 3000
