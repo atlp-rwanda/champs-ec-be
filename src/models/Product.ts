@@ -29,7 +29,7 @@ class Product
 
   public productCurrency!: string;
 
-  public productDiscount!: string;
+  public productDiscount!: number;
 
   public productDescription!: Text;
 
@@ -101,7 +101,7 @@ Product.init(
       allowNull: false
     },
     productCurrency: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
       unique: true,
       validate: {
@@ -109,9 +109,9 @@ Product.init(
       }
     },
     productDiscount: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: false,
-      defaultValue: "0"
+      defaultValue: 0
     },
     productDescription: {
       type: DataTypes.TEXT,

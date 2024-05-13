@@ -8,6 +8,7 @@ import sequelize, { Op } from "sequelize";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
+import { count } from "console";
 import { checkExpiredProducts } from "../utils/finders";
 import { isImageExist } from "../utils/product.image.check";
 import Product from "../models/Product";
@@ -90,7 +91,6 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
     const offset = (page - 1) * limit;
     if (loggedUser.Role && loggedUser.Role.dataValues.name === "seller") {
       const userId: string = loggedUser.dataValues.id as string;
-
       if (loggedUser.Role.dataValues.name === "seller") {
         const featuredProducts = await Product.findAll({
           where: {
@@ -105,19 +105,22 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
             }
           ]
         });
-        const nonFeaturedProducts = await Product.findAll({
-          where: {
-            sellerId: userId,
-            isFeatured: false
-          },
-          include: [
-            {
-              model: Reviews,
-              as: "reviews",
-              attributes: ["buyerId", "rating", "feedback"]
-            }
-          ]
-        });
+        const { count, rows: nonFeaturedProducts } =
+          await Product.findAndCountAll({
+            where: {
+              sellerId: userId,
+              isFeatured: false
+            },
+            limit,
+            offset,
+            include: [
+              {
+                model: Reviews,
+                as: "reviews",
+                attributes: ["buyerId", "rating", "feedback"]
+              }
+            ]
+          });
         const products = [...featuredProducts, ...nonFeaturedProducts];
         products.sort((a, b) => {
           if (a.isFeatured && !b.isFeatured) return -1;
@@ -125,13 +128,17 @@ export const getAllSellerProducts = async (req: any, res: Response) => {
 
           return 0;
         });
-
         if (products.length < 1) {
           return res
             .status(404)
             .json({ message: "no product found, please add new" });
         }
-        return res.status(200).json({ products });
+        return res.status(200).json({
+          totalItems: count,
+          totalPages: Math.ceil(count / limit),
+          currentPage: page,
+          products
+        });
       }
     } else {
       // Query the database for available products with pagination
@@ -183,13 +190,11 @@ export const getSingleProduct = async (req: Request, res: Response) => {
         return res.status(200).json({ product });
       }
     }
-
     const product = await Product.findOne({
       where: {
         id: req.params.productId,
         isAvailable: true
       },
-
       include: [
         {
           model: User,
@@ -209,7 +214,9 @@ export const getSingleProduct = async (req: Request, res: Response) => {
         }
       ]
     });
-
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
     // Find related products in the same category
     const relatedProducts = await Product.findAll({
       where: {
@@ -294,11 +301,11 @@ export const updateSellerProduct = async (req: Request, res: Response) => {
     const updatedprice: number = price - discount;
     product.sellerId = sellerId;
     product.productName = productName;
-    product.stockLevel = req.body.stockLevel;
+    product.stockLevel = parseInt(req.body.stockLevel, 10);
     product.productCategory = req.body.productCategory;
     product.productPrice = updatedprice;
     product.productCurrency = req.body.productCurrency;
-    product.productDiscount = req.body.productDiscount;
+    product.productDiscount = discount;
     product.productDescription = req.body.productDescription;
     product.expireDate = req.body.expireDate;
     product.productThumbnail = urls[0].url;

@@ -8,7 +8,7 @@ export interface ProductAttributes {
   stockLevel?: number;
   productPrice?: number;
   productCurrency?: string;
-  productDiscount: string;
+  productDiscount: number;
   isAvailable?: boolean;
   productDescription?: Text;
   productThumbnail?: string;

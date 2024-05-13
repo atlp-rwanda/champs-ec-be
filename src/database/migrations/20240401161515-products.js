@@ -32,7 +32,7 @@ module.exports = {
         allowNull: false
       },
       productPrice: {
-        type: Sequelize.DOUBLE,
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       productCurrency: {
@@ -40,7 +40,7 @@ module.exports = {
         allowNull: false
       },
       productDiscount: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false,
         default: 0
       },

@@ -52,23 +52,23 @@ export const createCustomer = async (req: Request, res: Response) => {
           "you cannot pay an empty cart, please add some product into your cart"
       });
     }
-    const cart = (await Cart.findOne({
-      where: { userId }
-    })) as cartInfo;
-    if (cart?.dataValues?.totalPrice < 600) {
-      return res.status(200).json({
-        message: "The mininum payment able to process is 600Rwf"
-      });
-    }
+    // const cart = (await Cart.findOne({
+    //   where: { userId }
+    // })) as cartInfo;
+    // if (cart?.dataValues?.totalPrice < 600) {
+    //   return res.status(200).json({
+    //     message: "The mininum payment able to process is 600Rwf"
+    //   });
+    // }
     const userProduct = await productInCart(cartProduct);
     const line_items: ILINESITEM[] = userProduct.map(
       (element: INTUSERPRODUCT) => ({
         price_data: {
-          currency: "usd",
+          currency: "rwf",
           product_data: {
             name: element.name
           },
-          unit_amount: element.unit_amount / 10
+          unit_amount: Math.floor(element.unit_amount)
         },
         quantity: element.quantity
       })

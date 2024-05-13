@@ -488,7 +488,7 @@
         "security": [{ "Bearer": [] }]
       }
     },
-    "/api/users/passwordUpdate": {
+    "/api/users/passwordupdate": {
       "patch": {
         "summary": "Updating user's password",
         "description": "Allowing user's to update their password",
@@ -969,10 +969,10 @@
                     "type": "string"
                   },
                   "stockLevel": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "productPrice": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "productCurrency": {
                     "type": "string"
@@ -1262,13 +1262,13 @@
                     "type": "string"
                   },
                   "stockLevel": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "productPrice": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "productDiscount": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "productCurrency": {
                     "type": "string"
