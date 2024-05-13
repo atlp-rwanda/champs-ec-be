@@ -23,8 +23,8 @@ import searchRoutes from "./routes/search.routes";
 import statsRoutes from "./routes/stats.routes";
 import {
   handleUnavailable,
-  startProductsExpirationCronJob,
-  startPasswordExpirationCronJob
+  startPasswordExpirationCronJob,
+  startProductsExpirationCronJob
 } from "./cronjobs/crontab";
 import orderRoutes from "./routes/orders.routes";
 import paymentRoutes from "./routes/payment.routes";
@@ -38,7 +38,6 @@ const app: express.Application = express();
 
 // run products expiration cron job
 // eslint-disable-next-line no-unused-expressions
-// run products expiration cron jobß
 process.env.DEV_MODE !== "test"
   ? startProductsExpirationCronJob(
       process.env.PRODUCT_EXPIRATION_CRON_TIMER as string
@@ -58,6 +57,7 @@ process.env.DEV_MODE !== "test"
 process.env.DEV_MODE !== "test"
   ? handleUnavailable(process.env.NOTIFICATION_CRON_TIME as string)
   : "";
+// eslint-disable-next-line no-unused-expressions
 process.env.DEV_MODE !== "test" ? createPublicChatroom() : "";
 
 app.use(cors());

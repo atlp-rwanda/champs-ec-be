@@ -68,6 +68,11 @@ const checkIfUserBlocked = async (
         reason: user?.dataValues.reasonForDeactivation
       });
     }
+    if (user?.dataValues.isPasswordExpired) {
+      return res.status(403).json({
+        error: "your password has expired please update it"
+      });
+    }
     next();
   } catch (error) {
     console.log("---------------------", error);

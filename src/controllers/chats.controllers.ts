@@ -22,21 +22,21 @@ export const Notification = (req: Request, res: Response) => {
   res.sendFile(filePath);
 };
 
-export const MessageSent = async (req: Request, res: Response) => {
-  try {
-    const messages = await Message.findAll({
-      include: {
-        model: User,
-        as: "sender",
-        attributes: ["id", "firstName", "email"]
-      }
-    });
-    return res.status(200).json({
-      status: "success",
-      message: "Messages retrieved successfully",
-      messages
-    });
-  } catch (err) {
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
+// export const MessageSent = async (req: Request, res: Response) => {
+//   try {
+//     const messages = await Message.findAll({
+//       include: {
+//         model: User,
+//         as: "sender",
+//         attributes: ["id", "firstName", "email"]
+//       }
+//     });
+//     return res.status(200).json({
+//       status: "success",
+//       message: "Messages retrieved successfully",
+//       messages
+//     });
+//   } catch (err) {
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
