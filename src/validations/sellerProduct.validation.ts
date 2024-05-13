@@ -34,7 +34,7 @@ const productSchema = z
       })
       .max(3, "use 3 charaters for currency unit")
       .regex(
-        /([a-z-A-Z]{3})$/,
+        /^RWF$/i,
         "use atleast 3 characters for curreny unit Ex:Rwf | USD "
       ),
     productDescription: z
@@ -78,7 +78,7 @@ const productUpdateSchema = z
       })
       .max(3, "use 3 charaters for currency unit")
       .regex(
-        /([a-z-A-Z]{3})$/,
+        /^RWF$/i,
         "use atleast 3 characters for curreny unit Ex:Rwf | USD "
       ),
     productDescription: z
