@@ -54,3 +54,12 @@ export const dbConnect = () =>
       console.log("Unable to connect to the database:");
       process.exit(1);
     });
+
+sequelizeConnection
+  .sync({ alter: true })
+  .then(() => {
+    console.log("Database synchronized successfully");
+  })
+  .catch((error) => {
+    console.error("Error synchronizing database:", error);
+  });

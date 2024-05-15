@@ -1,10 +1,20 @@
 import { Request, Response } from "express";
 import { join } from "path";
-import Message from "../models/messages";
+import { NextFunction } from "connect";
+import Message from "../models/message";
 import User from "../models/user";
+import {
+  createNewMessage,
+  fetchChatroomById,
+  fetchAllUserChatrooms
+} from "../services/chats.services";
 
 export const chatApplication = (req: Request, res: Response) => {
-  const filePath = join(__dirname, "../../public/index.html");
+  const filePath = join(__dirname, "../../public/frontend/index.html");
+  res.sendFile(filePath);
+};
+export const privateChatApplication = (req: Request, res: Response) => {
+  const filePath = join(__dirname, "../../public/frontend/messages.html");
   res.sendFile(filePath);
 };
 export const Notification = (req: Request, res: Response) => {

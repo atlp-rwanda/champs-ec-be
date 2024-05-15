@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+</head>
+<body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Poppins:wght@300;400;500;600&display=swap');
+
+:root{
+    /* // universal manipulation */
+    --primary-color-hue: 231;
+    --dark-color-lightness: 17%;
+    --light-color-lightness: 95%;
+    --white-color-lightness: 100%;
+    /* color palletes */
+    --color-white: hsl(252, 30%, var(--white-color-lightness));
+    --color-light: hsl(252, 30%, var(--light-color-lightness));
+    --color-dark: hsl(252, 30%, var(--dark-color-lightness));
+    /* for buttons and stuff */
+    --color-primary: hsl(var(--primary-color-hue), 34%, 23%);
+    --color-primary-hovered: hsl(232, 55%, 21%);
+}
+html {
+    scroll-behavior: smooth;
+}
+*, 
+*::before, 
+*::after {
+    margin:0;
+    padding:0;
+    outline:0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+    border: none;
+}
+body{
+    padding: 0 0 0 0;
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-dark);
+    background: var(--color-light);
+    position: relative;
+    min-height: 100vh !important;
+}
+.bg-body{
+    color: var(--color-dark);
+    background: var(--color-light);
+}
+.chat-container{
+    width: 100vw;
+    height: 100vh;
+    background-image: url('./assets/wild-2.jpeg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.chat{
+    background: #72b8ff;
+    border-radius: 20px;
+    display: inline-block;
+    padding: 10px;
+    color: #fff;
+    font-weight: lighter;
+    font-size: small;
+    box-shadow: 1px 1px 2px rgba(0,0,0,.3);
+    margin: 5px;
+    position: relative;
+}
+.chat.u1{
+    float: left;
+    clear: both;
+    border-top-left-radius: 0px;
+    max-width: 60%;
+}
+.chat.u1:before{
+    content: "";
+    width: 0px;
+    height: 0px;
+    display: block;
+    border-left: 5px solid transparent;
+    border-right: 5px solid #72b8ff;
+    border-top: 5px solid #72b8ff;
+    border-bottom: 5px solid transparent;
+    position: absolute;
+    top: 0px;
+    left: -10px;
+}
+.chat.u2{
+    float: right;
+    clear: both;
+    border-top-right-radius: 0px;
+    background: #00D025;
+    max-width: 60%;
+}
+.chat.u2:before{
+    content: "";
+    width: 0px;
+    height: 0px;
+    display: block;
+    border-left: 5px solid #00D025;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #00D025;
+    border-bottom: 5px solid transparent;
+    position: absolute;
+    top: 0px;
+    right: -10px;
+}
+.dashboard-body{
+    padding-left: 300px;
+}
+ /* General styles */
+ .d-lg-none{
+    display: none !important;
+}
+.container {
+    width: 76%;
+    margin: 0 auto;
+    padding: 4px;
+}
+.nav {
+    width: 100%;
+    background: var(--color-white);
+    padding:  0.7rem 0;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+}
+.nav .container {
+    width: 98%;
+    display: flex;
+    align-items: center;
+    justify-content:  space-between;
+}
+.small-nav{
+    background:  hsl(252, 30%, 10%) !important;
+    color: #fff;
+}
+.sidemenu{
+    background:  hsl(252, 30%, 15%) !important;
+    color: white;
+}
+footer{
+    position: absolute;
+    width: 100% !important;
+    bottom: 0;
+}
+.style-none{
+    text-decoration: none !important;
+    list-style: none !important;
+    color: inherit !important;
+}
+.box-shadow{
+    box-shadow: 0px 0px 4px 2px rgba(58, 36, 36, 0.2) !important;
+}
+.box-shadow-red{
+    box-shadow: 0 0 1rem #E84949 !important;
+  
+}
+.card-body{
+    background: var(--color-primary);
+    color: white !important;
+}
+.card{
+    background: var(--color-white);    
+}
+.card-stable{
+    background: var(--color-white);    
+}
+.card:hover{
+    box-shadow: 0px 0px 10px 8px rgba(58, 36, 36, 0.2) !important;
+}
+.bg-purple{
+    background-color: purple;
+    color:white
+}
+.bg-dark{
+    background-color: var(--color-dark);
+}
+.bg-white{
+    background-color: white;
+}
+.bg-hue{
+    background-color: var(--color-white);
+    color: #0000 !important;
+}
+.bg-inherit{
+    background-color: inherit !important;
+}
+.hamburger{
+    display:none;
+}
+.clr-red{
+    color: #E84949 !important;
+}
+.clr-black{
+    color: black !important;
+}
+.clr-white{
+    color: white !important;
+}
+.bg-red{
+    background-color: #E84949 !important;
+    color: #fff !important;
+}
+.bg-hue{
+    background-color: #bdbdbd !important;
+}
+.double-grid {
+    display: grid;
+    grid-template-columns: 3fr 3fr;
+    gap: 2rem;
+}
+.double-grid-responsive{
+    display: grid;
+    grid-template-columns: 3fr 3fr;
+    gap: 2rem;
+}
+.triple-grid {
+    display: grid;
+    grid-template-columns: 3fr 3fr 3fr;
+    gap: 1rem;
+}
+.big-small-grid-responsive{
+    display: grid;
+    grid-template-columns: 5fr 3fr;
+    gap:2rem;
+    align-items: top;
+}
+.small-big-grid{
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    gap:10px;
+    align-items: top; 
+}
+.big-small-grid{
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+    gap: 15rem;
+    align-items: bottom;
+}
+.big-small-grid-stable{
+    display: grid;
+    grid-template-columns: 5fr 4fr;
+    gap: 2rem;
+    align-items: bottom;
+}
+
+.active{
+    color: #2e9e38 !important;
+    font-weight: 900 !important;
+}
+.btn-light{
+    background-color: var(--color-light);
+    color: var(--color-dark)
+}
+.btn-dark{
+    background-color: var(--color-dark);
+    color: var(--color-white)
+}
+.btn-red{
+    background-color: #E84949 !important;
+    color: #fff !important;
+}
+.btn-green{
+    background-color: #40cd31 !important;
+    color: #fff !important;
+}
+.img-fit{
+    height: 100%;
+    width: 100%;   
+}
+.img-holder{
+    height: 36rem;
+    width: 100%;
+    background-image: url('../assets/mbg.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.img-holder-2 {
+    height: 24rem;
+    width: 100%;
+    background-image: url('../assets/skills-bg.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: fill;
+}
+.form-control{
+    width: 100% !important;
+    background-color: #bdbdbd;
+}
+.ring-bg-0{
+    height: 15rem;
+    width: 15rem;
+    bottom: -2rem;
+    right: -12rem;
+    background-color: var(--color-primary);
+    opacity: 0.2;
+    border-radius: 50%;
+    z-index: -1;
+}
+.ring-bg-1{
+    height: 10rem;
+    width: 10rem;
+    bottom: -1rem;
+    left: -3rem;
+    background-color: var(--color-primary);
+    opacity: 0.2;
+    border-radius: 50%;
+    z-index: -1;
+}
+.ring-bg-2{
+    height: 8rem;
+    width: 8rem;
+    top: 2rem;
+    right: 12rem;
+    background-color: var(--color-primary);
+    opacity: 0.2;
+    border-radius: 50%;
+    z-index: -1;
+}
+.ring-bg-3{
+    height: 20rem;
+    width: 20rem;
+    bottom: -6rem;
+    right: -6rem;
+    background-color: var(--color-primary);
+    opacity: 0.2;
+    border-radius: 50%;
+    z-index: -1;
+}
+.modal {
+    background: rgba(255, 255, 255, 0.5);
+    width:100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 200;
+    text-align: center;
+    display: grid;
+    place-items: center;
+    font-size: 0.9rem;
+}
+.account-popup{
+    background: var(--color-white);
+    height: 20rem;
+    width: 14rem;
+    top: 3rem;
+    right: -2.4rem;
+}
+.hovered-hue:hover{
+    background-color: #E84949 !important;
+    color: white;
+}
+.camera{
+    bottom: -4px;
+    right: -4px;
+    background: black;
+    height: 1.6rem;
+    width: 1.6rem;
+    opacity: 0.8;
+}
+.comment-card{
+    width: 76%;
+    height: auto;
+}
+.modal-card {
+    background: var(--color-white);
+    padding: 2rem 3rem;
+    width: 30%;
+    box-shadow: 0 0 1rem var(--color-primary);
+}
+.p-comment{
+    padding-left: 3rem;
+}
+/* reusable border classes */
+.b-1px-hue{border:1px solid var(--color-primary) !important;}
+.b-2px-hue{border:2px solid var(--color-primary) !important;}
+.b-3px-hue{border:3px solid var(--color-primary) !important;}
+.b-4px-hue{border:4px solid var(--color-primary) !important;}
+.b-5px-hue{border:5px solid var(--color-primary) !important;}
+.b-thick-hue{border:1rem px solid var(--color-primary) !important;}
+.b-2px-dashed-hue{border:2px dashed #bdbdbd !important;}
+.b-2px-white{border:2px solid white !important;}
+.b-1px-red{border:1px solid #E84949 !important;}
+.b-2px-red{border:2px solid #E84949 !important;}
+.b-top-1px-hue{border-top:1px solid #bdbbbb !important;}
+.b-btm-1px-hue{border-bottom:1px solid #bdbbbb !important;}
+
+/* re-usable font weight classes*/
+.bold-0{
+    font-weight: 300 !important;
+}
+.bold{
+    font-weight: 500 !important;
+}
+.bold-1{
+    font-weight: 700 !important;
+}
+.bold-2{
+    font-weight: 700 !important;
+}
+.bold-3{
+    font-weight: 800 !important;
+}
+.bold-4{
+    font-weight: 900 !important;
+}
+.bold-5{
+    font-weight: 1000 !important;
+}
+/* re-usable font size classes*/
+.font-smallest{
+    font-size: 8px !important;
+}
+.font-0{
+    font-size: 10px !important;
+}
+.font-1{
+    font-size: 12px !important;
+}
+.font-1-5{
+    font-size: 13px !important;
+}
+.font-2{
+    font-size: 14px !important;
+}
+.font-2-5{
+    font-size: 15px !important;
+}
+.font-3{
+    font-size: 1rem !important;
+}
+.font-3-5{
+    font-size: 1.2rem !important;
+}
+.font-4{
+    font-size: 1.5rem !important;
+}
+.font-5{
+    font-size: 2rem !important;
+}
+.font-lg{
+    font-size: 2.5rem !important;
+}
+.font-x-lg{
+    font-size: 5rem !important;
+}
+.font-italic-style{
+    font-style: italic !important;
+}
+.font-shadow{
+    text-shadow: 1px 0px #bdbdbd;
+}
+.capitalize{
+    text-transform: capitalize !important;
+}
+/******border radiuss********/
+.br-1{border-radius: 2px !important;}
+.br-2{border-radius: 4px !important;}
+.br-3{border-radius: 6px !important;}
+.br-4{border-radius: 8px !important;}
+.br-5{border-radius: 1.2rem !important;}
+.br-rnd{border-radius: 50% !important;}
+.br-top-2{
+    border-top-right-radius: 3px !important;
+    border-top-left-radius: 3px !important;
+}
+.br-btm-2{
+    border-bottom-right-radius: 3px !important;
+    border-bottom-left-radius: 3px !important;
+}
+.pointer{
+    cursor: pointer;
+}
+/* quick fixes */
+/* padding y */
+.py-lg-0{
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+.py-lg-1{
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+.py-lg-2{
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+.py-lg-3{
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+.py-lg-4{
+    padding-top: 18px !important;
+    padding-bottom: 18px !important;
+}
+.py-lg-5{
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+}
+  /* padding y */
+.px-lg-0{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+.px-lg-1{
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+}
+.px-lg-2{
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+}
+.px-lg-3{
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+.px-lg-4{
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+}
+.px-lg-5{
+    padding-left: 4rem !important;
+    padding-right: 4rem !important;
+}
+/* padding top */
+.pt-lg-0{
+    padding-top: 0px !important;
+}
+.pt-lg-1{
+    padding-top: 2px !important;
+}
+.pt-lg-2{
+    padding-top: 4px !important;
+}
+.pt-lg-3{
+    padding-top: 10px !important;
+}
+.pt-lg-4{
+    padding-top: 18px !important;
+}
+.pt-lg-5{
+    padding-top: 4rem !important;
+}
+/* padding bottom */
+.pb-lg-0{
+    padding-bottom: 0px !important;
+}
+.pb-lg-1{
+    padding-bottom: 2px !important;
+}
+.pb-lg-2{
+    padding-bottom: 4px !important;
+}
+.pb-lg-3{
+    padding-bottom: 10px !important;
+}
+.pb-lg-4{
+    padding-bottom: 18px !important;
+}
+.pb-lg-5{
+    padding-bottom: 4rem !important;
+}
+/* margin y */
+.my-lg-0{
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+ /* margin y */
+.my-lg-0{
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;   
+}
+.my-lg-1{
+    margin-top: 2px !important;
+    margin-bottom: 2px !important;
+}
+.my-lg-2{
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+}
+.my-lg-3{
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+}
+.my-lg-4{
+    margin-top: 18px !important;
+    margin-bottom: 18px !important;
+}
+.my-lg-5{
+    margin-top: 4rem !important;
+    margin-bottom: 4rem !important;
+}
+/* margin x */
+.mx-lg-0{
+    margin-left: 0px !important;
+    margin-right: 0px !important;   
+}
+.mx-lg-1{
+    margin-left: 2px !important;
+    margin-right: 2px !important;
+}
+.mx-lg-2{
+    margin-left: 4px !important;
+    margin-right: 4px !important;
+}
+.mx-lg-3{
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+}
+.mx-lg-4{
+    margin-left: 18px !important;
+    margin-right: 18px !important;
+}
+.mx-lg-5{
+    margin-left: 4rem !important;
+    margin-right: 4rem !important;
+}
+/* margin top */
+.mt-lg-0{
+    margin-top: 0px !important;
+}
+.mt-lg-1{
+    margin-top: 2px !important;
+}
+.mt-lg-2{
+    margin-top: 4px !important;
+}
+.mt-lg-3{
+    margin-top: 10px !important;
+}
+.mt-lg-4{
+    margin-top: 18px !important;
+}
+.mt-lg-5{
+    margin-top: 4rem !important;
+}
+/* margin bottom */
+.mb-lg-0{
+    margin-bottom: 0px !important;
+}
+.mb-lg-1{
+    margin-bottom: 2px !important;
+}
+.mb-lg-2{
+    margin-bottom: 4px !important;
+}
+.mb-lg-3{
+    margin-bottom: 10px !important;
+}
+.mb-lg-4{
+    margin-bottom: 18px !important;
+}
+.mb-lg-5{
+    margin-bottom: 4rem !important;
+}
+/*--------display & positioning------*/
+.block{display: block !important; width: 100%;}
+.fixed{display: fixed !important;}
+.absolute{position: absolute !important;}
+.text-center{ text-align: center !important;}
+.text-left{ text-align: left !important;}
+.text-right{ text-align: right !important;}
+.relative{position:relative !important;}
+.flex-centered-vertical{
+    display: flex;
+    align-items: center !important;
+    justify-content: space-between !important;
+    
+}
+.flex-centered-vertical-nospace{
+    display: flex;
+    align-items: center !important;
+    /* justify-content: space-between !important; */
+    
+}
+.flex-box{
+    display: flex;
+}
+.flex-centered{
+    display: flex;
+    align-items: center !important;
+    justify-content: center !important;
+    /* flex-wrap: wrap; */
+}
+.flex{
+    display: flex;
+    justify-content: space-evenly !important;
+    flex-wrap: wrap;
+}
+.top-0{
+    top: 0 !important;
+}
+.left-0{
+    left: 0 !important;
+}
+.bottom-0{
+    bottom: 0 !important;
+}
+.right-0{
+    right: 0 !important;
+}
+.uppercase{
+    text-transform: uppercase !important;
+}
+.inline-block{display: inline-block !important;}
+.inline{display: inline !important;}
+.f-right{ float: right !important;}
+.f-left{ float: left !important;}
+.o-hidden{overflow: hidden !important;}
+.o-x-scroll{overflow-y: scroll !important;}
+.opacity-0{opacity: 0 !important;}
+/* doubleshricked*/
+/* width */
+.scroll-double-shrinked::-webkit-scrollbar {
+    width: 4px;
+    height: 90% !important;
+    background-color: #fafafa !important;
+    margin-top: 1rem !important;
+}
+/* Track */
+.scroll-double-shrinked::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 2px rgb(41, 41, 41);
+    border-radius: 5px;
+}
+/* Handle */
+.scroll-double-shrinked::-webkit-scrollbar-thumb {
+    background: grey;
+    border-radius: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    height: 90% !important;
+
+}
+.o-y-hidden{overflow-y: hidden !important;}
+.o-x-hidden{overflow-y: hidden !important;}
+/* =================================================================
+MEDIA QUERIES FOR SMALL LAPTOPS AND TABLETS
+================================================================= */
+@media screen and (max-width:1200px) {
+    .double-grid {
+        display: grid;
+        grid-template-columns: 3fr 3fr;
+        gap: 1rem;
+    }
+    .container {
+        width: 90%;
+        margin: 0 auto;
+        padding: 4px;
+    }
+    .d-md-none{
+        display: none !important;
+    }
+    .comment-card{
+        width: 80%;
+        height: auto;
+    }
+    /* quick fixes */
+    /* padding y */
+    .py-md-0{
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+    }
+    .py-md-1{
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+    }
+    .py-md-2{
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+    }
+    .py-md-3{
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+    .py-md-4{
+        padding-top: 18px !important;
+        padding-bottom: 18px !important;
+    }
+    .py-md-5{
+        padding-top: 4rem !important;
+        padding-bottom: 4rem !important;
+    }
+    /* padding y */
+    .px-md-0{
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+    .px-md-1{
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
+    .px-md-2{
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+    .px-md-3{
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+    .px-md-4{
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+    .px-md-5{
+        padding-left: 4rem !important;
+        padding-right: 4rem !important;
+    }
+    /* padding top */
+    .pt-md-0{
+        padding-top: 0px !important;
+    }
+    .pt-md-1{
+        padding-top: 2px !important;
+    }
+
+    .pt-md-2{
+        padding-top: 4px !important;
+    }
+    .pt-md-3{
+        padding-top: 10px !important;
+    }
+    .pt-md-4{
+        padding-top: 18px !important;
+    }
+    .pt-md-5{
+        padding-top: 4rem !important;
+    }
+    /* padding bottom */
+    .pb-md-0{
+        padding-bottom: 0px !important;
+    }
+    .pb-md-1{
+        padding-bottom: 2px !important;
+    }
+    .pb-md-2{
+        padding-bottom: 4px !important;
+    }
+    .pb-md-3{
+        padding-bottom: 10px !important;
+    }
+    .pb-md-4{
+        padding-bottom: 18px !important;
+    }
+    .pb-md-5{
+        padding-bottom: 4rem !important;
+    }
+    /* margin md */
+    /* margin y */
+    .my-md-0{
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+    }
+    /* margin y */
+    .my-md-0{
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;   
+    }
+    .my-md-1{
+        margin-top: 2px !important;
+        margin-bottom: 2px !important;
+    }
+    .my-md-2{
+        margin-top: 4px !important;
+        margin-bottom: 4px !important;
+    }
+    .my-md-3{
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
+    }
+    .my-md-4{
+        margin-top: 18px !important;
+        margin-bottom: 18px !important;
+    }
+    .my-md-5{
+        margin-top: 4rem !important;
+        margin-bottom: 4rem !important;
+    }
+
+    /* margin x */
+    .mx-md-0{
+        margin-left: 0px !important;
+        margin-right: 0px !important;   
+    }
+    .mx-md-1{
+        margin-left: 2px !important;
+        margin-right: 2px !important;
+    }
+    .mx-md-2{
+        margin-left: 4px !important;
+        margin-right: 4px !important;
+    }
+    .mx-md-3{
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+    }
+    .mx-md-4{
+        margin-left: 18px !important;
+        margin-right: 18px !important;
+    }
+    .mx-md-5{
+        margin-left: 4rem !important;
+        margin-right: 4rem !important;
+    }
+    /* margin top */
+    .mt-md-0{
+        margin-top: 0px !important;
+    }
+    .mt-md-1{
+        margin-top: 2px !important;
+    }
+    .mt-md-2{
+        margin-top: 4px !important;
+    }
+    .mt-md-3{
+        margin-top: 10px !important;
+    }
+    .mt-md-4{
+        margin-top: 18px !important;
+    }
+    .mt-md-5{
+        margin-top: 4rem !important;
+    }
+    /* margin bottom */
+    .mb-md-0{
+        margin-bottom: 0px !important;
+    }
+    .mb-md-1{
+        margin-bottom: 2px !important;
+    }
+    .mb-md-2{
+        margin-bottom: 4px !important;
+    }
+    .mb-md-3{
+        margin-bottom: 10px !important;
+    }
+    .mb-md-4{
+        margin-bottom: 18px !important;
+    }
+    .mb-md-5{
+        margin-bottom: 4rem !important;
+    }
+}
+/* ==================================================================
+MEDIA QUERIES FOR SMALL TABLETS AND MOBILE PHONES
+================================================================== */
+@media screen and (max-width: 992px) {
+    .menu-items{
+        display: none;
+    }
+    .hamburger{
+        display:block
+    }
+    .big-small-grid{
+        display: flex; 
+        flex-direction: column; 
+    }
+    .welcome-text{
+        order: 2;
+    }
+    .img-holder{
+        order: 1;
+    }
+    .container {
+        width: 100%;
+        margin: 0 auto;
+        padding: 4px;
+    }
+    .double-grid-responsive{
+        display: flex; 
+        flex-direction: column; 
+    }
+    .flex-centered{
+        display: flex; 
+        flex-direction: column; 
+    }
+    .d-none{
+        display: none !important;
+    }
+    .d-block{
+        display: block !important;
+    }
+    .d-flex{
+        display: flex !important;
+    }
+    .sidemenu{
+        display: none;
+    
+    }
+    .dashboard-body{
+        padding-left: 4px !important;
+    }
+    .modal-card {
+        background: var(--color-white);
+        padding: 2rem 3rem;
+        width: 70%;
+        box-shadow: 0 0 1rem var(--color-primary);
+    
+    }
+    .comment-card{
+        width: 100%;
+        height: auto;
+    }
+    /* quick fixes */
+    /* padding y */
+    .py-0{
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+    }
+    .py-1{
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+    }
+    .py-2{
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+    }
+    .py-3{
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+    .py-4{
+        padding-top: 18px !important;
+        padding-bottom: 18px !important;
+    }
+    .py-5{
+        padding-top: 4rem !important;
+        padding-bottom: 4rem !important;
+    }
+    /* padding y */
+    .px-0{
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+    .px-1{
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
+    .px-2{
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+    .px-3{
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+    .px-4{
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+    .px-5{
+        padding-left: 4rem !important;
+        padding-right: 4rem !important;
+    }
+    /* padding top */
+    .pt-0{
+        padding-top: 0px !important;
+    }
+    .pt-1{
+        padding-top: 2px !important;
+    }
+    .pt-2{
+        padding-top: 4px !important;
+    }
+    .pt-3{
+        padding-top: 10px !important;
+    }
+    .pt-4{
+        padding-top: 18px !important;
+    }
+    .pt-5{
+        padding-top: 4rem !important;
+    }
+    /* padding bottom */
+    .pb-0{
+        padding-bottom: 0px !important;
+    }
+    .pb-1{
+        padding-bottom: 2px !important;
+    }
+    .pb-2{
+        padding-bottom: 4px !important;
+    }
+    .pb-3{
+        padding-bottom: 10px !important;
+    }
+    .pb-4{
+        padding-bottom: 18px !important;
+    }
+    .pb-5{
+        padding-bottom: 4rem !important;
+    }
+    /* margin md */
+    /* margin y */
+    .my-0{
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+    }
+    /* margin y */
+    .my-0{
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;   
+    }
+    .my-1{
+        margin-top: 2px !important;
+        margin-bottom: 2px !important;
+    }
+    .my-2{
+        margin-top: 4px !important;
+        margin-bottom: 4px !important;
+    }
+    .my-3{
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
+    }
+    .my-4{
+        margin-top: 18px !important;
+        margin-bottom: 18px !important;
+    }
+    .my-5{
+        margin-top: 4rem !important;
+        margin-bottom: 4rem !important;
+    }
+    /* margin x */
+    .mx-0{
+        margin-left: 0px !important;
+        margin-right: 0px !important;   
+    }
+    .mx-1{
+        margin-left: 2px !important;
+        margin-right: 2px !important;
+    }
+    .mx-2{
+        margin-left: 4px !important;
+        margin-right: 4px !important;
+    }
+    .mx-3{
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+    }
+    .mx-4{
+        margin-left: 18px !important;
+        margin-right: 18px !important;
+    }
+    .mx-5{
+        margin-left: 4rem !important;
+        margin-right: 4rem !important;
+    }
+    /* margin top */
+    .mt-0{
+        margin-top: 0px !important;
+    }
+    .mt-1{
+        margin-top: 2px !important;
+    }
+    .mt-2{
+        margin-top: 4px !important;
+    }
+    .mt-3{
+        margin-top: 10px !important;
+    }
+    .mt-4{
+        margin-top: 18px !important;
+    }
+    .mt-5{
+        margin-top: 4rem !important;
+    }
+    /* margin bottom */
+    .mb-0{
+        margin-bottom: 0px !important;
+    }
+    .mb-1{
+        margin-bottom: 2px !important;
+    }
+    .mb-2{
+        margin-bottom: 4px !important;
+    }
+    .mb-3{
+        margin-bottom: 10px !important;
+    }
+    .mb-4{
+        margin-bottom: 18px !important;
+    }
+    .mb-5{
+        margin-bottom: 4rem !important;
+    }
+}
+    </style>
+    <div class="chat-container bg py-lg-5 px-lg-5">
+        <div class="bg-white  box-shadow-red pb-lg-5 pt-lg-4 px-lg-5 br-5" style="height: 100%;">
+            <div class="login-wrapper container pt-3 pt-md-4 pt-lg-4">
+                <div class="flex-centered flex-centered-vertical">
+                    <div class="card-body my-5 my-md-5 my-lg-5 br-5  b-2px-white mt-md-5 mt-lg-5 px-4 px-md-4 px-lg-4 py-4 py-md-4 py-lg-4" style="max-width: 24rem;">
+                        <span class="block text-center font-4 bold-1 my-4 my-md-4 my-lg-4 ">Login</span>
+                        <div class="block b-1px-white px-2 px-md-3 px-lg-4">
+                            <form class="block pt-4 pt-md-4 pt-lg-4 px-4 px-md-4 px-lg-4" method="post" name="signinForm">
+                                <div class="block">
+                                    <label class="font-1 bold ">Email:</label>
+                                    <input type="text" name="email" class="font-2 py-3 py-md-3 py-lg-3 br-2 px-lg-3 form-control email"/>
+                                    <div class="block text-right pt-lg-2" style="height: 14px;">
+                                        <div class="font-0 clr-red d-lg-none error-box">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+                                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4m.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/>
+                                            </svg>
+                                            Invalid Email input
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <label class="font-1 bold c">Password:</label>
+                                    <input type="password"  class="font-2 py-3 py-md-3 py-lg-3 br-2 px-lg-3 form-control password"/>
+                                    <div class="block text-right pt-lg-2" style="height: 14px;">
+                                        <div class="font-0 clr-red d-lg-none password-error-box">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
+                                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4m.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/>
+                                            </svg>
+                                            Must be atleast 4 chars
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group block pt-lg-3">
+                                    <input  class="pointer font-0" type="checkbox"/>
+                                    <span class="font-0 text-muted bold">Remember Me</span>
+                                    <a href="#">
+                                        <span class="f-right font-0 py-3 py-md-3 py-lg-3 pointer clr-red bold">Forgot Password?</span>
+                                    </a>
+                                </div>
+                                <div class="block text-center my-4 my-md-4 my-lg-4">
+                                    <button class="signin-btn btn-red br-3 mt-4 mt-md-4 mt-lg-4 py-3 py-md-3 py-lg-3 px-5 px-md-5 px-lg-5">Login</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="block text-center my-4 my-md-4 my-lg-4">
+                            <span class="font-0 py-3 py-md-3 py-lg-3 pointer  bold pointer">Don't have an Account? <a href="#" class="style-none"><span class="clr-red">Signup here</span></a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let userEmail="";
+        let password = '';
+
+        // ================== FORM VALIDATION ================
+
+        var signinInput = document.querySelector('.email');
+        var errorBox = document.querySelector('.error-box');
+
+        var passswordForm = document.querySelector('.password');
+        var passswordErrorBox = document.querySelector('.password-error-box');
+
+        /// validation here
+        const checkIsEmail = (userEmail)=>{
+            return String(userEmail)
+                .toLowerCase()
+                .match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/);
+        }
+        //// eventlistener
+        signinInput.addEventListener('keyup', function(evt){
+            const { value } = evt.target;
+            if(!checkIsEmail(value)){
+                signinInput.classList.add('b-2px-red');
+                errorBox.classList.remove('d-lg-none');
+                return emailError = "That's not a valid Email sebo";
+            }
+            signinInput.classList.remove('b-2px-red');
+            errorBox.classList.add('d-lg-none');
+            return userEmail = checkIsEmail(value)[0];
+        });
+
+        /// eventlistener
+        passswordForm.addEventListener('keyup', function(evt){
+            const { value } = evt.target;
+            return password = value;
+        })
+        ///// handing form submit and sending request
+
+        const signinForm = document.querySelector("form[name=signinForm]");
+        var myBtn = document.querySelector(".signin-btn");
+
+        signinForm.addEventListener('submit', async function(evt){
+            evt.preventDefault();
+            if(checkIsEmail(userEmail) && password.length > 3){
+                console.log('here 1');
+                const response = await sendRequest();
+                const { status, msg } = response;
+                if(response.success && response.token){
+                    const newToken = tokenDecode(response.token);
+                    console.log('this is newtoken', newToken)
+                    localStorage.setItem('token', response.token.split(" ")[1]);
+                    localStorage.setItem('firstName', response.firstName);
+                    localStorage.setItem('lastName', response.lastName);
+                    localStorage.setItem('profileImage', response.profileImage);
+
+                    window.location.href = 'http://localhost:5500/api/chats/private' 
+                }
+            }else{
+                console.log('here 2');
+                alert('Please fill in all required fields')
+            }   
+        });
+        function tokenDecode(token) {
+            try {
+                const decodedToken = JSON.parse(atob(token.split(".")[1]));
+                localStorage.setItem('currentUser', decodedToken.id);
+                return decodedToken;
+            } catch (error) {
+                console.error("Error decoding token:", error);
+                return null;
+            }
+        }
+        const sendRequest = async()=>{
+            try{
+                const {data} = await axios.post(
+                    `http://localhost:5500/api/users/login`,
+                    {email:userEmail, password },
+                    {
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                })
+                return data;
+            }catch(error){
+                console.error('error during login', error)
+            }
+        }
+    </script>
+
+</body>
+</html>

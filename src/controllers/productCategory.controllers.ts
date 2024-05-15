@@ -51,12 +51,13 @@ export const updateProductCategory = async (req: Request, res: Response) => {
       }
     })) as ProductCategory;
 
-    const categoryName = formatString(req.body.categoryName);
-    category.categoryName = categoryName;
-    await category.update(category);
-    return res
-      .status(200)
-      .json({ message: "Product category updated successful", category });
+    const categoryNames = formatString(req.body.categoryName);
+    // category.categoryName = categoryName;
+    await category.update({ categoryName: categoryNames });
+    return res.status(200).json({
+      message: "Product category updated successful",
+      category
+    });
   } catch (error) {
     return res.status(500).json({ error: "Internal server error" });
   }

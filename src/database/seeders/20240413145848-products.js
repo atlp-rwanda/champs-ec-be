@@ -55,6 +55,26 @@ module.exports = {
           productThumbnail:
             "https://res.cloudinary.com/dbbv6uvfu/image/upload/v1712563210/ilezp3vjo7gcirzofy2t.jpg",
 
+          expireDate: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          isExpired: false
+        },
+        {
+          id: uuidv4(),
+          sellerId: userRow[0].id,
+          productName: "test Product20",
+          stockLevel: 100,
+          productCategory: category[1].id,
+          productPrice: 200.0,
+          productCurrency: "BUD",
+          productDiscount: "0",
+          isAvailable: false,
+          productDescription:
+            "test of project implementation product item crud",
+          productThumbnail:
+            "https://res.cloudinary.com/dbbv6uvfu/image/upload/v1712563210/ilezp3vjo7gcirzofy2t.jpg",
+          isExpired: false,
           expireDate: "2028-01-10",
           createdAt: new Date(),
           updatedAt: new Date()

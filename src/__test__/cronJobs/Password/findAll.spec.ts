@@ -23,7 +23,7 @@ describe("findAllUsers", () => {
       await findAllUsers();
       throw new Error("Expected error but none was thrown");
     } catch (error: any) {
-      expect(error.message).to.equal("Couldn't Perform task at the moment");
+      expect(error.message).to.equal("Database connection failed");
     } finally {
       findAllStub.restore();
     }
@@ -35,7 +35,7 @@ describe("findAllUsers", () => {
       await findAllUsers();
       expect.fail("Expected an error to be thrown");
     } catch (err: any) {
-      expect(err.message).to.equal("Couldn't Perform task at the moment");
+      expect(err.message).to.equal("Database error");
     }
     findAllStub.restore();
   }).timeout(5000);

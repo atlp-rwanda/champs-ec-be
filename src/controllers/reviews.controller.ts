@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Request, Response } from "express";
-import Reviews from "../models/reviews";
+import Reviews from "../models/review";
 import { UserData } from "./otpauth.controllers";
 import Product from "../models/Product";
 import { reviewData } from "../types/reviews";

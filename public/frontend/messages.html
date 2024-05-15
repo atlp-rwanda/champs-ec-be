@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+</head>
+<body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Poppins:wght@300;400;500;600&display=swap');
+
+:root{
+    /* // universal manipulation */
+    --primary-color-hue: 231;
+    --dark-color-lightness: 17%;
+    --light-color-lightness: 95%;
+    --white-color-lightness: 100%;
+    /* color palletes */
+    --color-white: hsl(252, 30%, var(--white-color-lightness));
+    --color-light: hsl(252, 30%, var(--light-color-lightness));
+    --color-dark: hsl(252, 30%, var(--dark-color-lightness));
+    /* for buttons and stuff */
+    --color-primary: hsl(var(--primary-color-hue), 34%, 23%);
+    --color-primary-hovered: hsl(232, 55%, 21%);
+}
+html {
+    scroll-behavior: smooth;
+}
+*, 
+*::before, 
+*::after {
+    margin:0;
+    padding:0;
+    outline:0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+    border: none;
+}
+body{
+    padding: 0 0 0 0;
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-dark);
+    background: var(--color-light);
+    position: relative;
+    min-height: 100vh !important;
+}
+.bg-body{
+    color: var(--color-dark);
+    background: var(--color-light);
+}
+.chat-container{
+    width: 100vw;
+    height: 100vh;
+    background-image: url('https://res.cloudinary.com/drno4jopp/image/upload/v1715685571/champs-bay/eqtqsw2blvuy6acvlvzr.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.chat{
+    background: #72b8ff;
+    border-radius: 20px;
+    display: inline-block;
+    padding: 10px;
+    color: #fff;
+    font-weight: lighter;
+    font-size: small;
+    box-shadow: 1px 1px 2px rgba(0,0,0,.3);
+    margin: 5px;
+    position: relative;
+}
+.chat.u1{
+    float: left;
+    clear: both;
+    border-top-left-radius: 0px;
+    max-width: 60%;
+}
+.chat.u1:before{
+    content: "";
+    width: 0px;
+    height: 0px;
+    display: block;
+    border-left: 5px solid transparent;
+    border-right: 5px solid #72b8ff;
+    border-top: 5px solid #72b8ff;
+    border-bottom: 5px solid transparent;
+    position: absolute;
+    top: 0px;
+    left: -10px;
+}
+.chat.u2{
+    float: right;
+    clear: both;
+    border-top-right-radius: 0px;
+    background: #00D025;
+    max-width: 60%;
+}
+.chat.u2:before{
+    content: "";
+    width: 0px;
+    height: 0px;
+    display: block;
+    border-left: 5px solid #00D025;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #00D025;
+    border-bottom: 5px solid transparent;
+    position: absolute;
+    top: 0px;
+    right: -10px;
+}
+.dashboard-body{
+    padding-left: 300px;
+}
+ /* General styles */
+ .d-lg-none{
+    display: none !important;
+}
+.container {
+    width: 76%;
+    margin: 0 auto;
+    padding: 4px;
+}
+.nav {
+    width: 100%;
+    background: var(--color-white);
+    padding:  0.7rem 0;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+}
+.nav .container {
+    width: 98%;
+    display: flex;
+    align-items: center;
+    justify-content:  space-between;
+}
+.small-nav{
+    background:  hsl(252, 30%, 10%) !important;
+    color: #fff;
+}
+.sidemenu{
+    background:  hsl(252, 30%, 15%) !important;
+    color: white;
+}
+footer{
+    position: absolute;
+    width: 100% !important;
+    bottom: 0;
+}
+.style-none{
+    text-decoration: none !important;
+    list-style: none !important;
+    color: inherit !important;
+}
+.box-shadow{
+    box-shadow: 0px 0px 4px 2px rgba(58, 36, 36, 0.2) !important;
+}
+.box-shadow-red{
+    box-shadow: 0 0 1rem #E84949 !important;
+  
+}
+.card-body{
+    background: var(--color-primary);
+    color: white !important;
+}
+.card{
+    background: var(--color-white);    
+}
+.card-stable{
+    background: var(--color-white);    
+}
+.card:hover{
+    box-shadow: 0px 0px 10px 8px rgba(58, 36, 36, 0.2) !important;
+}
+.bg-purple{
+    background-color: purple;
+    color:white
+}
+.bg-dark{
+    background-color: var(--color-dark);
+}
+.bg-white{
+    background-color: white;
+}
+.bg-hue{
+    background-color: var(--color-white);
+    color: #0000 !important;
+}
+.bg-inherit{
+    background-color: inherit !important;
+}
+.hamburger{
+    display:none;
+}
+.clr-red{
+    color: #E84949 !important;
+}
+.clr-black{
+    color: black !important;
+}
+.clr-white{
+    color: white !important;
+}
+.bg-red{
+    background-color: #E84949 !important;
+    color: #fff !important;
+}
+.bg-hue{
+    background-color: #bdbdbd !important;
+}
+.double-grid {
+    display: grid;
+    grid-template-columns: 3fr 3fr;
+    gap: 2rem;
+}
+.double-grid-responsive{
+    display: grid;
+    grid-template-columns: 3fr 3fr;
+    gap: 2rem;
+}
+.triple-grid {
+    display: grid;
+    grid-template-columns: 3fr 3fr 3fr;
+    gap: 1rem;
+}
+.big-small-grid-responsive{
+    display: grid;
+    grid-template-columns: 5fr 3fr;
+    gap:2rem;
+    align-items: top;
+}
+.small-big-grid{
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    gap:10px;
+    align-items: top; 
+}
+.big-small-grid{
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+    gap: 15rem;
+    align-items: bottom;
+}
+.big-small-grid-stable{
+    display: grid;
+    grid-template-columns: 5fr 4fr;
+    gap: 2rem;
+    align-items: bottom;
+}
+
+.active{
+    color: #2e9e38 !important;
+    font-weight: 900 !important;
+}
+.btn-light{
+    background-color: var(--color-light);
+    color: var(--color-dark)
+}
+.btn-dark{
+    background-color: var(--color-dark);
+    color: var(--color-white)
+}
+.btn-red{
+    background-color: #E84949 !important;
+    color: #fff !important;
+}
+.btn-green{
+    background-color: #40cd31 !important;
+    color: #fff !important;
+}
+.img-fit{
+    height: 100%;
+    width: 100%;   
+}
+.img-holder{
+    height: 36rem;
+    width: 100%;
+    background-image: url('../assets/mbg.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.img-holder-2 {
+    height: 24rem;
+    width: 100%;
+    background-image: url('../assets/skills-bg.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: fill;
+}
+.form-control{
+    width: 100% !important;
+    background-color: #bdbdbd;
+}
+.ring-bg-0{
+    height: 15rem;
+    width: 15rem;
+    bottom: -2rem;
+    right: -12rem;
+    background-color: var(--color-primary);
+    opacity: 0.2;
+    border-radius: 50%;
+    z-index: -1;
+}
+.ring-bg-1{
+    height: 10rem;
+    width: 10rem;
+    bottom: -1rem;
+    left: -3rem;
+    background-color: var(--color-primary);
+    opacity: 0.2;
+    border-radius: 50%;
+    z-index: -1;
+}
+.ring-bg-2{
+    height: 8rem;
+    width: 8rem;
+    top: 2rem;
+    right: 12rem;
+    background-color: var(--color-primary);
+    opacity: 0.2;
+    border-radius: 50%;
+    z-index: -1;
+}
+.ring-bg-3{
+    height: 20rem;
+    width: 20rem;
+    bottom: -6rem;
+    right: -6rem;
+    background-color: var(--color-primary);
+    opacity: 0.2;
+    border-radius: 50%;
+    z-index: -1;
+}
+.modal {
+    background: rgba(255, 255, 255, 0.5);
+    width:100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 200;
+    text-align: center;
+    display: grid;
+    place-items: center;
+    font-size: 0.9rem;
+}
+.account-popup{
+    background: var(--color-white);
+    height: 20rem;
+    width: 14rem;
+    top: 3rem;
+    right: -2.4rem;
+}
+.hovered-hue:hover{
+    background-color: #E84949 !important;
+    color: white;
+}
+.camera{
+    bottom: -4px;
+    right: -4px;
+    background: black;
+    height: 1.6rem;
+    width: 1.6rem;
+    opacity: 0.8;
+}
+.comment-card{
+    width: 76%;
+    height: auto;
+}
+.modal-card {
+    background: var(--color-white);
+    padding: 2rem 3rem;
+    width: 30%;
+    box-shadow: 0 0 1rem var(--color-primary);
+}
+.p-comment{
+    padding-left: 3rem;
+}
+/* reusable border classes */
+.b-1px-hue{border:1px solid var(--color-primary) !important;}
+.b-2px-hue{border:2px solid var(--color-primary) !important;}
+.b-3px-hue{border:3px solid var(--color-primary) !important;}
+.b-4px-hue{border:4px solid var(--color-primary) !important;}
+.b-5px-hue{border:5px solid var(--color-primary) !important;}
+.b-thick-hue{border:1rem px solid var(--color-primary) !important;}
+.b-2px-dashed-hue{border:2px dashed #bdbdbd !important;}
+.b-2px-white{border:2px solid white !important;}
+.b-1px-red{border:1px solid #E84949 !important;}
+.b-2px-red{border:2px solid #E84949 !important;}
+.b-top-1px-hue{border-top:1px solid #bdbbbb !important;}
+.b-btm-1px-hue{border-bottom:1px solid #bdbbbb !important;}
+
+/* re-usable font weight classes*/
+.bold-0{
+    font-weight: 300 !important;
+}
+.bold{
+    font-weight: 500 !important;
+}
+.bold-1{
+    font-weight: 700 !important;
+}
+.bold-2{
+    font-weight: 700 !important;
+}
+.bold-3{
+    font-weight: 800 !important;
+}
+.bold-4{
+    font-weight: 900 !important;
+}
+.bold-5{
+    font-weight: 1000 !important;
+}
+/* re-usable font size classes*/
+.font-smallest{
+    font-size: 8px !important;
+}
+.font-0{
+    font-size: 10px !important;
+}
+.font-1{
+    font-size: 12px !important;
+}
+.font-1-5{
+    font-size: 13px !important;
+}
+.font-2{
+    font-size: 14px !important;
+}
+.font-2-5{
+    font-size: 15px !important;
+}
+.font-3{
+    font-size: 1rem !important;
+}
+.font-3-5{
+    font-size: 1.2rem !important;
+}
+.font-4{
+    font-size: 1.5rem !important;
+}
+.font-5{
+    font-size: 2rem !important;
+}
+.font-lg{
+    font-size: 2.5rem !important;
+}
+.font-x-lg{
+    font-size: 5rem !important;
+}
+.font-italic-style{
+    font-style: italic !important;
+}
+.font-shadow{
+    text-shadow: 1px 0px #bdbdbd;
+}
+.capitalize{
+    text-transform: capitalize !important;
+}
+/******border radiuss********/
+.br-1{border-radius: 2px !important;}
+.br-2{border-radius: 4px !important;}
+.br-3{border-radius: 6px !important;}
+.br-4{border-radius: 8px !important;}
+.br-5{border-radius: 1.2rem !important;}
+.br-rnd{border-radius: 50% !important;}
+.br-top-2{
+    border-top-right-radius: 3px !important;
+    border-top-left-radius: 3px !important;
+}
+.br-btm-2{
+    border-bottom-right-radius: 3px !important;
+    border-bottom-left-radius: 3px !important;
+}
+.pointer{
+    cursor: pointer;
+}
+/* quick fixes */
+/* padding y */
+.py-lg-0{
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+.py-lg-1{
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+.py-lg-2{
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+.py-lg-3{
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+.py-lg-4{
+    padding-top: 18px !important;
+    padding-bottom: 18px !important;
+}
+.py-lg-5{
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+}
+  /* padding y */
+.px-lg-0{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+.px-lg-1{
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+}
+.px-lg-2{
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+}
+.px-lg-3{
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+.px-lg-4{
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+}
+.px-lg-5{
+    padding-left: 4rem !important;
+    padding-right: 4rem !important;
+}
+/* padding top */
+.pt-lg-0{
+    padding-top: 0px !important;
+}
+.pt-lg-1{
+    padding-top: 2px !important;
+}
+.pt-lg-2{
+    padding-top: 4px !important;
+}
+.pt-lg-3{
+    padding-top: 10px !important;
+}
+.pt-lg-4{
+    padding-top: 18px !important;
+}
+.pt-lg-5{
+    padding-top: 4rem !important;
+}
+/* padding bottom */
+.pb-lg-0{
+    padding-bottom: 0px !important;
+}
+.pb-lg-1{
+    padding-bottom: 2px !important;
+}
+.pb-lg-2{
+    padding-bottom: 4px !important;
+}
+.pb-lg-3{
+    padding-bottom: 10px !important;
+}
+.pb-lg-4{
+    padding-bottom: 18px !important;
+}
+.pb-lg-5{
+    padding-bottom: 4rem !important;
+}
+/* margin y */
+.my-lg-0{
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+ /* margin y */
+.my-lg-0{
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;   
+}
+.my-lg-1{
+    margin-top: 2px !important;
+    margin-bottom: 2px !important;
+}
+.my-lg-2{
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+}
+.my-lg-3{
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+}
+.my-lg-4{
+    margin-top: 18px !important;
+    margin-bottom: 18px !important;
+}
+.my-lg-5{
+    margin-top: 4rem !important;
+    margin-bottom: 4rem !important;
+}
+/* margin x */
+.mx-lg-0{
+    margin-left: 0px !important;
+    margin-right: 0px !important;   
+}
+.mx-lg-1{
+    margin-left: 2px !important;
+    margin-right: 2px !important;
+}
+.mx-lg-2{
+    margin-left: 4px !important;
+    margin-right: 4px !important;
+}
+.mx-lg-3{
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+}
+.mx-lg-4{
+    margin-left: 18px !important;
+    margin-right: 18px !important;
+}
+.mx-lg-5{
+    margin-left: 4rem !important;
+    margin-right: 4rem !important;
+}
+/* margin top */
+.mt-lg-0{
+    margin-top: 0px !important;
+}
+.mt-lg-1{
+    margin-top: 2px !important;
+}
+.mt-lg-2{
+    margin-top: 4px !important;
+}
+.mt-lg-3{
+    margin-top: 10px !important;
+}
+.mt-lg-4{
+    margin-top: 18px !important;
+}
+.mt-lg-5{
+    margin-top: 4rem !important;
+}
+/* margin bottom */
+.mb-lg-0{
+    margin-bottom: 0px !important;
+}
+.mb-lg-1{
+    margin-bottom: 2px !important;
+}
+.mb-lg-2{
+    margin-bottom: 4px !important;
+}
+.mb-lg-3{
+    margin-bottom: 10px !important;
+}
+.mb-lg-4{
+    margin-bottom: 18px !important;
+}
+.mb-lg-5{
+    margin-bottom: 4rem !important;
+}
+/*--------display & positioning------*/
+.block{display: block !important; width: 100%;}
+.fixed{display: fixed !important;}
+.absolute{position: absolute !important;}
+.text-center{ text-align: center !important;}
+.text-left{ text-align: left !important;}
+.text-right{ text-align: right !important;}
+.relative{position:relative !important;}
+.flex-centered-vertical{
+    display: flex;
+    align-items: center !important;
+    justify-content: space-between !important;
+    
+}
+.flex-centered-vertical-nospace{
+    display: flex;
+    align-items: center !important;
+    /* justify-content: space-between !important; */
+    
+}
+.flex-box{
+    display: flex;
+}
+.flex-centered{
+    display: flex;
+    align-items: center !important;
+    justify-content: center !important;
+    /* flex-wrap: wrap; */
+}
+.flex{
+    display: flex;
+    justify-content: space-evenly !important;
+    flex-wrap: wrap;
+}
+.top-0{
+    top: 0 !important;
+}
+.left-0{
+    left: 0 !important;
+}
+.bottom-0{
+    bottom: 0 !important;
+}
+.right-0{
+    right: 0 !important;
+}
+.uppercase{
+    text-transform: uppercase !important;
+}
+.inline-block{display: inline-block !important;}
+.inline{display: inline !important;}
+.f-right{ float: right !important;}
+.f-left{ float: left !important;}
+.o-hidden{overflow: hidden !important;}
+.o-x-scroll{overflow-y: scroll !important;}
+.opacity-0{opacity: 0 !important;}
+/* doubleshricked*/
+/* width */
+.scroll-double-shrinked::-webkit-scrollbar {
+    width: 4px;
+    height: 90% !important;
+    background-color: #fafafa !important;
+    margin-top: 1rem !important;
+}
+/* Track */
+.scroll-double-shrinked::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 2px rgb(41, 41, 41);
+    border-radius: 5px;
+}
+/* Handle */
+.scroll-double-shrinked::-webkit-scrollbar-thumb {
+    background: grey;
+    border-radius: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    height: 90% !important;
+
+}
+.o-y-hidden{overflow-y: hidden !important;}
+.o-x-hidden{overflow-y: hidden !important;}
+/* =================================================================
+MEDIA QUERIES FOR SMALL LAPTOPS AND TABLETS
+================================================================= */
+@media screen and (max-width:1200px) {
+    .double-grid {
+        display: grid;
+        grid-template-columns: 3fr 3fr;
+        gap: 1rem;
+    }
+    .container {
+        width: 90%;
+        margin: 0 auto;
+        padding: 4px;
+    }
+    .d-md-none{
+        display: none !important;
+    }
+    .comment-card{
+        width: 80%;
+        height: auto;
+    }
+    /* quick fixes */
+    /* padding y */
+    .py-md-0{
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+    }
+    .py-md-1{
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+    }
+    .py-md-2{
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+    }
+    .py-md-3{
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+    .py-md-4{
+        padding-top: 18px !important;
+        padding-bottom: 18px !important;
+    }
+    .py-md-5{
+        padding-top: 4rem !important;
+        padding-bottom: 4rem !important;
+    }
+    /* padding y */
+    .px-md-0{
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+    .px-md-1{
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
+    .px-md-2{
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+    .px-md-3{
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+    .px-md-4{
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+    .px-md-5{
+        padding-left: 4rem !important;
+        padding-right: 4rem !important;
+    }
+    /* padding top */
+    .pt-md-0{
+        padding-top: 0px !important;
+    }
+    .pt-md-1{
+        padding-top: 2px !important;
+    }
+
+    .pt-md-2{
+        padding-top: 4px !important;
+    }
+    .pt-md-3{
+        padding-top: 10px !important;
+    }
+    .pt-md-4{
+        padding-top: 18px !important;
+    }
+    .pt-md-5{
+        padding-top: 4rem !important;
+    }
+    /* padding bottom */
+    .pb-md-0{
+        padding-bottom: 0px !important;
+    }
+    .pb-md-1{
+        padding-bottom: 2px !important;
+    }
+    .pb-md-2{
+        padding-bottom: 4px !important;
+    }
+    .pb-md-3{
+        padding-bottom: 10px !important;
+    }
+    .pb-md-4{
+        padding-bottom: 18px !important;
+    }
+    .pb-md-5{
+        padding-bottom: 4rem !important;
+    }
+    /* margin md */
+    /* margin y */
+    .my-md-0{
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+    }
+    /* margin y */
+    .my-md-0{
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;   
+    }
+    .my-md-1{
+        margin-top: 2px !important;
+        margin-bottom: 2px !important;
+    }
+    .my-md-2{
+        margin-top: 4px !important;
+        margin-bottom: 4px !important;
+    }
+    .my-md-3{
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
+    }
+    .my-md-4{
+        margin-top: 18px !important;
+        margin-bottom: 18px !important;
+    }
+    .my-md-5{
+        margin-top: 4rem !important;
+        margin-bottom: 4rem !important;
+    }
+
+    /* margin x */
+    .mx-md-0{
+        margin-left: 0px !important;
+        margin-right: 0px !important;   
+    }
+    .mx-md-1{
+        margin-left: 2px !important;
+        margin-right: 2px !important;
+    }
+    .mx-md-2{
+        margin-left: 4px !important;
+        margin-right: 4px !important;
+    }
+    .mx-md-3{
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+    }
+    .mx-md-4{
+        margin-left: 18px !important;
+        margin-right: 18px !important;
+    }
+    .mx-md-5{
+        margin-left: 4rem !important;
+        margin-right: 4rem !important;
+    }
+    /* margin top */
+    .mt-md-0{
+        margin-top: 0px !important;
+    }
+    .mt-md-1{
+        margin-top: 2px !important;
+    }
+    .mt-md-2{
+        margin-top: 4px !important;
+    }
+    .mt-md-3{
+        margin-top: 10px !important;
+    }
+    .mt-md-4{
+        margin-top: 18px !important;
+    }
+    .mt-md-5{
+        margin-top: 4rem !important;
+    }
+    /* margin bottom */
+    .mb-md-0{
+        margin-bottom: 0px !important;
+    }
+    .mb-md-1{
+        margin-bottom: 2px !important;
+    }
+    .mb-md-2{
+        margin-bottom: 4px !important;
+    }
+    .mb-md-3{
+        margin-bottom: 10px !important;
+    }
+    .mb-md-4{
+        margin-bottom: 18px !important;
+    }
+    .mb-md-5{
+        margin-bottom: 4rem !important;
+    }
+}
+/* ==================================================================
+MEDIA QUERIES FOR SMALL TABLETS AND MOBILE PHONES
+================================================================== */
+@media screen and (max-width: 992px) {
+    .menu-items{
+        display: none;
+    }
+    .hamburger{
+        display:block
+    }
+    .big-small-grid{
+        display: flex; 
+        flex-direction: column; 
+    }
+    .welcome-text{
+        order: 2;
+    }
+    .img-holder{
+        order: 1;
+    }
+    .container {
+        width: 100%;
+        margin: 0 auto;
+        padding: 4px;
+    }
+    .double-grid-responsive{
+        display: flex; 
+        flex-direction: column; 
+    }
+    .flex-centered{
+        display: flex; 
+        flex-direction: column; 
+    }
+    .d-none{
+        display: none !important;
+    }
+    .d-block{
+        display: block !important;
+    }
+    .d-flex{
+        display: flex !important;
+    }
+    .sidemenu{
+        display: none;
+    
+    }
+    .dashboard-body{
+        padding-left: 4px !important;
+    }
+    .modal-card {
+        background: var(--color-white);
+        padding: 2rem 3rem;
+        width: 70%;
+        box-shadow: 0 0 1rem var(--color-primary);
+    
+    }
+    .comment-card{
+        width: 100%;
+        height: auto;
+    }
+    /* quick fixes */
+    /* padding y */
+    .py-0{
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+    }
+    .py-1{
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+    }
+    .py-2{
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+    }
+    .py-3{
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+    .py-4{
+        padding-top: 18px !important;
+        padding-bottom: 18px !important;
+    }
+    .py-5{
+        padding-top: 4rem !important;
+        padding-bottom: 4rem !important;
+    }
+    /* padding y */
+    .px-0{
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+    .px-1{
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
+    .px-2{
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+    .px-3{
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+    .px-4{
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+    .px-5{
+        padding-left: 4rem !important;
+        padding-right: 4rem !important;
+    }
+    /* padding top */
+    .pt-0{
+        padding-top: 0px !important;
+    }
+    .pt-1{
+        padding-top: 2px !important;
+    }
+    .pt-2{
+        padding-top: 4px !important;
+    }
+    .pt-3{
+        padding-top: 10px !important;
+    }
+    .pt-4{
+        padding-top: 18px !important;
+    }
+    .pt-5{
+        padding-top: 4rem !important;
+    }
+    /* padding bottom */
+    .pb-0{
+        padding-bottom: 0px !important;
+    }
+    .pb-1{
+        padding-bottom: 2px !important;
+    }
+    .pb-2{
+        padding-bottom: 4px !important;
+    }
+    .pb-3{
+        padding-bottom: 10px !important;
+    }
+    .pb-4{
+        padding-bottom: 18px !important;
+    }
+    .pb-5{
+        padding-bottom: 4rem !important;
+    }
+    /* margin md */
+    /* margin y */
+    .my-0{
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+    }
+    /* margin y */
+    .my-0{
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;   
+    }
+    .my-1{
+        margin-top: 2px !important;
+        margin-bottom: 2px !important;
+    }
+    .my-2{
+        margin-top: 4px !important;
+        margin-bottom: 4px !important;
+    }
+    .my-3{
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
+    }
+    .my-4{
+        margin-top: 18px !important;
+        margin-bottom: 18px !important;
+    }
+    .my-5{
+        margin-top: 4rem !important;
+        margin-bottom: 4rem !important;
+    }
+    /* margin x */
+    .mx-0{
+        margin-left: 0px !important;
+        margin-right: 0px !important;   
+    }
+    .mx-1{
+        margin-left: 2px !important;
+        margin-right: 2px !important;
+    }
+    .mx-2{
+        margin-left: 4px !important;
+        margin-right: 4px !important;
+    }
+    .mx-3{
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+    }
+    .mx-4{
+        margin-left: 18px !important;
+        margin-right: 18px !important;
+    }
+    .mx-5{
+        margin-left: 4rem !important;
+        margin-right: 4rem !important;
+    }
+    /* margin top */
+    .mt-0{
+        margin-top: 0px !important;
+    }
+    .mt-1{
+        margin-top: 2px !important;
+    }
+    .mt-2{
+        margin-top: 4px !important;
+    }
+    .mt-3{
+        margin-top: 10px !important;
+    }
+    .mt-4{
+        margin-top: 18px !important;
+    }
+    .mt-5{
+        margin-top: 4rem !important;
+    }
+    /* margin bottom */
+    .mb-0{
+        margin-bottom: 0px !important;
+    }
+    .mb-1{
+        margin-bottom: 2px !important;
+    }
+    .mb-2{
+        margin-bottom: 4px !important;
+    }
+    .mb-3{
+        margin-bottom: 10px !important;
+    }
+    .mb-4{
+        margin-bottom: 18px !important;
+    }
+    .mb-5{
+        margin-bottom: 4rem !important;
+    }
+}
+    </style>
+    <div class="chat-container bg py-lg-5 px-lg-5">
+        <div class="modal d-lg-none">
+            <div class="modal-card br-3">
+                <div class="block">
+                    <span class="bold-2 font-4 py-lg-3 block capitalize">All Users</span>
+                    <div class="user-list block o-hidden o-x-scroll scroll-double-shrinked" style="max-height: 20rem;">
+                        
+                    </div>
+                    <div class="block text-right py-lg-2 pt-lg-5">
+                        <button id='myid' class="block mx-2 mx-md-2 mx-lg-2 font-2 btn-red py-lg-3 px-lg-4 mt-lg-2 br-2 cancel pointer">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white  box-shadow-red pb-lg-5 pt-lg-4 px-lg-5 br-5" style="height: 105%;">
+            <div class="chat-wrapper">
+                <div class="bg-white py-lg-3 big-small-grid" style="width: 100%;">
+                    <h2 class="px-lg-3">Messages</h2>
+                    <button class="new-message-btn f-right b-1px-hue br-3 bg-purple font-2 bold" >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope-plus" viewBox="0 0 16 16">
+                            <path d="M2 2a2 2 0 0 0-2 2v8.01A2 2 0 0 0 2 14h5.5a.5.5 0 0 0 0-1H2a1 1 0 0 1-.966-.741l5.64-3.471L8 9.583l7-4.2V8.5a.5.5 0 0 0 1 0V4a2 2 0 0 0-2-2zm3.708 6.208L1 11.105V5.383zM1 4.217V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v.217l-7 4.2z"/>
+                            <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0m-3.5-2a.5.5 0 0 0-.5.5v1h-1a.5.5 0 0 0 0 1h1v1a.5.5 0 0 0 1 0v-1h1a.5.5 0 0 0 0-1h-1v-1a.5.5 0 0 0-.5-.5"/>
+                        </svg>
+                        New Message
+                    </button>
+                </div>
+                <div class="bg-body chat-window flex" style="height: 96%;">
+                    <div class="chatlist box-shadow py-lg-0 px-lg-0  br-btm-2 br-top-2 o-hidden o-x-scroll scroll-double-shrinked" style="width: 25%; max-height: 100%;"> 
+                    
+                    </div>
+                    <div class="box-shadow chatbox pt-lg-3 px-lg-3" style="width: 50%; height: 100%;"> 
+                        
+                            <div class="chat-header bg-body flex-centered py-lg-4" style="height: 20%;">
+                                
+                            </div>
+                            <div class="bg-white py-lg-2 " style="height: 70%;">
+                                <div class="messages-list o-hidden o-x-scroll scroll-double-shrinked px-lg-3 py-lg-2"  style="height: 24rem;">
+                                
+                                </div>
+                            </div>
+                        
+                        <div class="send-chat flex-centered flex-centered-vertical  px-lg-4" style="height: 6rem; width: 100%;">
+                            <form class="flex" style="width: 100%;" name="msgForm">
+                                <div class="input-block" style="width: 90%; height: auto;">
+                                    <input type="text" id="message-input" class="chat-input py-lg-3 px-lg-3 br-5 " placeholder="Type your message..."  style="width: 100%;">
+                                </div>
+                                <button type="submit" class="send-btn-block px-lg-3" style="width: 10%; height: auto;">
+                                    <div class="br-rnd  btn-green flex-centered" style="width:2.6rem; height: 2.6rem;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                                            <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="chat-details br-btm-2 br-top-2 py-lg-3 px-lg-3 flex-centered box-shadow" style="width: 25%;"> 
+                
+                    </div>
+                </div>
+            </div> 
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.min.js"></script>
+    <script>
+        let chatrooms = [];
+        let allUsers = [];
+        let currentlyOpenChatroom = {};
+        let newMessageContent = "";
+
+        const activeUser = localStorage.getItem("currentUser"); // handle with care
+        const token = localStorage.getItem("token");
+
+        const socket = io("http://localhost:5500/chats", { auth: { token } });
+
+        (function initChat() {
+        socket.emit("fetch all chatrooms");
+            socket.on("all chatrooms", (allChatrooms) => {
+                console.log("fucking chatrooms", allChatrooms);
+                chatrooms = allChatrooms;
+                console.log("fucking chatrooms", allChatrooms);
+                // alert("receiving things from be on fe")
+                currentlyOpenChatroom = allChatrooms[0];
+                displayChatrooms(allChatrooms);
+                fetchCurrentChatroom(currentlyOpenChatroom.id);
+                //displayCorrespondent(currentlyOpenChatroom);
+            });
+            
+        })();
+
+/// ///////////////////////////////  DOM elements  ///////////////////////////////////////
+
+const chatroomsList = document.querySelector(".chatlist");
+const messagesList = document.querySelector(".messages-list");
+const chatDetails = document.querySelector(".chat-details");
+const chatHeader = document.querySelector(".chat-header");
+const msgInput = document.querySelector(".chat-input");
+const msgForm = document.querySelector("form[name=msgForm]");
+
+msgInput.addEventListener("keyup", function (evt) {
+  evt.preventDefault();
+  newMessageContent = evt.target.value;
+});
+msgForm.addEventListener("submit", function (evt) {
+  let correspondent;
+  const { initiator, isPrivate, users } = currentlyOpenChatroom;
+  console.log(
+    "this is currentlyOpenChatroom before sendin message",
+    currentlyOpenChatroom
+  );
+  if (isPrivate) {
+    correspondent = users.filter((item) => item.id !== activeUser)[0];
+  } else {
+    correspondent = users.filter(
+      (item) => item.id !== activeUser && item.id == initiator
+    )[0];
+  }
+  evt.preventDefault();
+  const msgObj = {
+    senderId: activeUser,
+    receiver: correspondent.id,
+    message: newMessageContent
+  };
+  console.log("msg to be sent", msgObj);
+  if (newMessageContent.length) {
+    socket.emit("create new message", msgObj);
+    socket.on("message created", (newMessage) => {
+      console.log("new message here", newMessage);
+      if (currentlyOpenChatroom.id == newMessage.chatroomId || currentlyOpenChatroom.id == activeUser) {
+        if(currentlyOpenChatroom.id == activeUser){
+            currentlyOpenChatroom.id = newMessage.chatroomId;
+        }
+        fetchCurrentChatroom(newMessage.chatroomId);
+      }
+      
+    });
+  }
+});
+socket.on("new message created broadcast", (newMessage) => {
+    if (newMessage.receiver == activeUser){
+        // refetch chatrooms
+        socket.emit("fetch update chatrooms");
+        socket.on('refetched user chatrooms',(refreshedChatrooms)=>{
+            console.log('these are refreshed', refreshedChatrooms);
+            displayChatrooms(refreshedChatrooms);
+        });
+    }
+    if(currentlyOpenChatroom.id == newMessage.chatroomId) {
+        fetchCurrentChatroom(newMessage.chatroomId);
+    }
+});
+// let selectedChatroom = chatrooms[0];
+// console.log('this is start', selectedChatroom)
+const displayChatrooms = (chatrooms) => {
+  chatroomsList.innerHTML = "";
+  chatrooms.forEach((chatroom, idx) => {
+    const { isPrivate, users, messages, initiator } = chatroom;
+    const currentUser = users.filter((item) => item.id == activeUser)[0];
+    const publicChatroom = users.filter((item) => item.id == initiator)[0];
+    const otherParticipant = users.filter((item) => item.id !== activeUser)[0];
+    const correspondent = isPrivate ? otherParticipant : publicChatroom;
+    const lastMessage = messages.length ? messages[messages.length - 1] : "";
+    const chatroomContent = `
+            <div id="${chatroom.id}" class="chat-room flex-centered flex-centered-vertical pointer px-lg-3 shadow-stable" style="width:100%; height:6rem;">
+                <div id="${chatroom.id}"class="small-big-grid">
+                    <div id="${chatroom.id}" class="block-1">
+                        <div id="${chatroom.id}"class="b-1px-hue block br-rnd relative" 
+                            style=
+                            "
+                                width:3rem; 
+                                height: 3rem;
+                                background-image: url(${correspondent.profileImage});
+                                background-size: cover;
+                                background-repeat: no-repeat;
+                            "
+                        >
+                        </div>
+                    </div>
+                    <div id="${chatroom.id}"class="block-2 py-lg-2">
+                        <span id="${chatroom.id}" class="bold-2 block capitalize">${correspondent.firstName} ${correspondent.lastName}</span>
+                        <span id="${chatroom.id}" class="block text-muted font-1">${messages.length && lastMessage ? `${lastMessage.sender == activeUser ? "You: " : ""} ${lastMessage.message}` : ""}</span>
+                    </div>
+                </div>
+            </div>
+            <hr class="py-lg-0 my-lg-0">
+        `;
+    chatroomsList.innerHTML += chatroomContent;
+
+    const chatroomDivs = document.querySelectorAll(".chat-room");
+    chatroomDivs.forEach((room, idx) => {
+      room.addEventListener("click", function (evt) {
+        fetchCurrentChatroom(evt.target.id);
+      });
+    });
+  });
+};
+
+const fetchCurrentChatroom = (chatroomId) => {
+  socket.emit("select chatroom", chatroomId);
+  socket.on("update selected chatroom", (chatroom) => {
+    console.log("this is the single chatroom", chatroom);
+    currentlyOpenChatroom = chatroom;
+    displayChatroom(currentlyOpenChatroom);
+    displayCorrespondent(currentlyOpenChatroom);
+  });
+};
+const displayChatroom = (chatroom) => {
+  currentlyOpenChatroom = chatroom;
+  messagesList.innerHTML = "";
+  chatroom.messages.forEach((message, idx) => {
+    const { senderId } = message;
+    const messageContent = `
+            <span class="${senderId == activeUser ? "u2 chat" : "u1 chat"}">${message.message}</span>
+            
+        `;
+    messagesList.innerHTML += messageContent;
+  });
+};
+
+const displayCorrespondent = (chatroom) => {
+  console.log("now activeUser", activeUser);
+  currentlyOpenChatroom = chatroom;
+  const { users } = chatroom;
+  let otherParticipant;
+  if (chatroom.isPrivate) {
+    otherParticipant = users.filter((item) => item.id != activeUser)[0];
+  } else {
+    otherParticipant = users.filter(
+      (item) => item.firstName.toLowerCase() == "champs"
+    )[0];
+  }
+  chatHeader.innerHTML = `
+        <div class="wrap" style="width: 10%;">
+            <div class="b-1px-hue block br-rnd relative" 
+                style=
+                "
+                    width:3rem; 
+                    height: 3rem;
+                    background-image: url(${otherParticipant.profileImage});
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                "
+            >
+            </div>
+        </div>
+        <div class=" pt-lg-2 active" style="width: 90%;">
+            <span class="bold-2 block capitalize">${otherParticipant.firstName} ${otherParticipant.lastName}</span>
+            <span class="block text-muted font-0 bold-0">Last seen: Yesterday at 12:00PM</span>
+        </div>
+    `;
+  chatDetails.innerHTML = `
+        <div class="text-center">
+            <div class="block">
+                <div class=" b-1px-hue block br-rnd relative" 
+                    style=
+                    "
+                        width:10rem; 
+                        height: 10rem;
+                        background-image: url(${otherParticipant.profileImage});
+                        background-size: cover;
+                        background-repeat: no-repeat;
+                    "
+                >
+                </div>
+            </div>
+            <div class="block pt-lg-4 active">
+                <h6 class="bold-2 block capitalize pt-lg-3">${otherParticipant.firstName} ${otherParticipant.lastName}</span>
+                <span class="block text-muted font-0 bold-0">Last seen: Yesterday at 12:00PM</span>
+            </div>
+        </div>
+    `;
+};
+
+const handleActiveChatroom = (chatId) => {
+  document.querySelectorAll(".chat-room").forEach((chat) => {
+    console.log(chat);
+    chat.classList.remove("active");
+    if (chat.id == chatId) {
+      chat.classList.add("active");
+    }
+  });
+};
+
+// const createNewMessage = (sender, receiver) => {};
+
+const modal = document.querySelector(".modal");
+const cancelButton = document.querySelector(".cancel");
+const newMessageBtn = document.querySelector(".new-message-btn");
+const userList = document.querySelector(".user-list");
+
+newMessageBtn.addEventListener("click", function () {
+  openModal();
+  // fetch users here
+  socket.emit("fetch all users", activeUser);
+  socket.on("receive all users", (users) => {
+    console.log("this is all users", users);
+    allUsers = users;
+    displayUsers(users);
+  });
+});
+cancelButton.addEventListener("click", function () {
+  closeModal();
+});
+const displayUsers = (users) => {
+  userList.innerHTML = "";
+  users.forEach((user, idx) => {
+    const content = `
+            <div id="${user.id}" class="user-box flex-centered text-left py-lg-3">
+                <div id="${user.id}" class="wrap" style="width: 14%;">
+                    <div id="${user.id}" class="block br-rnd b-1px-hue" 
+                        style=
+                        "
+                            width:3rem; 
+                            height: 3rem;
+                            background-image: url(${user.profileImage});
+                            background-size: cover;
+                            background-repeat: no-repeat;
+                        "
+                    >
+                    </div>
+                </div>
+                <div id="${user.id}" class="px-lg-4 pt-lg-2" style="width: 86%;">
+                    <span id="${user.id}" class="bold-2  block capitalize">${user.firstName} ${user.lastName}</span>
+                    <span id="${user.id}" class="block  text-muted font-1 bold-0 capitalize">${user.role}</span>
+                </div>                        
+            </div>
+        `;
+    userList.innerHTML += content;
+
+    const userDivs = document.querySelectorAll(".user-box");
+    userDivs.forEach((room, idx) => {
+      room.addEventListener("click", function (evt) {
+        createNewChatroom(evt.target.id);
+      });
+    });
+  });
+};
+// open modal
+const openModal = (e) => {
+  modal.classList.remove("d-lg-none");
+};
+const closeModal = (e) => {
+  modal.classList.add("d-lg-none");
+};
+const createNewChatroom = (userId) => {
+  console.log("this is the mighty id", userId);
+  console.log("this is the mighty allUsers", allUsers);
+
+  const newCorrespondent = allUsers.filter((item) => item.id == userId)[0];
+  const existingChatrooms = chatrooms.filter(
+    (item) =>
+      item.participants.includes(userId) &&
+      item.participants.includes(newCorrespondent.id)
+  );
+  console.log("there are existingChatrooms", existingChatrooms.length);
+
+  if (existingChatrooms.length == 1) {
+    if (existingChatrooms[0].initiator == newCorrespondent.id) {
+      // no trouble create public message
+      const publicChatroom = chatrooms.filter((item) => !item.isPrivate)[0];
+      closeModal();
+      displayChatroom(publicChatroom);
+      displayCorrespondent(publicChatroom);
+      return;
+    }
+    const newChatroom = {
+      id: activeUser,
+      initiator: activeUser,
+      participants: [activeUser, newCorrespondent.id],
+      isPrivate: true,
+      users: [
+        {
+          id: newCorrespondent.id,
+          firstName: newCorrespondent.firstName,
+          lastName: newCorrespondent.lastName,
+          profileImage: newCorrespondent.profileImage,
+          lastSeen: "a few soconds ago"
+        },
+        {
+          id: activeUser,
+          firstName: localStorage.getItem("firstName"),
+          lastName: localStorage.getItem("lastName"),
+          lastSeen: "a few soconds ago"
+        }
+      ],
+      messages: []
+    };
+
+    // push into chatrooms
+    console.log("this is chatroom at end level", chatrooms);
+    chatrooms.push(newChatroom);
+    console.log("this is updated chatrooms", chatrooms);
+    closeModal();
+    displayChatrooms(chatrooms);
+    displayChatroom(newChatroom);
+    displayCorrespondent(newChatroom);
+    return;
+  }
+  if (existingChatrooms.length == 2) {
+    // no trouble
+    const publicChatroom = chatrooms.filter((item) => item.isPrivate)[0];
+    closeModal();
+    displayChatroom(publicChatroom);
+    displayCorrespondent(publicChatroom);
+  }
+};
+
+
+    </script>
+
+</body>
+</html>

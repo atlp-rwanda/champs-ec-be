@@ -4,10 +4,9 @@ import {
   ProductAttributes,
   ProductCreationAttributes
 } from "../types/product.types";
-import Reviews from "./reviews";
 import User from "./user";
 import Order from "./Order";
-
+import Reviews from "./review";
 // eslint-disable-next-line require-jsdoc
 class Product
   extends Model<ProductAttributes, ProductCreationAttributes>
@@ -71,13 +70,13 @@ Product.init(
     productName: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+      unique: false,
       validate: {
         notEmpty: true
       }
     },
     productCategory: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       validate: {
         notEmpty: true
@@ -90,7 +89,7 @@ Product.init(
     productPrice: {
       type: DataTypes.DOUBLE,
       allowNull: false,
-      unique: true,
+      unique: false,
       validate: {
         notEmpty: true
       }
@@ -103,7 +102,7 @@ Product.init(
     productCurrency: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true,
+      unique: false,
       validate: {
         notEmpty: true
       }
@@ -116,7 +115,7 @@ Product.init(
     productDescription: {
       type: DataTypes.TEXT,
       allowNull: false,
-      unique: true,
+      unique: false,
       validate: {
         notEmpty: true
       }
@@ -125,7 +124,7 @@ Product.init(
     productThumbnail: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+      unique: false,
       validate: {
         notEmpty: true
       }

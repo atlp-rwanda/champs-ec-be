@@ -21,6 +21,7 @@ import { matchPasswords } from "../utils/matchPasswords";
 import BlacklistedToken from "../models/Blacklist";
 import { ResponseOutPut, userStatusData } from "../helper/handleUserStatusData";
 import { isValidUUID } from "../utils/uuid";
+import { insertNewUserIntoPublicChatroom } from "../services/chats.services";
 
 config();
 interface JToken extends jwt.Jwt {
@@ -50,7 +51,6 @@ export const userSignup = async (req: Request, res: Response) => {
         const link: string = `api/users/${token}/verify-email`;
 
         sendVerificationMail(email, link, firstName);
-
         res.status(201).json({
           message: "user is registered, please verify through email"
         });
@@ -111,6 +111,7 @@ export const verifyAccount = async (req: Request, res: Response) => {
 
     if (user) {
       const updatedUser = await user.update({ verified: true });
+      await insertNewUserIntoPublicChatroom(user);
       if (updatedUser) {
         res.status(201).json({
           message: "Account verified please login to continue"
@@ -353,7 +354,11 @@ export const updateUserPassword = async (req: Request, res: Response) => {
     return res.status(500).send({ error: "Internal server error" });
   }
 };
-export const blacklistToken = async (req: Request, res: Response) => {
+export const blacklistToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const tokenHeader = req.headers.authorization?.split(" ")[1];
   if (!tokenHeader) {
     return res

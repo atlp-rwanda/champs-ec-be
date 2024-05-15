@@ -27,6 +27,8 @@ export interface UserAttributes {
 export interface PayloadAttributes {
   id: string;
   email: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export interface UserCreationAttributes
