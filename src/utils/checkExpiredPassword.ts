@@ -12,8 +12,9 @@ export const checkExpiredPasswords = async () => {
     const expiryDate = new Date(
       currentUser.dataValues.passwordExpiresAt as Date
     );
+    console.log("PASSWORD WILL EXPIRE AT => ", expiryDate);
 
-    if (expiryDate.getTime() <= new Date().getTime()) {
+    if (expiryDate <= new Date()) {
       await currentUser.update({
         isPasswordExpired: true
       });

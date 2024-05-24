@@ -1,13 +1,11 @@
-import { DataTypes, Model, ModelStatic, Sequelize } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import { sequelizeConnection } from "../config/db.config";
 import { UserAttributes, UserCreationAttributes } from "../types/user.types";
 import Role from "./Role";
-import Chatroom from "./Chatroom";
 import Message from "./message";
+import extendPasswordValidity from "../utils/extendPasswordValidity";
 
-const currentDate = new Date();
-const userPasswordValidityPeriod = new Date(currentDate);
-userPasswordValidityPeriod.setMonth(currentDate.getMonth() + 3);
+const userPasswordValidityPeriod = extendPasswordValidity();
 
 class User
   extends Model<UserAttributes, UserCreationAttributes>

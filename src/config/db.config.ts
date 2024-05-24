@@ -50,7 +50,7 @@ export const dbConnect = () =>
     .then(() => {
       console.log("Database connected successfully.", db_uri);
     })
-    .catch((error) => {
+    .catch(() => {
       console.log("Unable to connect to the database:");
       process.exit(1);
     });

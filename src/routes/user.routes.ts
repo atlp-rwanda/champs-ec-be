@@ -39,13 +39,7 @@ const userRoutes = express.Router({ mergeParams: true });
 userRoutes.post("/reset-password", sendResetInstructions);
 userRoutes.patch("/reset-password/:token", resetUserPassword);
 userRoutes.post("/signup", isValidUser, isUserExist, userSignup);
-userRoutes.post(
-  "/login",
-  isValidUserLogin,
-  checkIfUserBlocked,
-  passwordExpirationChecker,
-  userLogin
-);
+userRoutes.post("/login", isValidUserLogin, checkIfUserBlocked, userLogin);
 userRoutes.post("/logout", authenticate, blacklistToken);
 userRoutes.get("/profile", authenticate, userProfile);
 userRoutes.get("/", authenticate, checkRole(["admin"]), getAllUsers);

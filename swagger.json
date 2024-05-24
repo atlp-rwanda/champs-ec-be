@@ -7,7 +7,8 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5500",
+     
+      "url": "http://localhost:8000",
       "description": "Development server"
     },
     {
@@ -235,7 +236,7 @@
     "/api/users/reset-password": {
       "post": {
         "summary": "User Reset Password",
-        "description": "Reset User Paassword via Email",
+        "description": "Reset User Password via Email",
         "tags": ["Authentication"],
         "requestBody": {
           "content": {
@@ -791,6 +792,46 @@
         "responses": {
           "200": {
             "description": "Password reset Instructions sent successfully"
+          },
+          "400": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/users/check-passwords": {
+      "post": {
+        "summary": "Unlist expired passwords",
+        "description": "Run expiration checking algorithm manually to unlist expired passwords",
+        "tags": ["Authentication"],
+        "responses": {
+          "200": {
+            "description": "Password update Instructions sent successfully"
+          },
+          "400": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/users/check-expiration": {
+      "post": {
+        "summary": "Unlist expired passwords",
+        "description": "Run expiration checking algorithm manually to unlist expired passwords",
+        "tags": ["Authentication"],
+        "responses": {
+          "200": {
+            "description": "Password update Instructions sent successfully"
           },
           "400": {
             "description": "User not found"

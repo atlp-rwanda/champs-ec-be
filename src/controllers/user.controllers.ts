@@ -22,6 +22,8 @@ import BlacklistedToken from "../models/Blacklist";
 import { ResponseOutPut, userStatusData } from "../helper/handleUserStatusData";
 import { isValidUUID } from "../utils/uuid";
 import { insertNewUserIntoPublicChatroom } from "../services/chats.services";
+import { checkExpiredPasswords } from "../utils/checkExpiredPassword";
+import extendPasswordValidity from "../utils/extendPasswordValidity";
 
 config();
 interface JToken extends jwt.Jwt {
@@ -227,9 +229,12 @@ export const resetUserPassword = async (
     if (newPassword !== confirmPassword) {
       return res.status(400).json({ msg: "Passwords don't match" });
     }
-
+    const userPasswordValidityPeriod = await extendPasswordValidity();
     const pass: string = await passwordEncrypt(newPassword);
-    await foundUser.update({ password: pass });
+    await foundUser.update({
+      password: pass,
+      passwordExpiresAt: userPasswordValidityPeriod
+    });
 
     return res.status(200).json({ msg: "Password updated succesfully" });
   } catch (err) {
@@ -343,9 +348,12 @@ export const updateUserPassword = async (req: Request, res: Response) => {
     if (!matchIncommingPasswords) {
       return res.status(400).send({ error: "Passwords doesn't match" });
     }
-
+    const userPasswordValidityPeriod = await extendPasswordValidity();
     const hashedPassword = await passwordEncrypt(newPassword);
-    const updatePassword = await user?.update({ password: hashedPassword });
+    const updatePassword = await user?.update({
+      password: hashedPassword,
+      passwordExpiresAt: userPasswordValidityPeriod
+    });
     if (!updatePassword) {
       return res.status(400).send({ message: "failed to update password!" });
     }
@@ -354,11 +362,7 @@ export const updateUserPassword = async (req: Request, res: Response) => {
     return res.status(500).send({ error: "Internal server error" });
   }
 };
-export const blacklistToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const blacklistToken = async (req: Request, res: Response) => {
   const tokenHeader = req.headers.authorization?.split(" ")[1];
   if (!tokenHeader) {
     return res
@@ -405,26 +409,17 @@ export const changeAccountStatus = async (req: any, res: Response) => {
 
 export const passwordExpirationChecker = async (
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
   try {
-    const user: any = await User.findOne({
-      where: {
-        email: req.body.email
-      }
+    await checkExpiredPasswords();
+    return res.status(200).json({
+      msg: "SUCCESS: ALL PASSWORD EXPIRATION DATES HAVE BEEN CHECKED FROM API"
     });
-    const expiryDate = new Date(user.dataValues.passwordExpiresAt as Date);
-    if (expiryDate.getTime() <= new Date().getTime()) {
-      return res
-        .status(200)
-        .json({ msg: "Your password has expired please update your password" });
-    }
-    next();
   } catch (err) {
     return res
       .status(400)
-      .json({ msg: "failed to run checking passwords expiration!" });
+      .json({ msg: "failed to run checking passwords expiration date!" });
   }
 };
 
