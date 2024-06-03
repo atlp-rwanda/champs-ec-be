@@ -30,18 +30,9 @@ const handleGoogleCallback = async (req: Request, res: Response) => {
 
     try {
       const token = await userToken(user.id, user.email);
-      res.status(200).json({
-        status: "success",
-        message: "Login successful",
-        data: {
-          token
-        }
-      });
+      res.redirect(`${process.env.FRONTEND_URL}/auth/google?token=${token}`);
     } catch (error) {
-      return res.status(500).json({
-        status: "not success",
-        error: "Login Failed, token generation failed"
-      });
+      res.redirect(`${process.env.FRONTEND_URL}/auth/login`);
     }
   })(req, res);
 };
