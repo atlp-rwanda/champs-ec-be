@@ -40,7 +40,7 @@ module.exports = {
       "products",
       [
         {
-          id: uuidv4(),
+          id: "8c1d2ace-f8b7-4e80-b966-7877b2fcf182",
           sellerId: userRow[1].id,
           productName: "SKIRTS",
           stockLevel: 270,
@@ -53,7 +53,7 @@ module.exports = {
           productDescription:
             "test of project implementation product item crud",
           productThumbnail:
-            "https://res.cloudinary.com/dbbv6uvfu/image/upload/v1712563210/ilezp3vjo7gcirzofy2t.jpg",
+            "https://res.cloudinary.com/dmems8p0a/image/upload/v1708286842/samples/ecommerce/accessories-bag.jpg",
 
           expireDate: new Date(),
           createdAt: new Date(),
@@ -61,26 +61,26 @@ module.exports = {
           isExpired: false
         },
         {
-          id: uuidv4(),
+          id: "0e75be1a-762e-439f-af10-4a78a03ea635",
           sellerId: userRow[0].id,
           productName: "test Product20",
           stockLevel: 100,
           productCategory: category[1].id,
           productPrice: 200.0,
           productCurrency: "BUD",
-          productDiscount: "0",
+          productDiscount: 0,
           isAvailable: false,
           productDescription:
             "test of project implementation product item crud",
           productThumbnail:
-            "https://res.cloudinary.com/dbbv6uvfu/image/upload/v1712563210/ilezp3vjo7gcirzofy2t.jpg",
+            "https://res.cloudinary.com/dmems8p0a/image/upload/v1708286842/samples/ecommerce/accessories-bag.jpg",
           isExpired: false,
           expireDate: "2028-01-10",
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          id: uuidv4(),
+          id: "c8bec8f8-eeeb-47d1-89f0-0cb1b504694d",
           sellerId: userRow[1].id,
           productName: "SUIT",
           stockLevel: 49,
@@ -93,14 +93,14 @@ module.exports = {
           productDescription:
             "test of project implementation product item crud",
           productThumbnail:
-            "https://res.cloudinary.com/dbbv6uvfu/image/upload/v1712563210/ilezp3vjo7gcirzofy2t.jpg",
+            "https://res.cloudinary.com/dmems8p0a/image/upload/v1708286842/samples/ecommerce/accessories-bag.jpg",
 
           expireDate: "2028-01-10",
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          id: uuidv4(),
+          id: "075b82f8-f50b-4a7a-9309-c536cfafbeff",
           sellerId: userRow[2].id,
           productName: "SHOES",
           stockLevel: 175,
@@ -113,14 +113,14 @@ module.exports = {
           productDescription:
             "test of project implementation product item crud",
           productThumbnail:
-            "https://res.cloudinary.com/dbbv6uvfu/image/upload/v1712563210/ilezp3vjo7gcirzofy2t.jpg",
+            "https://res.cloudinary.com/dmems8p0a/image/upload/v1708286842/samples/ecommerce/accessories-bag.jpg",
 
           expireDate: "2024-01-10",
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          id: uuidv4(),
+          id: "bc041af6-a5da-407f-81ea-2b2b8f095f6d",
           sellerId: userRow[2].id,
           productName: "DRESSES",
           stockLevel: 100,
@@ -133,14 +133,14 @@ module.exports = {
           productDescription:
             "test of project implementation product item crud",
           productThumbnail:
-            "https://res.cloudinary.com/dbbv6uvfu/image/upload/v1712563210/ilezp3vjo7gcirzofy2t.jpg",
+            "https://res.cloudinary.com/dmems8p0a/image/upload/v1708286842/samples/ecommerce/accessories-bag.jpg",
 
           expireDate: "2028-01-10",
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          id: uuidv4(),
+          id: "c83a7eeb-3781-4235-83bb-29f19b385068",
           sellerId: userRow[3].id,
           productName: "Pens",
           stockLevel: 500,
@@ -153,14 +153,14 @@ module.exports = {
           productDescription:
             "test of project implementation product item crud",
           productThumbnail:
-            "https://res.cloudinary.com/dbbv6uvfu/image/upload/v1712563210/ilezp3vjo7gcirzofy2t.jpg",
+            "https://res.cloudinary.com/dmems8p0a/image/upload/v1708286842/samples/ecommerce/accessories-bag.jpg",
 
           expireDate: "2028-01-10",
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          id: uuidv4(),
+          id: "bcf8591d-2ab0-4364-88f2-a419650f927e",
           sellerId: userRow[3].id,
           productName: "Cup",
           stockLevel: 1000,
@@ -173,7 +173,7 @@ module.exports = {
           productDescription:
             "test of project implementation product item crud",
           productThumbnail:
-            "https://res.cloudinary.com/dbbv6uvfu/image/upload/v1712563210/ilezp3vjo7gcirzofy2t.jpg",
+            "https://res.cloudinary.com/dmems8p0a/image/upload/v1708286842/samples/ecommerce/accessories-bag.jpg",
 
           expireDate: "2028-01-10",
           createdAt: new Date(),

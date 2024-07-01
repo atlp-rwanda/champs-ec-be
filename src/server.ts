@@ -2,6 +2,7 @@ import { config } from "dotenv";
 import app from "./app";
 import { dbConnect } from "./config/db.config";
 import { socketserverstart } from "./socket.notification";
+import { createPublicChatroom } from "./services/chats.services";
 
 config();
 
@@ -11,7 +12,8 @@ const server = app.listen(port, () => {
 });
 
 dbConnect();
-
+// eslint-disable-next-line no-unused-expressions
+process.env.DEV_MODE !== "test" ? createPublicChatroom() : "";
 socketserverstart(server);
 
 export default app;

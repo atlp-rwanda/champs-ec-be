@@ -1223,16 +1223,14 @@ MEDIA QUERIES FOR SMALL TABLETS AND MOBILE PHONES
                     
                     </div>
                     <div class="box-shadow chatbox pt-lg-3 px-lg-3" style="width: 50%; height: 100%;"> 
-                        
-                            <div class="chat-header bg-body flex-centered py-lg-4" style="height: 20%;">
-                                
+                        <div class="chat-header bg-body flex-centered py-lg-4" style="height: 20%;">
+                            
+                        </div>
+                        <div class="bg-white py-lg-2 " style="height: 70%;">
+                            <div class="messages-list o-hidden o-x-scroll scroll-double-shrinked px-lg-3 py-lg-2"  style="height: 24rem;">
+                            
                             </div>
-                            <div class="bg-white py-lg-2 " style="height: 70%;">
-                                <div class="messages-list o-hidden o-x-scroll scroll-double-shrinked px-lg-3 py-lg-2"  style="height: 24rem;">
-                                
-                                </div>
-                            </div>
-                        
+                        </div>
                         <div class="send-chat flex-centered flex-centered-vertical  px-lg-4" style="height: 6rem; width: 100%;">
                             <form class="flex" style="width: 100%;" name="msgForm">
                                 <div class="input-block" style="width: 90%; height: auto;">
@@ -1271,9 +1269,9 @@ MEDIA QUERIES FOR SMALL TABLETS AND MOBILE PHONES
         (function initChat() {
         socket.emit("fetch all chatrooms");
             socket.on("all chatrooms", (allChatrooms) => {
-                console.log("fucking chatrooms", allChatrooms);
+                console.log("all chatrooms", allChatrooms);
                 chatrooms = allChatrooms;
-                console.log("fucking chatrooms", allChatrooms);
+                console.log("all chatrooms", allChatrooms);
                 // alert("receiving things from be on fe")
                 currentlyOpenChatroom = allChatrooms[0];
                 displayChatrooms(allChatrooms);
@@ -1319,7 +1317,7 @@ msgForm.addEventListener("submit", function (evt) {
   console.log("msg to be sent", msgObj);
   if (newMessageContent.length) {
     socket.emit("create new message", msgObj);
-    socket.on("message created", (newMessage) => {
+    io.on("message created", (newMessage) => {
       console.log("new message here", newMessage);
       if (currentlyOpenChatroom.id == newMessage.chatroomId || currentlyOpenChatroom.id == activeUser) {
         if(currentlyOpenChatroom.id == activeUser){

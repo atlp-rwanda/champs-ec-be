@@ -38,6 +38,7 @@ const app: express.Application = express();
 
 // run products expiration cron job
 // eslint-disable-next-line no-unused-expressions
+// run products expiration cron jobß
 process.env.DEV_MODE !== "test"
   ? startProductsExpirationCronJob(
       process.env.PRODUCT_EXPIRATION_CRON_TIMER as string
@@ -52,13 +53,11 @@ process.env.DEV_MODE !== "test"
     )
   : "";
 
-// run products expiration cron job for un validate the product
+// run products expiration cron job for notify users
 // eslint-disable-next-line no-unused-expressions
 process.env.DEV_MODE !== "test"
   ? handleUnavailable(process.env.NOTIFICATION_CRON_TIME as string)
   : "";
-// eslint-disable-next-line no-unused-expressions
-process.env.DEV_MODE !== "test" ? createPublicChatroom() : "";
 
 app.use(cors());
 app.use(express.json());
@@ -93,7 +92,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/roles", authenticate, checkRole(["admin"]), roleRoutes);
 app.use("/api/search/", searchRoutes);
 app.use("/api/carts/", authenticate, checkRole(["buyer"]), cartRouter);
-app.use("/api/orders/", orderRoutes);
+app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/chats", chatRoutes);
 

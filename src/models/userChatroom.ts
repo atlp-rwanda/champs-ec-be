@@ -37,13 +37,13 @@ UserChatroom.init(
       type: DataTypes.UUID,
       allowNull: false,
       references: {
-        model: "User",
+        model: "users",
         key: "id"
       }
     },
     chatroomId: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: "Chatroom",
         key: "id"

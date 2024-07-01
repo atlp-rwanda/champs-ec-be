@@ -50,32 +50,13 @@ export const getUserWishes = async (req: Request, res: Response) => {
   const userId: string = user.dataValues.id as string;
   const userRole: string = user.dataValues.roleId as string;
   const role = await Role.findByPk(userRole);
-  let wishesData: any[] = [];
 
   if (role?.dataValues.name == "buyer") {
     const wishes: any = await wishServices.getUserWishes(userId);
-    const productIds = wishes.map((wish: any) => wish.dataValues.productId);
-
-    const products = await Product.findAll({
-      where: {
-        id: productIds
-      },
-      attributes: ["id", "productName", "productPrice", "productThumbnail"]
-    });
-
-    const productMap = products.reduce((map: any, product: any) => {
-      map[product.dataValues.id] = product;
-      return map;
-    }, {});
-
-    wishesData = wishes.map((wish: any) => {
-      const { productId, userId, updatedAt, ...wishData } = wish.dataValues;
-      const product = productMap[productId];
-      return { ...wishData, product: product.dataValues };
-    });
+    console.log("this is is wishes", wishes);
     res.status(200).send({
       message: "Your products wish list",
-      data: wishesData
+      wishes
     });
   } else if (role?.dataValues.name == "seller") {
     const productsInWishes: any = [];

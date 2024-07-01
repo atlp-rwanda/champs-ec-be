@@ -50,5 +50,7 @@ Wish.init(
     tableName: "wishes"
   }
 );
+Wish.belongsTo(User, { foreignKey: "userId", as: "userProfile" });
+Wish.belongsTo(Product, { foreignKey: "productId", as: "product" });
 
 export default Wish;

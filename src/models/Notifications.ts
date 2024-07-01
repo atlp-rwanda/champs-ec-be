@@ -31,7 +31,7 @@ Notification.init(
       defaultValue: DataTypes.UUIDV4
     },
     reciepent_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       defaultValue: UUIDV4,
       validate: {

@@ -65,11 +65,11 @@ const createMessageAndStoreInChatroom = async (
   chatroom: Chatroom
 ) => {
   const newMessage = await Message.create({
-    ...options,
-    chatroomId: chatroom?.dataValues.id as string
+    ...options
   });
+  console.log("just created message >>>>>>>>>>", newMessage);
   await (chatroom as any).addMessage(newMessage);
-  return newMessage;
+  return (await Message.findByPk(newMessage.dataValues.id)) as Message;
 };
 export const createNewMessage = async (
   options: createNewMessageOptions

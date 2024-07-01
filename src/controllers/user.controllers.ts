@@ -5,6 +5,7 @@ import { config } from "dotenv";
 import { UserAttributes } from "../types/user.types";
 import { passwordCompare, passwordEncrypt } from "../utils/encrypt";
 import User from "../models/user";
+import Role from "../models/Role";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { userToken, tokenVerify, tokenAssign } from "../utils/token.generator";
 import uploadImage from "../utils/cloudinary";
@@ -66,8 +67,15 @@ export const userSignup = async (req: Request, res: Response) => {
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.findAll({
-      attributes: { exclude: ["password"] }
+      include: [
+        {
+          model: Role
+        }
+      ],
+      attributes: { exclude: ["password"] },
+      order: [["firstName", "ASC"]]
     });
+
     res.status(200).json({ users });
   } catch (error) {
     return res.status(500).json({ error: "Internal server error" });
@@ -183,7 +191,7 @@ export const sendResetInstructions = async (
       { user: id },
       Date.now() + Number(process.env.PASSWORD_RESET_EXPIRES as string)
     );
-    const passwordUpdateLink = `${process.env.BASE_URL as string}/api/users/reset-password/${token}`;
+    const passwordUpdateLink = `${process.env.FRONTEND_URL as string}/reset-password?token=${token}`;
     sendResetMail(email as string, passwordUpdateLink, firstName as string);
 
     return res.status(200).json({
@@ -362,7 +370,11 @@ export const updateUserPassword = async (req: Request, res: Response) => {
     return res.status(500).send({ error: "Internal server error" });
   }
 };
-export const blacklistToken = async (req: Request, res: Response) => {
+export const blacklistToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const tokenHeader = req.headers.authorization?.split(" ")[1];
   if (!tokenHeader) {
     return res
@@ -394,7 +406,6 @@ export const changeAccountStatus = async (req: any, res: Response) => {
   )
     .then((result) => {
       const user: Array<User> = result[1];
-
       sendNotificationInactiveAccount(
         user[0].dataValues.email as string,
         user[0].dataValues.firstName as string,
