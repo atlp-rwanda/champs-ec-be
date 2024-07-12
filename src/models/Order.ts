@@ -41,7 +41,11 @@ Order.init(
     },
     buyerId: {
       type: DataTypes.UUID,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: User,
+        key: "id"
+      }
     },
     productId: {
       type: DataTypes.UUID,
@@ -99,6 +103,7 @@ Order.belongsTo(Product, {
 });
 Order.belongsTo(User, {
   foreignKey: "buyerId",
-  onDelete: "CASCADE"
+  onDelete: "CASCADE",
+  as: "buyer"
 });
 export default Order;

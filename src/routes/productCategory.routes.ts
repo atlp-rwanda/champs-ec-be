@@ -25,11 +25,7 @@ productCategoryRoutes.post(
   checkRole(["admin"]),
   createProductCategory
 );
-productCategoryRoutes.get(
-  "/",
-  checkRole(["admin", "seller"]),
-  getProductCategory
-);
+productCategoryRoutes.get("/", getProductCategory);
 productCategoryRoutes.get(
   "/:catId",
   checkRole(["admin", "seller"]),

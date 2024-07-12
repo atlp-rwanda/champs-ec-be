@@ -5,8 +5,8 @@
   "main": "./dist/server.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "concurrently \"node ./dist/server.js \" \" node ./dist/socketServer.js\"",
-    "dev": "npm run demigratedev && npm run migrate &&  npm run seed:all && npx tsc && concurrently \"nodemon ./dist/server.js\" \"node ./dist/socketServer.js\"",
+    "start": "concurrently \"node ./dist/server.js \"",
+    "dev": "npm run demigratedev && npm run migrate &&  npm run seed:all && npx tsc && concurrently \"nodemon ./dist/server.js\"",
     "lint": "eslint \"src/**/*.{js,ts,css,html,json,md}\"",
     "prettier": "eslint \"src/**/*.{js,ts,css,html,json,md}\"",
     "lint:staged": "lint-staged",

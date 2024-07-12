@@ -19,6 +19,7 @@ import NodeEvents from "../services/eventEmit.services";
 export const createRemoveWish = async (req: Request, res: Response) => {
   try {
     const { productId } = req.body;
+    console.log("thia ias emmitted id", productId);
     const isValid: boolean = isValidUUID(productId);
     const user: User = req.user as User;
     const userId: string = user.dataValues.id as string;
@@ -32,12 +33,15 @@ export const createRemoveWish = async (req: Request, res: Response) => {
         await wishServices.createWish(data);
         NodeEvents.emit("productWished", productId, user.dataValues.firstName);
         res.status(200).send({
+          status: 200,
           message: "product added to wishlist",
           data
         });
       } else {
         await wishServices.deleteWish(data);
-        res.status(200).send({ message: "Product removed into wishlist" });
+        res
+          .status(203)
+          .send({ status: 203, message: "Product removed from wishlist" });
       }
     }
   } catch (error) {
@@ -50,39 +54,28 @@ export const getUserWishes = async (req: Request, res: Response) => {
   const userId: string = user.dataValues.id as string;
   const userRole: string = user.dataValues.roleId as string;
   const role = await Role.findByPk(userRole);
-  let wishesData: any[] = [];
 
   if (role?.dataValues.name == "buyer") {
     const wishes: any = await wishServices.getUserWishes(userId);
-    const productIds = wishes.map((wish: any) => wish.dataValues.productId);
-
-    const products = await Product.findAll({
-      where: {
-        id: productIds
-      },
-      attributes: ["id", "productName", "productPrice", "productThumbnail"]
-    });
-
-    const productMap = products.reduce((map: any, product: any) => {
-      map[product.dataValues.id] = product;
-      return map;
-    }, {});
-
-    wishesData = wishes.map((wish: any) => {
-      const { productId, userId, updatedAt, ...wishData } = wish.dataValues;
-      const product = productMap[productId];
-      return { ...wishData, product: product.dataValues };
-    });
+    console.log("this is is wishes", wishes);
     res.status(200).send({
+      status: 200,
       message: "Your products wish list",
-      data: wishesData
+      wishes
     });
   } else if (role?.dataValues.name == "seller") {
     const productsInWishes: any = [];
 
     const sellerProducts = await Product.findAll({
       where: { sellerId: userId },
-      attributes: ["id", "productName", "productPrice", "productThumbnail"]
+      attributes: [
+        "id",
+        "productThumbnail",
+        "stockLevel",
+        "productName",
+        "productPrice",
+        "productCurrency"
+      ]
     });
 
     const sellProductsIds = sellerProducts.map(
@@ -104,6 +97,7 @@ export const getUserWishes = async (req: Request, res: Response) => {
       });
     }
     res.status(200).send({
+      status: 200,
       message: "your products that are being wished",
       data: productsInWishes
     });

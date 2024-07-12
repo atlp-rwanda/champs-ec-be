@@ -59,15 +59,17 @@ Chatroom.init(
     timestamps: true,
     sequelize: sequelizeConnection,
     modelName: "Chatroom",
-    tableName: "chatrooms"
+    tableName: "Chatroom"
   }
 );
+export default Chatroom;
+
 Chatroom.hasMany(Message, {
   as: "messages",
   onDelete: "CASCADE"
 });
 Message.belongsTo(Chatroom, {
-  as: "chatroom",
+  as: "chatrooms",
   onDelete: "CASCADE"
 });
 
@@ -81,4 +83,3 @@ User.belongsToMany(Chatroom, {
   as: "chatrooms",
   foreignKey: "userId"
 });
-export default Chatroom;

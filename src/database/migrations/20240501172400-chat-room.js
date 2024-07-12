@@ -1,7 +1,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     // Recreate chatrooms table
-    await queryInterface.createTable("chatrooms", {
+    await queryInterface.createTable("Chatroom", {
       id: {
         type: Sequelize.UUID,
         allowNull: false,
@@ -33,6 +33,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("chatrooms");
+    await queryInterface.dropTable("Chatroom");
   }
 };

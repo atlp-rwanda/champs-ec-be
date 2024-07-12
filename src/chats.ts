@@ -16,7 +16,6 @@ class ChatsController {
   static io: Server;
   static typingUsers: { [key: string]: boolean } = {};
   static chatsController: any;
-
   static initIO(io: Server) {
     ChatsController.io = io;
     io.on("connection", async (socket: Socket) => {
@@ -31,7 +30,6 @@ class ChatsController {
       const userId = decoded.id;
       const email = decoded.email;
       console.log("User ID:", userId, "Email:", email);
-
       // find all user chatrooms
       socket.on("fetch all chatrooms", async () => {
         const chatrooms = await fetchAllUserChatrooms(userId);
@@ -46,6 +44,9 @@ class ChatsController {
       });
       // create new message
       socket.on("create new message", async (messageObj) => {
+        console.log(
+          "The call reached here................................................................................................."
+        );
         const newlyCreatedMessage = (await createNewMessage(
           messageObj
         )) as Message;
@@ -60,27 +61,24 @@ class ChatsController {
         );
       });
       // find all users
-      socket.on("fetch all users", async (userId) => {
-        const allUsers = await fetchAllUsers(userId);
+      socket.on("fetch all users", async (user_id) => {
+        const allUsers = await fetchAllUsers(user_id);
         socket.emit("receive all users", allUsers);
       });
       socket.on("fetch update chatrooms", async () => {
         const allUsers = await fetchAllUserChatrooms(userId);
         socket.emit("refetched user chatrooms", allUsers);
       });
-
       // paradis' work
       const messages = await ChatsController.getAllMessages();
       // console.log("Sending all messages to the client:", messages);
       socket.emit("all messages", messages);
-
       socket.on("chat message", async (msg, callback) => {
         console.log("Received chat message:", msg);
         const { senderId, message } = msg;
         try {
           const newMessage = await Message.create({ senderId, message });
           console.log("New message created in the database:", newMessage);
-
           if (newMessage.dataValues.id) {
             const messageWithSender = await Message.findOne({
               where: { id: newMessage.dataValues.id },
@@ -125,7 +123,6 @@ class ChatsController {
       });
     });
   }
-
   static async getAllMessages() {
     const messages = await Message.findAll({
       include: [
@@ -139,5 +136,4 @@ class ChatsController {
     return messages;
   }
 }
-
 export default ChatsController;

@@ -1,9 +1,14 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, ModelStatic, Sequelize } from "sequelize";
 import { sequelizeConnection } from "../config/db.config";
 import { UserAttributes, UserCreationAttributes } from "../types/user.types";
 import Role from "./Role";
 import Message from "./message";
 import extendPasswordValidity from "../utils/extendPasswordValidity";
+import Reviews from "./review";
+
+let myDate = new Date(Date.now());
+const addedTime = Number(process.env.PASSWORD_LIFE_SPAN);
+myDate = new Date(myDate.setMonth(myDate.getMonth() + addedTime));
 
 const userPasswordValidityPeriod = extendPasswordValidity();
 
@@ -156,9 +161,9 @@ User.init(
       type: DataTypes.DATE
     },
     passwordExpiresAt: {
-      allowNull: true,
+      allowNull: false,
       type: DataTypes.DATE,
-      defaultValue: userPasswordValidityPeriod
+      defaultValue: myDate
     },
     isPasswordExpired: {
       allowNull: true,

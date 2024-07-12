@@ -85,7 +85,7 @@ describe("Admin disable and activating user account", () => {
   it("stub throw internal error for getting all users ", (done) => {
     const roleStub = sinon
       .stub(User, "findAll")
-      .throws(new Error("User is successful creates"));
+      .throws(new Error("getting all users internal server error"));
     chai
       .request(app)
       .get(`/api/users`)
@@ -110,7 +110,7 @@ describe("Admin disable and activating user account", () => {
   it("stub throw internal error for getting single users ", (done) => {
     const roleStub = sinon
       .stub(User, "findOne")
-      .throws(new Error("User is successful creates"));
+      .throws(new Error("getting single user internal server error"));
     chai
       .request(app)
       .get(`/api/users/623332af-f30e-409f-b560-d88186c94dc0`)

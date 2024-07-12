@@ -27,7 +27,6 @@ const handleGoogleCallback = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(401).json({ error: "User not found" });
     }
-
     try {
       const token = await userToken(user.id, user.email);
       res.redirect(`${process.env.FRONTEND_URL}/auth/google?token=${token}`);

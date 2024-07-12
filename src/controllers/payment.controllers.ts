@@ -108,9 +108,7 @@ export const checkoutSuccess = async (req: Request, res: Response) => {
       await handleProductStockChanges(cartProduct);
       await Cart.destroy({ where: { userId } });
       NodeEvents.emit("newOrder", order, userId);
-      return res
-        .status(200)
-        .json({ message: "Order is successful creates", order });
+      res.redirect(`${process.env.FRONTEND_URL}/payments/success`);
     }
   } catch (error) {
     return res
